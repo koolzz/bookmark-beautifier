@@ -1,27 +1,55 @@
 $().ready(function() {
-    printBookmarks('1');
+    printBookmarks();
     $("#sort").click(function(e) {
-        $("#bookmarks ul").empty();
         sortBookmarks('1');
+
     });
     $("#group").click(function(e) {
-        $("#bookmarks ul").empty();
         groupBookmarks('1');
+
     });
     $("#crop").click(function(e) {
-        $("#bookmarks ul").empty();
         cropBookmarks('1');
+
     });
 });
 
-function printBookmarks(id) {
-    chrome.bookmarks.getChildren(id, function(children) {
-        children.forEach(function(bookmark) {
-            //console.log(bookmark);
-            $("#bookmarks ul").append("<li>" + bookmark.title + "</li>");
-            //printBookmarks(bookmark.id); //for folders, don't uncomment as leads do multiple outputs.
+function printBookmarks() {
+    $("#bookmarks ul").empty();
+    chrome.bookmarks.getTree(function(children) {
+        console.log(children);
+
+        children.forEach(function(main) {
+            console.log(main);
+
+            $('#bookmarks').append(printBookmarkNode(main));
+
         });
     });
+}
+
+function printBookmarkNode(bookmarkFolder) {
+    var list = $("<ul>");
+    bookmarkFolder.children.forEach(function(bookmark) {
+
+        if (typeof bookmark.url != 'undefined') {
+            list.append(printNode(bookmark));
+            //$("#main").append("<li>" + bookmark.title + "</li>");
+        } else {
+            //console.log(bookmark.title);
+            list.append(printNode(bookmark)
+                .css('font-weight', 'bold'));
+            //$("#main").append("<li><span>" + name + "</span>" + "<ul id=\"" + name + "\"></ul></li>");
+            list.append(printBookmarkNode(bookmark));
+        }
+    });
+    return list;
+}
+
+function printNode(bookmark) {
+    var li = $("<li>")
+        .text(bookmark.title);
+    return li;
 }
 
 function sortBookmarks(id) {
@@ -38,8 +66,27 @@ function sortBookmarks(id) {
                 'parentId': '1',
                 'index': key
             });
-            $("#bookmarks ul").append("<li>" + value.title + "</li>");
+            //$("#bookmarks ul").append("<li>" + value.title + "</li>");
         });
+        printBookmarks();
+    });
+}
+
+function cropBookmarks(id) {
+    chrome.bookmarks.getChildren(id, function(children) {
+        children.forEach(function(bookmark) {
+            var oldTitle = bookmark.title;
+
+            if (bookmark.title.length > 10) {
+                oldTitle = stripPunctuation(oldTitle);
+                var newTitle = oldTitle.split(" ")[0] + " " + oldTitle.split(" ")[1]; //just take the first 2 words(temporary solution)
+                chrome.bookmarks.update(String(bookmark.id), {
+                    'title': newTitle
+                });
+            }
+        });
+
+        printBookmarks();
     });
 }
 
@@ -51,17 +98,17 @@ function groupBookmarks(id) {
             keys.push(bookmark);
 
             if (typeof bookmark.url != 'undefined') {
-                var website = bookmark.url.split('.')[1];
+                var domain = getHostname(bookmark.url);
 
                 //creates an array of results, but we only have 2 cases empty or 1 element
                 var result = $.grep(dictionary, function(e) {
-                    return e.key == website;
+                    return e.key == domain;
                 });
 
                 //for 0 create new entry, else increment excisting entry
                 if (result == 0) {
                     dictionary.push({
-                        key: String(website),
+                        key: String(domain),
                         value: 1,
                         bookmarkList: [bookmark]
                     });
@@ -72,27 +119,56 @@ function groupBookmarks(id) {
             }
             //sortBookmarks(bookmark.id); //for folders, don't uncomment as leads do multiple outputs.
         });
-        console.log(dictionary);
         $.each(dictionary, function(key, value) {
             if (value.value > 1) {
-                addFolder('1', value.key, addLinksToFolder, dictionary[key].bookmarkList);
+                addFolder('1', capitalizeFirstLetter(getFolderName(value.key)), addLinksToFolder, dictionary[key].bookmarkList);
             }
         });
     });
 }
 
+function getHostname(url) {
+    var m = url.match(/^https?\:\/\/([^\/:?#]+)(?:[\/:?#]|$)/i);
+    return m ? m[0] : null;
+}
+
+function getFolderName(hostname) {
+    var m = hostname.match(/:\/\/(www\.)?(.*)\./);
+    return m ? m[2] : null;
+}
+
+function capitalizeFirstLetter(string) {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+}
+
+function stripPunctuation(string) { //god bless stackowerflow
+    var punctuationless = string.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, "");
+    var finalString = punctuationless.replace(/\s{2,}/g, " ");
+    return finalString
+}
+
 function addLinksToFolder(newFolder, list) {
     var parentId = newFolder.id;
     var name = newFolder.title;
-    $("#main").append("<li><span>" + name + "</span>" + "<ul id=\"" + name + "\"></ul></li>");
+
+    var length = list.length;
+    //$("#main").append("<li><span>" + name + "</span>" + "<ul id=\"" + name + "\"></ul></li>");
     $.each(list, function(key, value) {
+
         console.log(value.title);
+        var subli = $("<li>")
+            .text = value.title;
+
         chrome.bookmarks.move(String(value.id), {
             'parentId': parentId,
             'index': key
+        }, function(done) {
+            if (key == length - 1)
+                printBookmarks();
         });
-        $("#" + name).append("<li>" + value.title + "</li>");
+        //$("#" + name).append("<li>" + value.title + "</li>");
     });
+
 }
 
 function sortByName(a, b) {
@@ -110,12 +186,26 @@ function addBookmark(parentId, title, url) {
 }
 
 function addFolder(parentId, title, callback, list) {
-    chrome.bookmarks.create({
-            'parentId': parentId,
-            'title': title
-        },
-        function(newFolder) {
-            console.log("added folder: " + newFolder.title);
-            callback(newFolder, list);
+    console.log("looking for " + title);
+    chrome.bookmarks.search(String(title), function(result) {
+        var folderFound = false;
+        result.forEach(function(node) {
+            if (typeof node.url === 'undefined' && node.title === title) {
+                console.log("found " + node.title);
+                callback(node, list);
+                folderFound = true;
+                return false;
+            }
         });
+        if (!folderFound) {
+            chrome.bookmarks.create({
+                    'parentId': parentId,
+                    'title': title
+                },
+                function(newFolder) {
+                    console.log("added folder: " + newFolder.title);
+                    callback(newFolder, list);
+                });
+        }
+    });
 }
