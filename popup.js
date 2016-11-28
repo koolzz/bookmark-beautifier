@@ -1,5 +1,8 @@
 $().ready(function() {
+    'use strict';
+
     printBookmarks();
+
     $("#sort").click(function(e) {
         sortBookmarks('1');
 
@@ -14,13 +17,15 @@ $().ready(function() {
     });
 });
 
+
+
+
+
 function printBookmarks() {
     $("#bookmarks ul").empty();
     chrome.bookmarks.getTree(function(children) {
-        console.log(children);
 
         children.forEach(function(main) {
-            console.log(main);
 
             $('#bookmarks').append(printBookmarkNode(main));
 
@@ -28,19 +33,29 @@ function printBookmarks() {
     });
 }
 
+function deleteFolder(bookmarkFolder) {
+    bookmarkFolder.children.forEach(function(bookmark) {
+        if (typeof bookmark.url == 'undefined') {
+            if (bookmark.children.length == 0 && bookmark.parentId != 0) {
+                chrome.bookmarks.remove(bookmark.id, function(children) {})
+            }
+        }
+    });
+}
+
 function printBookmarkNode(bookmarkFolder) {
     var list = $("<ul>");
     bookmarkFolder.children.forEach(function(bookmark) {
-
+        deleteFolder(bookmarkFolder);
         if (typeof bookmark.url != 'undefined') {
             list.append(printNode(bookmark));
             //$("#main").append("<li>" + bookmark.title + "</li>");
         } else {
-            //console.log(bookmark.title);
-            list.append(printNode(bookmark)
-                .css('font-weight', 'bold'));
-            //$("#main").append("<li><span>" + name + "</span>" + "<ul id=\"" + name + "\"></ul></li>");
-            list.append(printBookmarkNode(bookmark));
+            if (bookmark.children.length != 0) {
+                list.append(printNode(bookmark)
+                    .css('font-weight', 'bold'));
+                list.append(printBookmarkNode(bookmark));
+            }
         }
     });
     return list;
@@ -66,7 +81,6 @@ function sortBookmarks(id) {
                 'parentId': '1',
                 'index': key
             });
-            //$("#bookmarks ul").append("<li>" + value.title + "</li>");
         });
         printBookmarks();
     });
@@ -100,6 +114,7 @@ function groupBookmarks(id) {
             if (typeof bookmark.url != 'undefined') {
                 var domain = getHostname(bookmark.url);
 
+
                 //creates an array of results, but we only have 2 cases empty or 1 element
                 var result = $.grep(dictionary, function(e) {
                     return e.key == domain;
@@ -111,14 +126,18 @@ function groupBookmarks(id) {
                         key: String(domain),
                         value: 1,
                         bookmarkList: [bookmark]
+
                     });
+
                 } else {
                     result[0].value++;
                     result[0].bookmarkList.push(bookmark);
                 }
+
             }
             //sortBookmarks(bookmark.id); //for folders, don't uncomment as leads do multiple outputs.
         });
+
         $.each(dictionary, function(key, value) {
             if (value.value > 1) {
                 addFolder('1', capitalizeFirstLetter(getFolderName(value.key)), addLinksToFolder, dictionary[key].bookmarkList);
