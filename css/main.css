@@ -1,6 +1,8 @@
+
 /* Sort button*/
 
 #sort {
+    position: relative;
     overflow: hidden;
     border-width: 0;
     outline: none;
@@ -22,6 +24,8 @@
 /* Group button */
 
 #group {
+    position: relative;
+    left: 20px;
     overflow: hidden;
     border-width: 0;
     outline: none;
@@ -43,6 +47,8 @@
 /* Crop button */
 
 #crop {
+    position: relative;
+    left: 40px;
     overflow: hidden;
     border-width: 0;
     outline: none;
@@ -58,4 +64,33 @@
 #crop:hover,
 #crop:focus {
     background-color: #F0544F;
+}
+
+
+
+
+/* Instruction */
+
+#sort_help{
+    position: absolute;
+    top: 40px;
+    display: none;
+    width: 100px;
+    padding: 10px;
+    background-color: white;
+    
+    border: 1px solid #000;
+    border-color: dimgray;
+}
+
+#group_help{
+    position: absolute;
+    top: 40px;
+    left: 133px;
+    display: none;
+    width: 100px;
+    padding: 10px;
+    background-color: white;
+    border: 1px solid #000;
+    
 }
