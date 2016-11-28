@@ -1,35 +1,19 @@
-$().ready(function () {
+$().ready(function() {
     'use strict';
 
     printBookmarks();
-    $('#sort_help').hide();
-    $('#group_help').hide();
 
-    $("#sort").click(function (e) {
+    $("#sort").click(function(e) {
         sortBookmarks('1');
 
     });
-    $("#group").click(function (e) {
+    $("#group").click(function(e) {
         groupBookmarks('1');
 
     });
-    $("#crop").click(function (e) {
+    $("#crop").click(function(e) {
         cropBookmarks('1');
 
-    });
-
-    $("#sort").hover(function () {
-        $("#sort_help").fadeIn(500);
-    });
-    $("#sort").mouseleave(function () {
-        $('#sort_help').fadeOut(500);
-    });
-
-    $("#group").hover(function () {
-        $("#group_help").fadeIn(500);
-    });
-    $("#group").mouseleave(function () {
-        $('#group_help').fadeOut(500);
     });
 });
 
@@ -39,9 +23,9 @@ $().ready(function () {
 
 function printBookmarks() {
     $("#bookmarks ul").empty();
-    chrome.bookmarks.getTree(function (children) {
+    chrome.bookmarks.getTree(function(children) {
 
-        children.forEach(function (main) {
+        children.forEach(function(main) {
 
             $('#bookmarks').append(printBookmarkNode(main));
 
@@ -50,10 +34,10 @@ function printBookmarks() {
 }
 
 function deleteFolder(bookmarkFolder) {
-    bookmarkFolder.children.forEach(function (bookmark) {
+    bookmarkFolder.children.forEach(function(bookmark) {
         if (typeof bookmark.url == 'undefined') {
-            if (bookmark.children.length == 0) {
-                chrome.bookmarks.remove(bookmark.id, function (children) {})
+            if (bookmark.children.length == 0 && bookmark.parentId != 0) {
+                chrome.bookmarks.remove(bookmark.id, function(children) {})
             }
         }
     });
@@ -61,7 +45,7 @@ function deleteFolder(bookmarkFolder) {
 
 function printBookmarkNode(bookmarkFolder) {
     var list = $("<ul>");
-    bookmarkFolder.children.forEach(function (bookmark) {
+    bookmarkFolder.children.forEach(function(bookmark) {
         deleteFolder(bookmarkFolder);
         if (typeof bookmark.url != 'undefined') {
             list.append(printNode(bookmark));
@@ -85,13 +69,13 @@ function printNode(bookmark) {
 
 function sortBookmarks(id) {
     var keys = [];
-    chrome.bookmarks.getChildren(id, function (children) {
-        children.forEach(function (bookmark) {
+    chrome.bookmarks.getChildren(id, function(children) {
+        children.forEach(function(bookmark) {
             keys.push(bookmark);
             //sortBookmarks(bookmark.id); //for folders, don't uncomment as leads do multiple outputs.
         });
         keys.sort(sortByName)
-        $.each(keys, function (key, value) {
+        $.each(keys, function(key, value) {
             console.log(value.title);
             chrome.bookmarks.move(String(value.id), {
                 'parentId': '1',
@@ -103,8 +87,8 @@ function sortBookmarks(id) {
 }
 
 function cropBookmarks(id) {
-    chrome.bookmarks.getChildren(id, function (children) {
-        children.forEach(function (bookmark) {
+    chrome.bookmarks.getChildren(id, function(children) {
+        children.forEach(function(bookmark) {
             var oldTitle = bookmark.title;
 
             if (bookmark.title.length > 10) {
@@ -123,8 +107,8 @@ function cropBookmarks(id) {
 function groupBookmarks(id) {
     var keys = [];
     var dictionary = [];
-    chrome.bookmarks.getChildren(id, function (children) {
-        children.forEach(function (bookmark) {
+    chrome.bookmarks.getChildren(id, function(children) {
+        children.forEach(function(bookmark) {
             keys.push(bookmark);
 
             if (typeof bookmark.url != 'undefined') {
@@ -132,7 +116,7 @@ function groupBookmarks(id) {
 
 
                 //creates an array of results, but we only have 2 cases empty or 1 element
-                var result = $.grep(dictionary, function (e) {
+                var result = $.grep(dictionary, function(e) {
                     return e.key == domain;
                 });
 
@@ -154,7 +138,7 @@ function groupBookmarks(id) {
             //sortBookmarks(bookmark.id); //for folders, don't uncomment as leads do multiple outputs.
         });
 
-        $.each(dictionary, function (key, value) {
+        $.each(dictionary, function(key, value) {
             if (value.value > 1) {
                 addFolder('1', capitalizeFirstLetter(getFolderName(value.key)), addLinksToFolder, dictionary[key].bookmarkList);
             }
@@ -188,7 +172,7 @@ function addLinksToFolder(newFolder, list) {
 
     var length = list.length;
     //$("#main").append("<li><span>" + name + "</span>" + "<ul id=\"" + name + "\"></ul></li>");
-    $.each(list, function (key, value) {
+    $.each(list, function(key, value) {
 
         console.log(value.title);
         var subli = $("<li>")
@@ -197,7 +181,7 @@ function addLinksToFolder(newFolder, list) {
         chrome.bookmarks.move(String(value.id), {
             'parentId': parentId,
             'index': key
-        }, function (done) {
+        }, function(done) {
             if (key == length - 1)
                 printBookmarks();
         });
@@ -222,9 +206,9 @@ function addBookmark(parentId, title, url) {
 
 function addFolder(parentId, title, callback, list) {
     console.log("looking for " + title);
-    chrome.bookmarks.search(String(title), function (result) {
+    chrome.bookmarks.search(String(title), function(result) {
         var folderFound = false;
-        result.forEach(function (node) {
+        result.forEach(function(node) {
             if (typeof node.url === 'undefined' && node.title === title) {
                 console.log("found " + node.title);
                 callback(node, list);
@@ -237,7 +221,7 @@ function addFolder(parentId, title, callback, list) {
                     'parentId': parentId,
                     'title': title
                 },
-                function (newFolder) {
+                function(newFolder) {
                     console.log("added folder: " + newFolder.title);
                     callback(newFolder, list);
                 });
