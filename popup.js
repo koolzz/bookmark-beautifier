@@ -33,36 +33,22 @@ $().ready(function () {
     });
 });
 
-
-
-
+var ROOT_TABS;
 
 function printBookmarks() {
     $("#bookmarks ul").empty();
-    chrome.bookmarks.getTree(function (children) {
-
-        children.forEach(function (main) {
-
-            $('#bookmarks').append(printBookmarkNode(main));
-
+    chrome.bookmarks.getTree(function (root) {
+        console.log(root);
+        ROOT_TABS=root[0].children.length;
+        root.forEach(function (folder) {
+            $('#bookmarks').append(printBookmarkFolder(folder));
         });
     });
 }
 
-function deleteFolder(bookmarkFolder) {
-    bookmarkFolder.children.forEach(function (bookmark) {
-        if (typeof bookmark.url == 'undefined') {
-            if (bookmark.children.length == 0) {
-                chrome.bookmarks.remove(bookmark.id, function (children) {})
-            }
-        }
-    });
-}
-
-function printBookmarkNode(bookmarkFolder) {
+function printBookmarkFolder(bookmarkFolder) {
     var list = $("<ul>");
     bookmarkFolder.children.forEach(function (bookmark) {
-        deleteFolder(bookmarkFolder);
         if (typeof bookmark.url != 'undefined') {
             list.append(printNode(bookmark));
             //$("#main").append("<li>" + bookmark.title + "</li>");
@@ -70,7 +56,10 @@ function printBookmarkNode(bookmarkFolder) {
             if (bookmark.children.length != 0) {
                 list.append(printNode(bookmark)
                     .css('font-weight', 'bold'));
-                list.append(printBookmarkNode(bookmark));
+                list.append(printBookmarkFolder(bookmark));
+            }
+            else if(bookmark.id>ROOT_TABS) {
+                deleteFolder(bookmark);
             }
         }
     });
@@ -81,6 +70,12 @@ function printNode(bookmark) {
     var li = $("<li>")
         .text(bookmark.title);
     return li;
+}
+
+function deleteFolder(bookmarkFolder) {
+    chrome.bookmarks.remove(bookmarkFolder.id, function () {
+        console.log(bookmarkFolder.title+" removed");
+    });
 }
 
 function sortBookmarks(id) {
