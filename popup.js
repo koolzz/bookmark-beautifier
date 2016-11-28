@@ -38,7 +38,7 @@ var ROOT_TABS;
 function printBookmarks() {
     $("#bookmarks ul").empty();
     chrome.bookmarks.getTree(function (root) {
-        console.log(root);
+        //console.log(root);
         ROOT_TABS=root[0].children.length;
         root.forEach(function (folder) {
             $('#bookmarks').append(printBookmarkFolder(folder));
@@ -51,7 +51,6 @@ function printBookmarkFolder(bookmarkFolder) {
     bookmarkFolder.children.forEach(function (bookmark) {
         if (typeof bookmark.url != 'undefined') {
             list.append(printNode(bookmark));
-            //$("#main").append("<li>" + bookmark.title + "</li>");
         } else {
             if (bookmark.children.length != 0) {
                 list.append(printNode(bookmark)
@@ -83,13 +82,14 @@ function sortBookmarks(id) {
     chrome.bookmarks.getChildren(id, function (children) {
         children.forEach(function (bookmark) {
             keys.push(bookmark);
-            //sortBookmarks(bookmark.id); //for folders, don't uncomment as leads do multiple outputs.
+            if(bookmark.children !== 'undefined'){
+                sortBookmarks(bookmark.id);
+            }
         });
         keys.sort(sortByName)
         $.each(keys, function (key, value) {
-            console.log(value.title);
             chrome.bookmarks.move(String(value.id), {
-                'parentId': '1',
+                'parentId': id,
                 'index': key
             });
         });
@@ -125,7 +125,6 @@ function groupBookmarks(id) {
             if (typeof bookmark.url != 'undefined') {
                 var domain = getHostname(bookmark.url);
 
-
                 //creates an array of results, but we only have 2 cases empty or 1 element
                 var result = $.grep(dictionary, function (e) {
                     return e.key == domain;
@@ -144,9 +143,7 @@ function groupBookmarks(id) {
                     result[0].value++;
                     result[0].bookmarkList.push(bookmark);
                 }
-
             }
-            //sortBookmarks(bookmark.id); //for folders, don't uncomment as leads do multiple outputs.
         });
 
         $.each(dictionary, function (key, value) {
@@ -182,10 +179,7 @@ function addLinksToFolder(newFolder, list) {
     var name = newFolder.title;
 
     var length = list.length;
-    //$("#main").append("<li><span>" + name + "</span>" + "<ul id=\"" + name + "\"></ul></li>");
     $.each(list, function (key, value) {
-
-        console.log(value.title);
         var subli = $("<li>")
             .text = value.title;
 
@@ -196,7 +190,6 @@ function addLinksToFolder(newFolder, list) {
             if (key == length - 1)
                 printBookmarks();
         });
-        //$("#" + name).append("<li>" + value.title + "</li>");
     });
 
 }
