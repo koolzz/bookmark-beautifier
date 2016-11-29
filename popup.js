@@ -1,42 +1,26 @@
-$().ready(function () {
+$().ready(function() {
     'use strict';
 
     printBookmarks();
-    $('#sort_help').hide();
-    $('#group_help').hide();
 
-    $("#sort").click(function (e) {
+    $("#sort").click(function(e) {
         sortBookmarks('1');
 
     });
-    $("#group").click(function (e) {
+    $("#group").click(function(e) {
         groupBookmarks('1');
 
     });
-    $("#crop").click(function (e) {
+    $("#crop").click(function(e) {
         cropBookmarks('1');
 
-    });
-
-    $("#sort").hover(function () {
-        $("#sort_help").fadeIn(500);
-    });
-    $("#sort").mouseleave(function () {
-        $('#sort_help').fadeOut(500);
-    });
-
-    $("#group").hover(function () {
-        $("#group_help").fadeIn(500);
-    });
-    $("#group").mouseleave(function () {
-        $('#group_help').fadeOut(500);
     });
 });
 
 var ROOT_TABS;
 
 function printBookmarks() {
-    $("#bookmarks ul").empty();
+    $('#bookmarks').empty();
     chrome.bookmarks.getTree(function (root) {
         //console.log(root);
         ROOT_TABS=root[0].children.length;
@@ -65,22 +49,22 @@ function printBookmarkFolder(bookmarkFolder) {
     return list;
 }
 
-function printNode(bookmark) {
-    var li = $("<li>")
-        .text(bookmark.title);
-    return li;
-}
-
 function deleteFolder(bookmarkFolder) {
     chrome.bookmarks.remove(bookmarkFolder.id, function () {
         console.log(bookmarkFolder.title+" removed");
     });
 }
 
+function printNode(bookmark) {
+    var li = $("<li>")
+        .text(bookmark.title);
+    return li;
+}
+
 function sortBookmarks(id) {
     var keys = [];
-    chrome.bookmarks.getChildren(id, function (children) {
-        children.forEach(function (bookmark) {
+    chrome.bookmarks.getChildren(id, function(children) {
+        children.forEach(function(bookmark) {
             keys.push(bookmark);
             if(bookmark.children !== 'undefined'){
                 sortBookmarks(bookmark.id);
@@ -88,18 +72,26 @@ function sortBookmarks(id) {
         });
         keys.sort(sortByName)
         $.each(keys, function (key, value) {
+            if(key==keys.length-1){
+                chrome.bookmarks.move(String(value.id), {
+                    'parentId': id,
+                    'index': key
+                },function printCallback(){
+                    printBookmarks();
+                });
+            }
             chrome.bookmarks.move(String(value.id), {
                 'parentId': id,
                 'index': key
             });
         });
-        printBookmarks();
+
     });
 }
 
 function cropBookmarks(id) {
-    chrome.bookmarks.getChildren(id, function (children) {
-        children.forEach(function (bookmark) {
+    chrome.bookmarks.getChildren(id, function(children) {
+        children.forEach(function(bookmark) {
             var oldTitle = bookmark.title;
 
             if (bookmark.title.length > 10) {
@@ -118,15 +110,15 @@ function cropBookmarks(id) {
 function groupBookmarks(id) {
     var keys = [];
     var dictionary = [];
-    chrome.bookmarks.getChildren(id, function (children) {
-        children.forEach(function (bookmark) {
+    chrome.bookmarks.getChildren(id, function(children) {
+        children.forEach(function(bookmark) {
             keys.push(bookmark);
 
             if (typeof bookmark.url != 'undefined') {
                 var domain = getHostname(bookmark.url);
 
                 //creates an array of results, but we only have 2 cases empty or 1 element
-                var result = $.grep(dictionary, function (e) {
+                var result = $.grep(dictionary, function(e) {
                     return e.key == domain;
                 });
 
@@ -146,7 +138,7 @@ function groupBookmarks(id) {
             }
         });
 
-        $.each(dictionary, function (key, value) {
+        $.each(dictionary, function(key, value) {
             if (value.value > 1) {
                 addFolder('1', capitalizeFirstLetter(getFolderName(value.key)), addLinksToFolder, dictionary[key].bookmarkList);
             }
@@ -186,7 +178,7 @@ function addLinksToFolder(newFolder, list) {
         chrome.bookmarks.move(String(value.id), {
             'parentId': parentId,
             'index': key
-        }, function (done) {
+        }, function(done) {
             if (key == length - 1)
                 printBookmarks();
         });
@@ -210,9 +202,9 @@ function addBookmark(parentId, title, url) {
 
 function addFolder(parentId, title, callback, list) {
     console.log("looking for " + title);
-    chrome.bookmarks.search(String(title), function (result) {
+    chrome.bookmarks.search(String(title), function(result) {
         var folderFound = false;
-        result.forEach(function (node) {
+        result.forEach(function(node) {
             if (typeof node.url === 'undefined' && node.title === title) {
                 console.log("found " + node.title);
                 callback(node, list);
@@ -225,7 +217,7 @@ function addFolder(parentId, title, callback, list) {
                     'parentId': parentId,
                     'title': title
                 },
-                function (newFolder) {
+                function(newFolder) {
                     console.log("added folder: " + newFolder.title);
                     callback(newFolder, list);
                 });
