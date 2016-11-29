@@ -20,7 +20,7 @@ $().ready(function() {
 var ROOT_TABS;
 
 function printBookmarks() {
-    console.log("print "+$("#bookmarks ul"));
+    $('#bookmarks').empty();
     chrome.bookmarks.getTree(function (root) {
         //console.log(root);
         ROOT_TABS=root[0].children.length;
@@ -66,16 +66,26 @@ function sortBookmarks(id) {
     chrome.bookmarks.getChildren(id, function(children) {
         children.forEach(function(bookmark) {
             keys.push(bookmark);
+            if(bookmark.children !== 'undefined'){
+                sortBookmarks(bookmark.id);
+            }
         });
         keys.sort(sortByName)
-        $.each(keys, function(key, value) {
-            console.log(value.title);
+        $.each(keys, function (key, value) {
+            if(key==keys.length-1){
+                chrome.bookmarks.move(String(value.id), {
+                    'parentId': id,
+                    'index': key
+                },function printCallback(){
+                    printBookmarks();
+                });
+            }
             chrome.bookmarks.move(String(value.id), {
-                'parentId': '1',
+                'parentId': id,
                 'index': key
             });
         });
-        printBookmarks();
+
     });
 }
 
@@ -107,7 +117,6 @@ function groupBookmarks(id) {
             if (typeof bookmark.url != 'undefined') {
                 var domain = getHostname(bookmark.url);
 
-
                 //creates an array of results, but we only have 2 cases empty or 1 element
                 var result = $.grep(dictionary, function(e) {
                     return e.key == domain;
@@ -126,7 +135,6 @@ function groupBookmarks(id) {
                     result[0].value++;
                     result[0].bookmarkList.push(bookmark);
                 }
-
             }
         });
 
@@ -163,9 +171,7 @@ function addLinksToFolder(newFolder, list) {
     var name = newFolder.title;
 
     var length = list.length;
-    $.each(list, function(key, value) {
-
-        console.log(value.title);
+    $.each(list, function (key, value) {
         var subli = $("<li>")
             .text = value.title;
 
