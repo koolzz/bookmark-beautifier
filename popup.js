@@ -1,9 +1,11 @@
 $().ready(function() {
     'use strict';
 
+    console.log("hello");
     printBookmarks();
 
     $("#sort").click(function(e) {
+        print=true;
         sortBookmarks('1');
 
     });
@@ -20,7 +22,9 @@ $().ready(function() {
 var ROOT_TABS;
 
 function printBookmarks() {
+
     $('#bookmarks').empty();
+    console.log("hi");
     chrome.bookmarks.getTree(function (root) {
         //console.log(root);
         ROOT_TABS=root[0].children.length;
@@ -60,19 +64,21 @@ function printNode(bookmark) {
         .text(bookmark.title);
     return li;
 }
-
+var print;
 function sortBookmarks(id) {
     var keys = [];
     chrome.bookmarks.getChildren(id, function(children) {
         children.forEach(function(bookmark) {
             keys.push(bookmark);
+
             if(bookmark.children !== 'undefined'){
                 sortBookmarks(bookmark.id);
             }
         });
         keys.sort(sortByName)
         $.each(keys, function (key, value) {
-            if(key==keys.length-1){
+            if(key==keys.length-1&&print==true){
+                print=false;
                 chrome.bookmarks.move(String(value.id), {
                     'parentId': id,
                     'index': key
