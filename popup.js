@@ -1,12 +1,10 @@
 $().ready(function() {
     'use strict';
 
-    console.log("hello");
     printBookmarks();
 
     $("#sort").click(function(e) {
-        print=true;
-        sortBookmarks('1');
+        sortBookmarks('1',true);
 
     });
     $("#group").click(function(e) {
@@ -24,7 +22,6 @@ var ROOT_TABS;
 function printBookmarks() {
 
     $('#bookmarks').empty();
-    console.log("hi");
     chrome.bookmarks.getTree(function (root) {
         //console.log(root);
         ROOT_TABS=root[0].children.length;
@@ -64,20 +61,20 @@ function printNode(bookmark) {
         .text(bookmark.title);
     return li;
 }
-var print;
-function sortBookmarks(id) {
+
+function sortBookmarks(id,printAfter) {
     var keys = [];
     chrome.bookmarks.getChildren(id, function(children) {
         children.forEach(function(bookmark) {
             keys.push(bookmark);
 
             if(bookmark.children !== 'undefined'){
-                sortBookmarks(bookmark.id);
+                sortBookmarks(bookmark.id,false);
             }
         });
         keys.sort(sortByName)
         $.each(keys, function (key, value) {
-            if(key==keys.length-1&&print==true){
+            if(key==keys.length-1&&printAfter==true){
                 print=false;
                 chrome.bookmarks.move(String(value.id), {
                     'parentId': id,
@@ -116,6 +113,7 @@ function cropBookmarks(id) {
 function groupBookmarks(id) {
     var keys = [];
     var dictionary = [];
+    var updatedGroups=0;//added groups
     chrome.bookmarks.getChildren(id, function(children) {
         children.forEach(function(bookmark) {
             keys.push(bookmark);
@@ -123,7 +121,7 @@ function groupBookmarks(id) {
             if (typeof bookmark.url != 'undefined') {
                 var domain = getHostname(bookmark.url);
 
-                //creates an array of results, but we only have 2 cases empty or 1 element
+                //creates an array of results, nly have 2 cases empty or 1 element
                 var result = $.grep(dictionary, function(e) {
                     return e.key == domain;
                 });
@@ -138,15 +136,21 @@ function groupBookmarks(id) {
                     });
 
                 } else {
+                    if(result[0].value==1)
+                        updatedGroups++;
                     result[0].value++;
                     result[0].bookmarkList.push(bookmark);
                 }
             }
         });
-
+        var i=0;
         $.each(dictionary, function(key, value) {
             if (value.value > 1) {
-                addFolder('1', capitalizeFirstLetter(getFolderName(value.key)), addLinksToFolder, dictionary[key].bookmarkList);
+                i++;
+                if(i==updatedGroups)
+                    addFolder('1', capitalizeFirstLetter(getFolderName(value.key)), addLinksToFolder, dictionary[key].bookmarkList,true);
+                else
+                    addFolder('1', capitalizeFirstLetter(getFolderName(value.key)), addLinksToFolder, dictionary[key].bookmarkList,false);
             }
         });
     });
@@ -172,7 +176,7 @@ function stripPunctuation(string) { //god bless stackowerflow
     return finalString
 }
 
-function addLinksToFolder(newFolder, list) {
+function addLinksToFolder(newFolder, list, printAfter) {
     var parentId = newFolder.id;
     var name = newFolder.title;
 
@@ -185,7 +189,7 @@ function addLinksToFolder(newFolder, list) {
             'parentId': parentId,
             'index': key
         }, function(done) {
-            if (key == length - 1)
+            if (key == length - 1&&printAfter)
                 printBookmarks();
         });
     });
@@ -206,14 +210,14 @@ function addBookmark(parentId, title, url) {
     });
 }
 
-function addFolder(parentId, title, callback, list) {
+function addFolder(parentId, title, callback, list,printAfter) {
     console.log("looking for " + title);
     chrome.bookmarks.search(String(title), function(result) {
         var folderFound = false;
         result.forEach(function(node) {
             if (typeof node.url === 'undefined' && node.title === title) {
                 console.log("found " + node.title);
-                callback(node, list);
+                callback(node, list,printAfter);
                 folderFound = true;
                 return false;
             }
@@ -225,7 +229,7 @@ function addFolder(parentId, title, callback, list) {
                 },
                 function(newFolder) {
                     console.log("added folder: " + newFolder.title);
-                    callback(newFolder, list);
+                    callback(newFolder, list,printAfter);
                 });
         }
     });
