@@ -16,6 +16,8 @@ $().ready(function() {
 
     });
     $("#bookmarks").on('dblclick', 'li', function(e) {
+        if($('#bookmarks').find('.editSelectedVal').length != 0)
+            return;
         e.stopPropagation();
         updateVal($(this), $(this).html());
     });
@@ -253,10 +255,18 @@ function updateVal(currentLi, oldVal) {
         if (event.keyCode == 13) {
             rename(oldVal, $(".editSelectedVal").val().trim());
             $(currentLi).html($(".editSelectedVal").val().trim());
+
         }
     });
-    $(document).one("click", function() {
-        $(".editSelectedVal").parent("li").html(oldVal);
+    $(document).click("click", function(e) {
+        if ($(e.target).is(".editSelectedVal")){
+        //if ( $(this).hasClass(".editSelectedVal")){
+            console.log($(this));
+            return;
+        }else{
+            $(".editSelectedVal").parent("li").html(oldVal);
+            $(document).unbind( "click" );
+        }
     });
 
 }
