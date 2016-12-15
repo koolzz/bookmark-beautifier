@@ -4,7 +4,7 @@ $().ready(function() {
     printBookmarks();
 
     $("#sort").click(function(e) {
-        sortBookmarks('1',true);
+        sortBookmarks('1', true);
 
     });
     $("#group").click(function(e) {
@@ -15,6 +15,10 @@ $().ready(function() {
         cropBookmarks('1');
 
     });
+    $("#bookmarks").on('dblclick', 'li', function(e) {
+        e.stopPropagation();
+        updateVal($(this), $(this).html());
+    });
 });
 
 var ROOT_TABS;
@@ -22,10 +26,10 @@ var ROOT_TABS;
 function printBookmarks() {
 
     $('#bookmarks').empty();
-    chrome.bookmarks.getTree(function (root) {
+    chrome.bookmarks.getTree(function(root) {
         //console.log(root);
-        ROOT_TABS=root[0].children.length;
-        root.forEach(function (folder) {
+        ROOT_TABS = root[0].children.length;
+        root.forEach(function(folder) {
             $('#bookmarks').append(printBookmarkFolder(folder));
         });
     });
@@ -33,7 +37,7 @@ function printBookmarks() {
 
 function printBookmarkFolder(bookmarkFolder) {
     var list = $("<ul>");
-    bookmarkFolder.children.forEach(function (bookmark) {
+    bookmarkFolder.children.forEach(function(bookmark) {
         if (typeof bookmark.url != 'undefined') {
             list.append(printNode(bookmark));
         } else {
@@ -41,8 +45,7 @@ function printBookmarkFolder(bookmarkFolder) {
                 list.append(printNode(bookmark)
                     .css('font-weight', 'bold'));
                 list.append(printBookmarkFolder(bookmark));
-            }
-            else if(bookmark.id>ROOT_TABS) {
+            } else if (bookmark.id > ROOT_TABS) {
                 deleteFolder(bookmark);
             }
         }
@@ -51,8 +54,8 @@ function printBookmarkFolder(bookmarkFolder) {
 }
 
 function deleteFolder(bookmarkFolder) {
-    chrome.bookmarks.remove(bookmarkFolder.id, function () {
-        console.log(bookmarkFolder.title+" removed");
+    chrome.bookmarks.remove(bookmarkFolder.id, function() {
+        console.log(bookmarkFolder.title + " removed");
     });
 }
 
@@ -62,24 +65,24 @@ function printNode(bookmark) {
     return li;
 }
 
-function sortBookmarks(id,printAfter) {
+function sortBookmarks(id, printAfter) {
     var keys = [];
     chrome.bookmarks.getChildren(id, function(children) {
         children.forEach(function(bookmark) {
             keys.push(bookmark);
 
-            if(bookmark.children !== 'undefined'){
-                sortBookmarks(bookmark.id,false);
+            if (bookmark.children !== 'undefined') {
+                sortBookmarks(bookmark.id, false);
             }
         });
         keys.sort(sortByName)
-        $.each(keys, function (key, value) {
-            if(key==keys.length-1&&printAfter==true){
-                print=false;
+        $.each(keys, function(key, value) {
+            if (key == keys.length - 1 && printAfter == true) {
+                print = false;
                 chrome.bookmarks.move(String(value.id), {
                     'parentId': id,
                     'index': key
-                },function printCallback(){
+                }, function printCallback() {
                     printBookmarks();
                 });
             }
@@ -113,7 +116,7 @@ function cropBookmarks(id) {
 function groupBookmarks(id) {
     var keys = [];
     var dictionary = [];
-    var updatedGroups=0;//added groups
+    var updatedGroups = 0; //added groups
     chrome.bookmarks.getChildren(id, function(children) {
         children.forEach(function(bookmark) {
             keys.push(bookmark);
@@ -136,21 +139,21 @@ function groupBookmarks(id) {
                     });
 
                 } else {
-                    if(result[0].value==1)
+                    if (result[0].value == 1)
                         updatedGroups++;
                     result[0].value++;
                     result[0].bookmarkList.push(bookmark);
                 }
             }
         });
-        var i=0;
+        var i = 0;
         $.each(dictionary, function(key, value) {
             if (value.value > 1) {
                 i++;
-                if(i==updatedGroups)
-                    addFolder('1', capitalizeFirstLetter(getFolderName(value.key)), addLinksToFolder, dictionary[key].bookmarkList,true);
+                if (i == updatedGroups)
+                    addFolder('1', capitalizeFirstLetter(getFolderName(value.key)), addLinksToFolder, dictionary[key].bookmarkList, true);
                 else
-                    addFolder('1', capitalizeFirstLetter(getFolderName(value.key)), addLinksToFolder, dictionary[key].bookmarkList,false);
+                    addFolder('1', capitalizeFirstLetter(getFolderName(value.key)), addLinksToFolder, dictionary[key].bookmarkList, false);
             }
         });
     });
@@ -181,7 +184,7 @@ function addLinksToFolder(newFolder, list, printAfter) {
     var name = newFolder.title;
 
     var length = list.length;
-    $.each(list, function (key, value) {
+    $.each(list, function(key, value) {
         var subli = $("<li>")
             .text = value.title;
 
@@ -189,7 +192,7 @@ function addLinksToFolder(newFolder, list, printAfter) {
             'parentId': parentId,
             'index': key
         }, function(done) {
-            if (key == length - 1&&printAfter)
+            if (key == length - 1 && printAfter)
                 printBookmarks();
         });
     });
@@ -210,14 +213,14 @@ function addBookmark(parentId, title, url) {
     });
 }
 
-function addFolder(parentId, title, callback, list,printAfter) {
+function addFolder(parentId, title, callback, list, printAfter) {
     console.log("looking for " + title);
     chrome.bookmarks.search(String(title), function(result) {
         var folderFound = false;
         result.forEach(function(node) {
             if (typeof node.url === 'undefined' && node.title === title) {
                 console.log("found " + node.title);
-                callback(node, list,printAfter);
+                callback(node, list, printAfter);
                 folderFound = true;
                 return false;
             }
@@ -229,8 +232,31 @@ function addFolder(parentId, title, callback, list,printAfter) {
                 },
                 function(newFolder) {
                     console.log("added folder: " + newFolder.title);
-                    callback(newFolder, list,printAfter);
+                    callback(newFolder, list, printAfter);
                 });
         }
     });
+}
+
+function rename(oldTitle, newTitle) {
+    chrome.bookmarks.search(oldTitle, function callback(results) {
+        chrome.bookmarks.update(String(results[0].id), {
+            'title': newTitle
+        });
+    })
+}
+
+function updateVal(currentLi, oldVal) {
+    $(currentLi).html('<input class="editSelectedVal" type="text" value="' + oldVal + '" />');
+    $(".editSelectedVal").focus();
+    $(".editSelectedVal").keyup(function(event) {
+        if (event.keyCode == 13) {
+            rename(oldVal, $(".editSelectedVal").val().trim());
+            $(currentLi).html($(".editSelectedVal").val().trim());
+        }
+    });
+    $(document).one("click", function() {
+        $(".editSelectedVal").parent("li").html(oldVal);
+    });
+
 }
