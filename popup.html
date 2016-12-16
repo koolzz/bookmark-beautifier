@@ -1,23 +1,87 @@
 <html>
 
 <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
     <script src="popup.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+
+    <link href="css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="css/main.css">
+    
+        <!-- Material Design fonts -->
+      <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Roboto:300,400,500,700" type="text/css">
+      <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+      <!-- Bootstrap -->
+      <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet">
+
+      <!-- Bootstrap Material Design -->
+      <link href="/css/bootstrap-material-design.css" rel="stylesheet">
+      <link href="/css/ripples.min.css" rel="stylesheet">
+
+      <!-- Dropdown.js -->
+      <link href="/cdn.rawgit.com/FezVrasta/dropdown.js/master/jquery.dropdown.css" rel="stylesheet">
+
+      <!-- Page style -->
+      <link href="index.css" rel="stylesheet">
+
+    <script>
+      $.material.init();
+    </script>
+    
+    
 </head>
 
+    
+    
 <body style="width: 400px">
+    
+        <script src="js/material.js"></script>
+    <script src="js/ripples.min.js"></script>
+    <script src="//fezvrasta.github.io/snackbarjs/dist/snackbar.min.js"></script>
+ 
+  <div class="container">
+      <div class="panel panel-default">
+  <div class="panel-body">
+    <h1>Here you can manage your bookmarks</h1> 
+    <p>Press sort for sorting your bookmarks or press group to make groups</p> 
+    <a class="btn btn-primary btn-lg">Learn more</a>
+    <a class="btn btn-primary btn-lg">Backup</a>
+</div>
+</div>
+</div>
+    
+    <div class="container">
+    
+        <p class="bs-component">
+          <a href="javascript:void(0)" id="sort" class="btn btn-raised btn-success" title="Sorts all your bookmarks in alphabetical order">Sort</a>
+          <a href="javascript:void(0)" id="group" class="btn btn-raised btn-info" title="If you have bookmarks with a single domain, the plugin adds them to a folder">Group</a>
+          <a href="javascript:void(0)" id="crop" class="btn btn-raised btn-warning" title="Change name of the bookmark">DO NOT PRESS</a>
 
-    <button id="sort" title="Sorts all your bookmarks in alphabetical order">Sort</button>
-
-    <button id="group" title="If you have bookmarks with a single domain, the plugin adds them to a folder">Group</button>
-
-    <button id="crop" title="Change name of the bookmark">Shorten</button>
-
-    <div id="bookmarks">
+        </p>
+    </div>
+    
+            <div class="container">
+                <div class="panel panel-primary">
+  <div class="panel-heading">
+    <h3 class="panel-title">Bookmarks</h3>
+  </div>
+  <div class="panel-body">
+        <div id="bookmarks">
         <ul id="main">
         </ul>
     </div>
+  </div>
+</div>
+   
+        </div>
+                     
+
+
+
 </body>
 
 </html>
