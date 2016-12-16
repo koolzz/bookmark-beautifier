@@ -63,3 +63,14 @@
 #crop:hover, #crop:focus {
     background-color: #F0544F;
 }
+
+/* Expand folder icon */
+
+.dropIcon {
+    background-color: Transparent;
+    background-repeat:no-repeat;
+    border: none;
+    cursor:pointer;
+    overflow: hidden;
+    outline:none;
+}

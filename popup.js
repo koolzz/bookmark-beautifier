@@ -19,7 +19,16 @@ $().ready(function() {
         if($('#bookmarks').find('.editSelectedVal').length != 0)
             return;
         e.stopPropagation();
-        updateVal($(this), $(this).html());
+        var oldVal;
+
+        if($(this).children().length > 0){
+            oldVal = $(this).clone().children().remove().end().text();
+            return; //TODO enable renaming folders
+        }
+        else{
+            oldVal=$(this).html();
+        }
+        updateVal($(this), oldVal);
     });
 });
 
@@ -41,12 +50,38 @@ function printBookmarkFolder(bookmarkFolder) {
     var list = $("<ul>");
     bookmarkFolder.children.forEach(function(bookmark) {
         if (typeof bookmark.url != 'undefined') {
-            list.append(printNode(bookmark));
+            list.append(printNode(bookmark)
+            .css('font-weight', 'normal'));
         } else {
             if (bookmark.children.length != 0) {
-                list.append(printNode(bookmark)
-                    .css('font-weight', 'bold'));
-                list.append(printBookmarkFolder(bookmark));
+                var folder = printNode(bookmark)
+                    .css('font-weight', 'bold');
+                //var r= $('<input type="button" value="new button"/>');
+                var r=$('<input/>').attr({
+                    type: "button",
+                    id: "field",
+                    class: "dropIcon",
+                    value: ' v '
+                });
+                folder.append(r);
+                folder.append(printBookmarkFolder(bookmark));
+                list.append(folder);
+
+                    $(r).click(function(e) {
+                        e.stopPropagation();
+                        if($(folder).find('li').is(':visible')){
+                            $(folder).children().hide();
+                            $(folder).find('.dropIcon').show();
+                        }
+                        else{
+                            $(folder).children().show();
+                        }
+
+                    });
+                if(bookmark.id > ROOT_TABS){
+                        $(folder).children().hide();
+                        $(folder).find('.dropIcon').show();
+                }
             } else if (bookmark.id > ROOT_TABS) {
                 deleteFolder(bookmark);
             }
@@ -260,8 +295,6 @@ function updateVal(currentLi, oldVal) {
     });
     $(document).click("click", function(e) {
         if ($(e.target).is(".editSelectedVal")){
-        //if ( $(this).hasClass(".editSelectedVal")){
-            console.log($(this));
             return;
         }else{
             $(".editSelectedVal").parent("li").html(oldVal);
