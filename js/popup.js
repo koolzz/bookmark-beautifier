@@ -1,7 +1,12 @@
 $().ready(function() {
     'use strict';
 
+    $(window).blur(function() {
+        window.close;
+    });
+
     printBookmarks();
+
 
     $("#sort").click(function(e) {
         sortBookmarks('1', true);
@@ -16,17 +21,16 @@ $().ready(function() {
 
     });
     $("#bookmarks").on('dblclick', 'li', function(e) {
-        if($('#bookmarks').find('.editSelectedVal').length != 0)
+        if ($('#bookmarks').find('.editSelectedVal').length != 0)
             return;
         e.stopPropagation();
         var oldVal;
 
-        if($(this).children().length > 0){
+        if ($(this).children().length > 0) {
             oldVal = $(this).clone().children().remove().end().text();
             return; //TODO enable renaming folders
-        }
-        else{
-            oldVal=$(this).html();
+        } else {
+            oldVal = $(this).html();
         }
         updateVal($(this), oldVal);
     });
@@ -38,7 +42,6 @@ function printBookmarks() {
 
     $('#bookmarks').empty();
     chrome.bookmarks.getTree(function(root) {
-        //console.log(root);
         ROOT_TABS = root[0].children.length;
         root.forEach(function(folder) {
             $('#bookmarks').append(printBookmarkFolder(folder));
@@ -53,27 +56,26 @@ function printBookmarkFolder(bookmarkFolder) {
             list.append(printNode(bookmark));
         } else {
             if (bookmark.children.length != 0) {
-                var folder= printNodeFolder(bookmark);
+                var folder = printNodeFolder(bookmark);
 
-                var r=$("<button type=\"submit\" class=\"dropIcon\"><i class=\"fa fa-caret-down fa-lg\"></i></button>");
+                var r = $("<button type=\"submit\" class=\"dropIcon\"><i class=\"fa fa-caret-down fa-lg\"></i></button>");
                 folder.prepend(r);
                 folder.append(printBookmarkFolder(bookmark));
                 list.append(folder);
 
-                    $(r).click(function(e) {
-                        e.stopPropagation();
-                        if($(folder).find('li').is(':visible')){
-                            $(folder).children().hide();
-                            $(folder).find('.dropIcon').show();
-                        }
-                        else{
-                            $(folder).children().show();
-                        }
-
-                    });
-                if(bookmark.id > ROOT_TABS){
+                $(r).click(function(e) {
+                    e.stopPropagation();
+                    if ($(folder).find('li').is(':visible')) {
                         $(folder).children().hide();
                         $(folder).find('.dropIcon').show();
+                    } else {
+                        $(folder).children().show();
+                    }
+
+                });
+                if (bookmark.id > ROOT_TABS) {
+                    $(folder).children().hide();
+                    $(folder).find('.dropIcon').show();
                 }
             } else if (bookmark.id > ROOT_TABS) {
                 deleteFolder(bookmark);
@@ -96,6 +98,7 @@ function printNode(bookmark) {
         .text(bookmark.title);
     return li;
 }
+
 function printNodeFolder(bookmark) {
     var li = $("<li>")
         .addClass("bFolder")
@@ -296,11 +299,11 @@ function updateVal(currentLi, oldVal) {
         }
     });
     $(document).click("click", function(e) {
-        if ($(e.target).is(".editSelectedVal")){
+        if ($(e.target).is(".editSelectedVal")) {
             return;
-        }else{
+        } else {
             $(".editSelectedVal").parent("li").html(oldVal);
-            $(document).unbind( "click" );
+            $(document).unbind("click");
         }
     });
 
