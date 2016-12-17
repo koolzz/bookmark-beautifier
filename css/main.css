@@ -11,17 +11,28 @@
 /* Expand folder icon */
 
 .dropIcon {
-    background-color: #efefef;
+    padding-right: 8px;
+    background-color: #fff;
     background-repeat:no-repeat;
     border: none;
     cursor:pointer;
     overflow: hidden;
     outline:none;
-    transition: background-color .2s;
+    transition: all .2s ease-in-out;
 }
+
 .dropIcon:hover {
-background-color: aliceblue;
+    color: #248232;
 }
+
 .container {
     background: #f2f2f2;
+}
+
+.bFolder{
+        list-style-type:  none;
+        margin-left: -25px;
+}
+.bLink{
+        list-style-type:  circle;
 }

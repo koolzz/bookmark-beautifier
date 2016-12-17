@@ -50,20 +50,13 @@ function printBookmarkFolder(bookmarkFolder) {
     var list = $("<ul>");
     bookmarkFolder.children.forEach(function(bookmark) {
         if (typeof bookmark.url != 'undefined') {
-            list.append(printNode(bookmark)
-            .css('font-weight', 'normal'));
+            list.append(printNode(bookmark));
         } else {
             if (bookmark.children.length != 0) {
-                var folder = printNode(bookmark)
-                    .css('font-weight', 'bold');
-                //var r= $('<input type="button" value="new button"/>');
-                var r=$('<input/>').attr({
-                    type: "button",
-                    id: "field",
-                    class: "dropIcon",
-                    value: ' v '
-                });
-                folder.append(r);
+                var folder= printNodeFolder(bookmark);
+
+                var r=$("<button type=\"submit\" class=\"dropIcon\"><i class=\"fa fa-caret-down fa-lg\"></i></button>");
+                folder.prepend(r);
                 folder.append(printBookmarkFolder(bookmark));
                 list.append(folder);
 
@@ -98,6 +91,15 @@ function deleteFolder(bookmarkFolder) {
 
 function printNode(bookmark) {
     var li = $("<li>")
+        .css('font-weight', 'normal')
+        //.addClass("bLink")
+        .text(bookmark.title);
+    return li;
+}
+function printNodeFolder(bookmark) {
+    var li = $("<li>")
+        .addClass("bFolder")
+        .css('font-weight', 'bold')
         .text(bookmark.title);
     return li;
 }
