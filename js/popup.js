@@ -5,21 +5,25 @@ $().ready(function() {
         window.close;
     });
 
+    $(window).focus();
     printBookmarks();
 
-
     $("#sort").click(function(e) {
-        sortBookmarks('1', true);
+        toggleAllButtons();
+        previewSort();
 
     });
     $("#group").click(function(e) {
         groupBookmarks('1');
+        toggleAllButtons();
 
     });
     $("#crop").click(function(e) {
         cropBookmarks('1');
+        toggleAllButtons();
 
     });
+
     $("#bookmarks").on('dblclick', 'li', function(e) {
         if ($('#bookmarks').find('.editSelectedVal').length != 0)
             return;
@@ -42,9 +46,11 @@ function printBookmarks() {
 
     $('#bookmarks').empty();
     chrome.bookmarks.getTree(function(root) {
+        //console.log(root);
         ROOT_TABS = root[0].children.length;
         root.forEach(function(folder) {
-            $('#bookmarks').append(printBookmarkFolder(folder));
+            $('#bookmarks').append(printBookmarkFolder(folder)
+                .css('padding-right', "2px"));
         });
     });
 }
@@ -94,7 +100,7 @@ function deleteFolder(bookmarkFolder) {
 function printNode(bookmark) {
     var li = $("<li>")
         .css('font-weight', 'normal')
-        //.addClass("bLink")
+        .addClass("bLink")
         .text(bookmark.title);
     return li;
 }
@@ -107,17 +113,21 @@ function printNodeFolder(bookmark) {
     return li;
 }
 
+//soon to be deprecated -> moving to apply reject structure, previewSort()
 function sortBookmarks(id, printAfter) {
     var keys = [];
     chrome.bookmarks.getChildren(id, function(children) {
         children.forEach(function(bookmark) {
             keys.push(bookmark);
-
-            if (bookmark.children !== 'undefined') {
+            console.log(bookmark);
+            if (typeof bookmark.url === 'undefined') {
+                //console.log(bookmark);
                 sortBookmarks(bookmark.id, false);
             }
         });
-        keys.sort(sortByName)
+
+        keys.sort(sortByName);
+        //console.log(keys );
         $.each(keys, function(key, value) {
             if (key == keys.length - 1 && printAfter == true) {
                 print = false;
@@ -127,11 +137,12 @@ function sortBookmarks(id, printAfter) {
                 }, function printCallback() {
                     printBookmarks();
                 });
+            } else {
+                chrome.bookmarks.move(String(value.id), {
+                    'parentId': id,
+                    'index': key
+                });
             }
-            chrome.bookmarks.move(String(value.id), {
-                'parentId': id,
-                'index': key
-            });
         });
 
     });
@@ -295,7 +306,6 @@ function updateVal(currentLi, oldVal) {
         if (event.keyCode == 13) {
             rename(oldVal, $(".editSelectedVal").val().trim());
             $(currentLi).html($(".editSelectedVal").val().trim());
-
         }
     });
     $(document).click("click", function(e) {
@@ -306,5 +316,79 @@ function updateVal(currentLi, oldVal) {
             $(document).unbind("click");
         }
     });
+}
 
+function previewSort() {
+    var keys = {
+        children: []
+    };
+    chrome.bookmarks.getTree(function(root) {
+        ROOT_TABS = root[0].children.length;
+        root[0].children.forEach(function(folder) {
+            keys.children.push(folder);
+        });
+        sort(keys);
+
+        $('#bookmarks').empty();
+        $('#bookmarks').append(printBookmarkFolder(keys));
+
+        $('#reject').one("click", function(e) {
+            $('#apply').unbind("click");
+            printBookmarks();
+            toggleAllButtons();
+        });
+        $('#apply').one("click", function(e) {
+            $('#reject').unbind("click");
+            updateBookmarks(keys);
+            toggleAllButtons();
+        });
+    });
+}
+
+function updateBookmarks(list, printAfter) {
+    list.children.forEach(function(folder, key) {
+        if (typeof folder.url === 'undefined' && folder.children.length > 0)
+            updateBookmarks(folder, false);
+        if (folder.id <= ROOT_TABS)
+            return;
+        if (key == list.length - 1 && printAfter == true) {
+            chrome.bookmarks.move(String(folder.id), {
+                'parentId': folder.parentId,
+                'index': key
+            }, function printCallback() {
+                printBookmarks();
+            });
+        } else {
+            chrome.bookmarks.move(String(folder.id), {
+                'parentId': folder.parentId,
+                'index': key
+            });
+        }
+    });
+}
+
+function sort(list) {
+    list.children.sort(sortByName);
+    list.children.forEach(function(folder) {
+        if (typeof folder.url === 'undefined' && folder.children.length > 0)
+            sort(folder);
+    });
+}
+
+function toggleAllButtons() {
+    toggleButtons(["#reject", "#apply"]);
+    toggleButtons(["#sort", "#group", "#crop"]);
+}
+
+function toggleButtons(idList) {
+    idList.forEach(function(id) {
+        var button = $(id);
+        if (button.hasClass("disabled")) {
+            button.removeClass("disabled");
+            button.addClass("active");
+        } else {
+            button.removeClass("active");
+            button.addClass("disabled");
+        }
+    });
 }
