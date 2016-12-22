@@ -14,8 +14,8 @@ $().ready(function() {
 
     });
     $("#group").click(function(e) {
-        groupBookmarks('1');
         toggleAllButtons();
+        previewGroup();
 
     });
     $("#crop").click(function(e) {
@@ -46,7 +46,7 @@ function printBookmarks() {
 
     $('#bookmarks').empty();
     chrome.bookmarks.getTree(function(root) {
-        //console.log(root);
+        console.log(root);
         ROOT_TABS = root[0].children.length;
         root.forEach(function(folder) {
             $('#bookmarks').append(printBookmarkFolder(folder)
@@ -327,11 +327,50 @@ function previewSort() {
         root[0].children.forEach(function(folder) {
             keys.children.push(folder);
         });
+        console.log(keys);
         sort(keys);
+        $('#bookmarks').empty();
+        $('#bookmarks').append(printBookmarkFolder(keys));
+        console.log(keys);
+
+        keys.children.push({
+            title: "Dummy node",
+            printNode: true
+        });
+        $('#reject').one("click", function(e) {
+            $('#apply').unbind("click");
+            printBookmarks();
+            toggleAllButtons();
+        });
+        $('#apply').one("click", function(e) {
+            $('#reject').unbind("click");
+            updateBookmarks(keys);
+            toggleAllButtons();
+        });
+    });
+}
+
+function previewGroup() {
+    var keys = {
+        children: []
+    };
+    chrome.bookmarks.getTree(function(root) {
+        ROOT_TABS = root[0].children.length;
+        root[0].children.forEach(function(folder) {
+            keys.children.push(folder);
+        });
+
+        console.log(keys);
+        group(keys);
 
         $('#bookmarks').empty();
         $('#bookmarks').append(printBookmarkFolder(keys));
+        keys.children.push({
+            title: "Dummy node",
+            printNode: true
+        });
 
+        console.log(keys);
         $('#reject').one("click", function(e) {
             $('#apply').unbind("click");
             printBookmarks();
@@ -347,23 +386,42 @@ function previewSort() {
 
 function updateBookmarks(list, printAfter) {
     list.children.forEach(function(folder, key) {
-        if (typeof folder.url === 'undefined' && folder.children.length > 0)
-            updateBookmarks(folder, false);
+        if (typeof folder.url === 'undefined') {
+            if (folder.printNode) {
+                console.log("print");
+                printBookmarks();
+                return;
+
+            }
+            if (folder.create) {
+                chrome.bookmarks.create({
+                    'parentId': folder.parentId,
+                    'title': folder.title
+                }, function(e) {
+
+                                        console.log(e);
+                    folder.children.forEach(function(bookmark) {
+                        console.log(bookmark);
+                        bookmark.parentId = e.id;
+                    });
+
+                    console.log(folder);
+                    updateBookmarks(folder, false);
+                });
+                return;
+            } else {
+                updateBookmarks(folder, false);
+            }
+        }
+
         if (folder.id <= ROOT_TABS)
             return;
-        if (key == list.length - 1 && printAfter == true) {
-            chrome.bookmarks.move(String(folder.id), {
-                'parentId': folder.parentId,
-                'index': key
-            }, function printCallback() {
-                printBookmarks();
-            });
-        } else {
-            chrome.bookmarks.move(String(folder.id), {
-                'parentId': folder.parentId,
-                'index': key
-            });
-        }
+
+        chrome.bookmarks.move(String(folder.id), {
+            'parentId': folder.parentId,
+            'index': key
+        });
+
     });
 }
 
@@ -372,6 +430,66 @@ function sort(list) {
     list.children.forEach(function(folder) {
         if (typeof folder.url === 'undefined' && folder.children.length > 0)
             sort(folder);
+    });
+}
+
+function group(list) {
+    var dictionary = [];
+    list.children.forEach(function(folder) {
+        if (typeof folder.url === 'undefined' && folder.children.length > 0 && folder.id <= ROOT_TABS) {
+            group(folder);
+            return;
+        }
+        if (typeof folder.url != 'undefined') {
+            var domain = getHostname(folder.url);
+            if (domain === null)
+                return;
+
+            //creates an array of results, nly have 2 cases empty or 1 element
+            var result = $.grep(dictionary, function(e) {
+                return e.key == domain;
+            });
+            //for 0 create new entry, else increment excisting entry
+            if (result == 0) {
+                dictionary.push({
+                    key: String(domain),
+                    value: 1,
+                    parentId:folder.parentId,
+                    folderName: String(capitalizeFirstLetter(getFolderName(domain))),
+                    bookmarkList: [folder]
+                });
+            } else {
+                result[0].value++;
+                result[0].bookmarkList.push(folder);
+            }
+        }
+    });
+    var i = 0;
+    $.each(dictionary, function(key, value) {
+        var folderFound = false;
+        if (value.value > 1) {
+            dictionary[key].bookmarkList.forEach(function(bookmark) {
+                var index = list.children.indexOf(bookmark);
+                if (index > -1) {
+                    list.children.splice(index, 1);
+                }
+            });
+            list.children.forEach(function(bookmark, index) {
+                if (typeof bookmark.url === 'undefined' && bookmark.title === value.folderName) {
+                    dictionary[key].bookmarkList.forEach(function(e) {
+                        bookmark.children.push(e);
+                    });
+                    return true;
+                } else if (index === list.children.length - 1) {
+                    list.children.push({
+                        title: value.folderName,
+                        parentId:value.parentId,
+                        create: true,
+                        children: dictionary[key].bookmarkList
+                    });
+                }
+            });
+        }
     });
 }
 
