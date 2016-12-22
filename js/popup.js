@@ -307,24 +307,17 @@ function updateBookmarks(list, printAfter) {
     list.children.forEach(function(folder, key) {
         if (typeof folder.url === 'undefined') {
             if (folder.printNode) {
-                console.log("print");
                 printBookmarks();
                 return;
-
             }
             if (folder.create) {
                 chrome.bookmarks.create({
                     'parentId': folder.parentId,
                     'title': folder.title
                 }, function(e) {
-
-                                        console.log(e);
                     folder.children.forEach(function(bookmark) {
-                        console.log(bookmark);
                         bookmark.parentId = e.id;
                     });
-
-                    console.log(folder);
                     updateBookmarks(folder, false);
                 });
                 return;
@@ -383,7 +376,6 @@ function group(list) {
             }
         }
     });
-    var i = 0;
     $.each(dictionary, function(key, value) {
         var folderFound = false;
         if (value.value > 1) {
@@ -393,12 +385,13 @@ function group(list) {
                     list.children.splice(index, 1);
                 }
             });
-            list.children.forEach(function(bookmark, index) {
+            $.each(list.children, function(index, bookmark) {
                 if (typeof bookmark.url === 'undefined' && bookmark.title === value.folderName) {
                     dictionary[key].bookmarkList.forEach(function(e) {
+                        e.parentId=bookmark.id;
                         bookmark.children.push(e);
                     });
-                    return true;
+                    return false;
                 } else if (index === list.children.length - 1) {
                     list.children.push({
                         title: value.folderName,
