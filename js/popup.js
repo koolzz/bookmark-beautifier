@@ -113,41 +113,6 @@ function printNodeFolder(bookmark) {
     return li;
 }
 
-//soon to be deprecated -> moving to apply reject structure, previewSort()
-function sortBookmarks(id, printAfter) {
-    var keys = [];
-    chrome.bookmarks.getChildren(id, function(children) {
-        children.forEach(function(bookmark) {
-            keys.push(bookmark);
-            console.log(bookmark);
-            if (typeof bookmark.url === 'undefined') {
-                //console.log(bookmark);
-                sortBookmarks(bookmark.id, false);
-            }
-        });
-
-        keys.sort(sortByName);
-        //console.log(keys );
-        $.each(keys, function(key, value) {
-            if (key == keys.length - 1 && printAfter == true) {
-                print = false;
-                chrome.bookmarks.move(String(value.id), {
-                    'parentId': id,
-                    'index': key
-                }, function printCallback() {
-                    printBookmarks();
-                });
-            } else {
-                chrome.bookmarks.move(String(value.id), {
-                    'parentId': id,
-                    'index': key
-                });
-            }
-        });
-
-    });
-}
-
 function cropBookmarks(id) {
     chrome.bookmarks.getChildren(id, function(children) {
         children.forEach(function(bookmark) {
@@ -166,52 +131,6 @@ function cropBookmarks(id) {
     });
 }
 
-function groupBookmarks(id) {
-    var keys = [];
-    var dictionary = [];
-    var updatedGroups = 0; //added groups
-    chrome.bookmarks.getChildren(id, function(children) {
-        children.forEach(function(bookmark) {
-            keys.push(bookmark);
-
-            if (typeof bookmark.url != 'undefined') {
-                var domain = getHostname(bookmark.url);
-
-                //creates an array of results, nly have 2 cases empty or 1 element
-                var result = $.grep(dictionary, function(e) {
-                    return e.key == domain;
-                });
-
-                //for 0 create new entry, else increment excisting entry
-                if (result == 0) {
-                    dictionary.push({
-                        key: String(domain),
-                        value: 1,
-                        bookmarkList: [bookmark]
-
-                    });
-
-                } else {
-                    if (result[0].value == 1)
-                        updatedGroups++;
-                    result[0].value++;
-                    result[0].bookmarkList.push(bookmark);
-                }
-            }
-        });
-        var i = 0;
-        $.each(dictionary, function(key, value) {
-            if (value.value > 1) {
-                i++;
-                if (i == updatedGroups)
-                    addFolder('1', capitalizeFirstLetter(getFolderName(value.key)), addLinksToFolder, dictionary[key].bookmarkList, true);
-                else
-                    addFolder('1', capitalizeFirstLetter(getFolderName(value.key)), addLinksToFolder, dictionary[key].bookmarkList, false);
-            }
-        });
-    });
-}
-
 function getHostname(url) {
     var m = url.match(/^https?\:\/\/([^\/:?#]+)(?:[\/:?#]|$)/i);
     return m ? m[0] : null;
@@ -226,10 +145,10 @@ function capitalizeFirstLetter(string) {
     return string.charAt(0).toUpperCase() + string.slice(1);
 }
 
-function stripPunctuation(string) { //god bless stackowerflow
+function stripPunctuation(string) {
     var punctuationless = string.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, "");
     var finalString = punctuationless.replace(/\s{2,}/g, " ");
-    return finalString
+    return finalString;
 }
 
 function addLinksToFolder(newFolder, list, printAfter) {
