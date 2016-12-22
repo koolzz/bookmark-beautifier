@@ -5,21 +5,25 @@ $().ready(function() {
         window.close;
     });
 
+    $(window).focus();
     printBookmarks();
 
-
     $("#sort").click(function(e) {
-        sortBookmarks('1', true);
+        toggleAllButtons();
+        previewSort();
 
     });
     $("#group").click(function(e) {
-        groupBookmarks('1');
+        toggleAllButtons();
+        previewGroup();
 
     });
     $("#crop").click(function(e) {
         cropBookmarks('1');
+        toggleAllButtons();
 
     });
+
     $("#bookmarks").on('dblclick', 'li', function(e) {
         if ($('#bookmarks').find('.editSelectedVal').length != 0)
             return;
@@ -42,9 +46,11 @@ function printBookmarks() {
 
     $('#bookmarks').empty();
     chrome.bookmarks.getTree(function(root) {
+        //console.log(root);
         ROOT_TABS = root[0].children.length;
         root.forEach(function(folder) {
-            $('#bookmarks').append(printBookmarkFolder(folder));
+            $('#bookmarks').append(printBookmarkFolder(folder)
+                .css('padding-right', "2px"));
         });
     });
 }
@@ -94,7 +100,7 @@ function deleteFolder(bookmarkFolder) {
 function printNode(bookmark) {
     var li = $("<li>")
         .css('font-weight', 'normal')
-        //.addClass("bLink")
+        .addClass("bLink")
         .text(bookmark.title);
     return li;
 }
@@ -105,36 +111,6 @@ function printNodeFolder(bookmark) {
         .css('font-weight', 'bold')
         .text(bookmark.title);
     return li;
-}
-
-function sortBookmarks(id, printAfter) {
-    var keys = [];
-    chrome.bookmarks.getChildren(id, function(children) {
-        children.forEach(function(bookmark) {
-            keys.push(bookmark);
-
-            if (bookmark.children !== 'undefined') {
-                sortBookmarks(bookmark.id, false);
-            }
-        });
-        keys.sort(sortByName)
-        $.each(keys, function(key, value) {
-            if (key == keys.length - 1 && printAfter == true) {
-                print = false;
-                chrome.bookmarks.move(String(value.id), {
-                    'parentId': id,
-                    'index': key
-                }, function printCallback() {
-                    printBookmarks();
-                });
-            }
-            chrome.bookmarks.move(String(value.id), {
-                'parentId': id,
-                'index': key
-            });
-        });
-
-    });
 }
 
 function cropBookmarks(id) {
@@ -155,52 +131,6 @@ function cropBookmarks(id) {
     });
 }
 
-function groupBookmarks(id) {
-    var keys = [];
-    var dictionary = [];
-    var updatedGroups = 0; //added groups
-    chrome.bookmarks.getChildren(id, function(children) {
-        children.forEach(function(bookmark) {
-            keys.push(bookmark);
-
-            if (typeof bookmark.url != 'undefined') {
-                var domain = getHostname(bookmark.url);
-
-                //creates an array of results, nly have 2 cases empty or 1 element
-                var result = $.grep(dictionary, function(e) {
-                    return e.key == domain;
-                });
-
-                //for 0 create new entry, else increment excisting entry
-                if (result == 0) {
-                    dictionary.push({
-                        key: String(domain),
-                        value: 1,
-                        bookmarkList: [bookmark]
-
-                    });
-
-                } else {
-                    if (result[0].value == 1)
-                        updatedGroups++;
-                    result[0].value++;
-                    result[0].bookmarkList.push(bookmark);
-                }
-            }
-        });
-        var i = 0;
-        $.each(dictionary, function(key, value) {
-            if (value.value > 1) {
-                i++;
-                if (i == updatedGroups)
-                    addFolder('1', capitalizeFirstLetter(getFolderName(value.key)), addLinksToFolder, dictionary[key].bookmarkList, true);
-                else
-                    addFolder('1', capitalizeFirstLetter(getFolderName(value.key)), addLinksToFolder, dictionary[key].bookmarkList, false);
-            }
-        });
-    });
-}
-
 function getHostname(url) {
     var m = url.match(/^https?\:\/\/([^\/:?#]+)(?:[\/:?#]|$)/i);
     return m ? m[0] : null;
@@ -215,10 +145,10 @@ function capitalizeFirstLetter(string) {
     return string.charAt(0).toUpperCase() + string.slice(1);
 }
 
-function stripPunctuation(string) { //god bless stackowerflow
+function stripPunctuation(string) {
     var punctuationless = string.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, "");
     var finalString = punctuationless.replace(/\s{2,}/g, " ");
-    return finalString
+    return finalString;
 }
 
 function addLinksToFolder(newFolder, list, printAfter) {
@@ -295,7 +225,6 @@ function updateVal(currentLi, oldVal) {
         if (event.keyCode == 13) {
             rename(oldVal, $(".editSelectedVal").val().trim());
             $(currentLi).html($(".editSelectedVal").val().trim());
-
         }
     });
     $(document).click("click", function(e) {
@@ -306,5 +235,177 @@ function updateVal(currentLi, oldVal) {
             $(document).unbind("click");
         }
     });
+}
 
+function previewSort() {
+    var keys = {
+        children: []
+    };
+    chrome.bookmarks.getTree(function(root) {
+        root[0].children.forEach(function(folder) {
+            keys.children.push(folder);
+        });
+
+        sort(keys);
+        $('#bookmarks').empty();
+        $('#bookmarks').append(printBookmarkFolder(keys));
+
+        $('#reject').one("click", function(e) {
+            $('#apply').unbind("click");
+            printBookmarks();
+            toggleAllButtons();
+        });
+        $('#apply').one("click", function(e) {
+            $('#reject').unbind("click");
+            updateBookmarks(keys, true);
+            toggleAllButtons();
+        });
+    });
+}
+
+function previewGroup() {
+    var keys = {
+        children: []
+    };
+    chrome.bookmarks.getTree(function(root) {
+        root[0].children.forEach(function(folder) {
+            keys.children.push(folder);
+        });
+
+        group(keys);
+        $('#bookmarks').empty();
+        $('#bookmarks').append(printBookmarkFolder(keys));
+
+        $('#reject').one("click", function(e) {
+            $('#apply').unbind("click");
+            printBookmarks();
+            toggleAllButtons();
+        });
+        $('#apply').one("click", function(e) {
+            $('#reject').unbind("click");
+            updateBookmarks(keys, true);
+            toggleAllButtons();
+        });
+    });
+}
+
+function updateBookmarks(list, printAfter) {
+    list.children.forEach(function(folder, key) {
+        if (typeof folder.url === 'undefined') {
+            if (folder.create) {
+                chrome.bookmarks.create({
+                    'parentId': folder.parentId,
+                    'title': folder.title
+                }, function(e) {
+                    folder.children.forEach(function(bookmark) {
+                        bookmark.parentId = e.id;
+                    });
+                    if (key === list.children.length - 1)
+                        updateBookmarks(folder, true);
+                    else
+                        updateBookmarks(folder, false);
+                });
+                return;
+            } else {
+                updateBookmarks(folder, false);
+            }
+        }
+
+        if (folder.id <= ROOT_TABS)
+            return;
+
+        chrome.bookmarks.move(String(folder.id), {
+            'parentId': folder.parentId,
+            'index': key
+        }, function callback() {
+            if (printAfter && key === list.children.length - 1)
+                printBookmarks();
+        });
+    });
+}
+
+function sort(list) {
+    list.children.sort(sortByName);
+    list.children.forEach(function(folder) {
+        if (typeof folder.url === 'undefined' && folder.children.length > 0)
+            sort(folder);
+    });
+}
+
+function group(list) {
+    var dictionary = [];
+    list.children.forEach(function(folder) {
+        if (typeof folder.url === 'undefined' && folder.children.length > 0 && folder.id <= ROOT_TABS) {
+            group(folder);
+            return;
+        }
+        if (typeof folder.url != 'undefined') {
+            var domain = getHostname(folder.url);
+            if (domain === null)
+                return;
+
+            //creates an array of results, nly have 2 cases empty or 1 element
+            var result = $.grep(dictionary, function(e) {
+                return e.key == domain;
+            });
+            //for 0 create new entry, else increment excisting entry
+            if (result == 0) {
+                dictionary.push({
+                    key: String(domain),
+                    value: 1,
+                    parentId: folder.parentId,
+                    folderName: String(capitalizeFirstLetter(getFolderName(domain))),
+                    bookmarkList: [folder]
+                });
+            } else {
+                result[0].value++;
+                result[0].bookmarkList.push(folder);
+            }
+        }
+    });
+    $.each(dictionary, function(key, value) {
+        var folderFound = false;
+        if (value.value > 1) {
+            dictionary[key].bookmarkList.forEach(function(bookmark) {
+                var index = list.children.indexOf(bookmark);
+                if (index > -1) {
+                    list.children.splice(index, 1);
+                }
+            });
+            $.each(list.children, function(index, bookmark) {
+                if (typeof bookmark.url === 'undefined' && bookmark.title === value.folderName) {
+                    dictionary[key].bookmarkList.forEach(function(e) {
+                        e.parentId = bookmark.id;
+                        bookmark.children.push(e);
+                    });
+                    return false;
+                } else if (index === list.children.length - 1) {
+                    list.children.push({
+                        title: value.folderName,
+                        parentId: value.parentId,
+                        create: true,
+                        children: dictionary[key].bookmarkList
+                    });
+                }
+            });
+        }
+    });
+}
+
+function toggleAllButtons() {
+    toggleButtons(["#reject", "#apply"]);
+    toggleButtons(["#sort", "#group", "#crop"]);
+}
+
+function toggleButtons(idList) {
+    idList.forEach(function(id) {
+        var button = $(id);
+        if (button.hasClass("disabled")) {
+            button.removeClass("disabled");
+            button.addClass("active");
+        } else {
+            button.removeClass("active");
+            button.addClass("disabled");
+        }
+    });
 }

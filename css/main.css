@@ -8,16 +8,25 @@
     background-color: aliceblue;
 }
 
+#bookmarks {
+    height: 420px;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    position: relative;
+}
+
+
 /* Expand folder icon */
 
 .dropIcon {
-    padding-right: 8px;
+    width: 26px;
+    margin-left: -26px;
     background-color: #fff;
-    background-repeat:no-repeat;
+    background-repeat: no-repeat;
     border: none;
-    cursor:pointer;
+    cursor: pointer;
     overflow: hidden;
-    outline:none;
+    outline: none;
     transition: all .2s ease-in-out;
 }
 
@@ -29,10 +38,22 @@
     background: #f2f2f2;
 }
 
-.bFolder{
-        list-style-type:  none;
-        margin-left: -25px;
+.bFolder {
+    list-style-type: none;
 }
-.bLink{
-        list-style-type:  circle;
+
+.bLink {
+    list-style-type: disc;
 }
+
+
+/*
+.bLink:before {
+  content: "\f111";
+  font-family: FontAwesome;
+  display: inline-block;
+  margin-left: -2.5em;
+  width: 2.5em;
+  font-size: 0.5em;
+}
+*/

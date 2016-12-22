@@ -1,49 +1,56 @@
 <html>
+
 <head>
-<meta charset="utf-8">
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
-<script src="js/popup.js"></script>
-<script src="js/fontawesome.js"></script>
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-<link rel="stylesheet" type="text/css" href="css/main.css">
-<!-- Material Design fonts -->
-<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Roboto:300,400,500,700" type="text/css">
-<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
-<!-- Bootstrap Material Design -->
-<link rel="stylesheet" href="/css/bootstrap-material-design.min.css">
+    <script src="js/jquery.min.js"></script>
+    <script src="js/popup.js"></script>
+    <script src="js/fontawesome.js"></script>
+    <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="css/main.css">
+    <!-- Material Design fonts -->
+    <link rel="stylesheet" type="text/css" href="css/font.css">
+    <!-- Bootstrap Material Design -->
+    <link rel="stylesheet" type="text/css" href="css/bootstrap-material-design.min.css">
 
 </head>
+
 <body style="width: 410px">
-  <div class="container">
-      <div class="panel panel-default">
-  <div class="panel-body">
-    <h1>Here you can manage your bookmarks</h1>
-    <a class="btn btn-primary btn-lg">Learn more</a>
-    <a class="btn btn-primary btn-lg">Backup</a>
-</div>
-</div>
-</div>
+
+    <!--<div class="container">
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <h1>Here you can manage your bookmarks</h1>
+                <a class="btn btn-primary btn-lg">Learn more</a>
+                <a class="btn btn-primary btn-lg">Backup</a>
+            </div>
+        </div>
+    </div>-->
     <div class="container">
-        <p class="bs-component">
-          <a href="#" id="sort" class="btn btn-raised btn-success" title="Sorts all your bookmarks in alphabetical order">Sort</a>
-          <a href="#" id="group" class="btn btn-raised btn-info" title="If you have bookmarks with a single domain, the plugin adds them to a folder">Group</a>
-          <a href="#" id="crop" class="btn btn-raised btn-warning" title="Change name of the bookmark">DO NOT PRESS</a>
+        <p class="bs-component" id="tools" style="margin-bottom: 0px">
+            <a href="#" id="sort" class="btn btn-raised btn-success" title="Sorts all your bookmarks in alphabetical order">Sort</a>
+            <a href="#" id="group" class="btn btn-raised btn-info" title="If you have bookmarks with a single domain, the plugin adds them to a folder">Group</a>
+            <a href="#" id="crop" class="btn btn-raised btn-warning" title="Change name of the bookmark">DO NOT PRESS</a>
         </p>
     </div>
-            <div class="container">
-                <div class="panel panel-primary">
-  <div class="panel-heading">
-    <h3 class="panel-title">Bookmarks</h3>
-  </div>
-  <div class="panel-body">
-        <div id="bookmarks">
-        <ul id="main">
-        </ul>
+    <div class="container">
+        <div class="panel panel-primary" style="margin-bottom: 0px">
+            <div class="panel-heading">
+                <h3 class="panel-title">Bookmarks</h3>
+            </div>
+            <div class="panel-body">
+                <div id="bookmarks">
+
+                    <ul id="main">
+                    </ul>
+                </div>
+            </div>
+        </div>
     </div>
-  </div>
-</div>
+    <div class="container">
+        <p class="btn-group btn-group-justified" style="margin-bottom: 0px">
+            <a href="#" id="apply" class="btn btn-raised btn-primary btn-sm disabled " title="Update bookmark changes">Apply <i class="fa fa-check" aria-hidden="true"></i></a>
+            <a href="#" id="reject" class="btn btn-raised btn-danger btn-sm disabled " title="Discard bookmark changes">Reject <i class="fa fa-close" aria-hidden="true"></i></a>
+        </p>
     </div>
 </body>
+
 </html>
