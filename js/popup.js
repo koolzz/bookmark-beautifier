@@ -8,19 +8,24 @@ $().ready(function() {
     $(window).focus();
     printBookmarks();
 
+    hideAllAccessButtons();
+
     $("#sort").click(function(e) {
         toggleAllButtons();
         previewSort();
+        showAllAccessButtons();
 
     });
     $("#group").click(function(e) {
         toggleAllButtons();
         previewGroup();
+        showAllAccessButtons();
 
     });
     $("#crop").click(function(e) {
         cropBookmarks('1');
         toggleAllButtons();
+        showAllAccessButtons();
 
     });
 
@@ -395,6 +400,7 @@ function group(list) {
 function toggleAllButtons() {
     toggleButtons(["#reject", "#apply"]);
     toggleButtons(["#sort", "#group", "#crop"]);
+    hideAllAccessButtons();
 }
 
 function toggleButtons(idList) {
@@ -407,5 +413,18 @@ function toggleButtons(idList) {
             button.removeClass("active");
             button.addClass("disabled");
         }
+
     });
+}
+
+function showAllAccessButtons() {
+    $("#apply").css('visibility', 'visible');
+    $("#reject").css('visibility', 'visible');
+
+}
+
+function hideAllAccessButtons() {
+    $("#apply").css('visibility', 'hidden');
+    $("#reject").css('visibility', 'hidden');
+
 }
