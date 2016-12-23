@@ -8,23 +8,21 @@ $().ready(function() {
     $(window).focus();
     printBookmarks();
 
+    $("#sort, #group, #crop").click(function(e) {
+        e.preventDefault();
+        toggleAllButtons();
+    });
+
     $("#sort").click(function(e) {
-        e.preventDefault();
-        toggleAllButtons();
-        previewSort();
-
+        previewFunction(sort);
     });
+
     $("#group").click(function(e) {
-        e.preventDefault();
-        toggleAllButtons();
-        previewGroup();
-
+        previewFunction(group);
     });
-    $("#crop").click(function(e) {
-        e.preventDefault();
-        toggleAllButtons();
-        previewCrop();
 
+    $("#crop").click(function(e) {
+        previewFunction(crop);
     });
 
     $("#bookmarks").on('dblclick', 'li', function(e) {
@@ -240,7 +238,7 @@ function updateVal(currentLi, oldVal) {
     });
 }
 
-function previewSort() {
+function previewFunction(callbackFunction) {
     var keys = {
         children: []
     };
@@ -249,80 +247,11 @@ function previewSort() {
             keys.children.push(folder);
         });
 
-        sort(keys);
-        $('#bookmarks').empty();
-        $('#bookmarks').append(printBookmarkFolder(keys));
-
-        $('#reject').one("click", function(e) {
-            e.preventDefault();
-            $('#apply').unbind("click");
-            printBookmarks();
-            toggleAllButtons();
-        });
-        $('#apply').one("click", function(e) {
-            e.preventDefault();
-            $('#reject').unbind("click");
-            updateBookmarks(keys, true);
-            toggleAllButtons();
-        });
+        callbackFunction(keys);
+        updateBookmarkListBuffer(keys);
     });
 }
 
-function previewGroup() {
-    var keys = {
-        children: []
-    };
-    chrome.bookmarks.getTree(function(root) {
-        root[0].children.forEach(function(folder) {
-            keys.children.push(folder);
-        });
-
-        group(keys);
-        $('#bookmarks').empty();
-        $('#bookmarks').append(printBookmarkFolder(keys));
-
-        $('#reject').one("click", function(e) {
-            e.preventDefault();
-            $('#apply').unbind("click");
-            printBookmarks();
-            toggleAllButtons();
-        });
-        $('#apply').one("click", function(e) {
-            e.preventDefault();
-            $('#reject').unbind("click");
-            updateBookmarks(keys, true);
-            toggleAllButtons();
-        });
-    });
-}
-
-function previewCrop() {
-    var keys = {
-        children: []
-    };
-    chrome.bookmarks.getTree(function(root) {
-        root[0].children.forEach(function(folder) {
-            keys.children.push(folder);
-        });
-
-        crop(keys);
-        $('#bookmarks').empty();
-        $('#bookmarks').append(printBookmarkFolder(keys));
-
-        $('#reject').one("click", function(e) {
-            e.preventDefault();
-            $('#apply').unbind("click");
-            printBookmarks();
-            toggleAllButtons();
-        });
-        $('#apply').one("click", function(e) {
-            e.preventDefault();
-            $('#reject').unbind("click");
-            updateBookmarks(keys, true);
-            toggleAllButtons();
-        });
-    });
-}
 function updateBookmarks(list, printAfter) {
     list.children.forEach(function(folder, key) {
         if (typeof folder.url === 'undefined') {
@@ -437,25 +366,40 @@ function crop(list) {
         if (typeof folder.url === 'undefined' && folder.children.length > 0)
             crop(folder);
 
-        if(typeof folder.url != 'undefined'){
+        if (typeof folder.url != 'undefined') {
             var oldTitle = folder.title;
             oldTitle = stripPunctuation(oldTitle);
             while (oldTitle.length > 70) {
-                var lastSpace=oldTitle.lastIndexOf(" ");
-                var firstSpace=oldTitle.indexOf(" ");
-                if(lastSpace!=-1&&lastSpace!=firstSpace){
-                    oldTitle=oldTitle.substring(0,lastSpace);
-
-                    folder.rename=true;
-                    folder.title=oldTitle;
-                }
-                else {
+                var lastSpace = oldTitle.lastIndexOf(" ");
+                var firstSpace = oldTitle.indexOf(" ");
+                if (lastSpace != -1 && lastSpace != firstSpace) {
+                    oldTitle = oldTitle.substring(0, lastSpace);
+                    folder.rename = true;
+                    folder.title = oldTitle;
+                } else {
                     return;
                 }
-                //var newTitle = oldTitle.split(" ")[0] + " " + (typeof oldTitle.split(" ")[1] === 'undefined'?"":oldTitle.split(" ")[1]); //just take the first 2 words(temporary solution)
             }
         }
 
+    });
+}
+
+function updateBookmarkListBuffer(keys) {
+    $('#bookmarks').empty();
+    $('#bookmarks').append(printBookmarkFolder(keys));
+
+    $('#reject').one("click", function(e) {
+        e.preventDefault();
+        $('#apply').unbind("click");
+        printBookmarks();
+        toggleAllButtons();
+    });
+    $('#apply').one("click", function(e) {
+        e.preventDefault();
+        $('#reject').unbind("click");
+        updateBookmarks(keys, true);
+        toggleAllButtons();
     });
 }
 
