@@ -8,22 +8,21 @@ $().ready(function() {
     $(window).focus();
     printBookmarks();
 
+    $("#sort, #group, #crop").click(function(e) {
+        e.preventDefault();
+        toggleAllButtons();
+    });
+
     $("#sort").click(function(e) {
-        e.preventDefault();
-        toggleAllButtons();
-        previewSort();
-
+        previewFunction(sort);
     });
+
     $("#group").click(function(e) {
-        e.preventDefault();
-        toggleAllButtons();
-        previewGroup();
+        previewFunction(group);
     });
-    $("#crop").click(function(e) {
-        e.preventDefault();
-        cropBookmarks('1');
-        toggleAllButtons();
 
+    $("#crop").click(function(e) {
+        previewFunction(crop);
     });
 
     $("#bookmarks").on('dblclick', 'li', function(e) {
@@ -115,24 +114,6 @@ function printNodeFolder(bookmark) {
     return li;
 }
 
-function cropBookmarks(id) {
-    chrome.bookmarks.getChildren(id, function(children) {
-        children.forEach(function(bookmark) {
-            var oldTitle = bookmark.title;
-
-            if (bookmark.title.length > 10) {
-                oldTitle = stripPunctuation(oldTitle);
-                var newTitle = oldTitle.split(" ")[0] + " " + oldTitle.split(" ")[1]; //just take the first 2 words(temporary solution)
-                chrome.bookmarks.update(String(bookmark.id), {
-                    'title': newTitle
-                });
-            }
-        });
-
-        printBookmarks();
-    });
-}
-
 function getHostname(url) {
     var m = url.match(/^https?\:\/\/([^\/:?#]+)(?:[\/:?#]|$)/i);
     return m ? m[0] : null;
@@ -187,39 +168,6 @@ function addBookmark(parentId, title, url) {
     });
 }
 
-function addFolder(parentId, title, callback, list, printAfter) {
-    console.log("looking for " + title);
-    chrome.bookmarks.search(String(title), function(result) {
-        var folderFound = false;
-        result.forEach(function(node) {
-            if (typeof node.url === 'undefined' && node.title === title) {
-                console.log("found " + node.title);
-                callback(node, list, printAfter);
-                folderFound = true;
-                return false;
-            }
-        });
-        if (!folderFound) {
-            chrome.bookmarks.create({
-                    'parentId': parentId,
-                    'title': title
-                },
-                function(newFolder) {
-                    console.log("added folder: " + newFolder.title);
-                    callback(newFolder, list, printAfter);
-                });
-        }
-    });
-}
-
-function rename(oldTitle, newTitle) {
-    chrome.bookmarks.search(oldTitle, function callback(results) {
-        chrome.bookmarks.update(String(results[0].id), {
-            'title': newTitle
-        });
-    })
-}
-
 function updateVal(currentLi, oldVal) {
     $(currentLi).html('<input class="editSelectedVal" type="text" value="' + oldVal + '" />');
     $(".editSelectedVal").focus();
@@ -239,7 +187,7 @@ function updateVal(currentLi, oldVal) {
     });
 }
 
-function previewSort() {
+function previewFunction(callbackFunction) {
     var keys = {
         children: []
     };
@@ -248,50 +196,8 @@ function previewSort() {
             keys.children.push(folder);
         });
 
-        sort(keys);
-        $('#bookmarks').empty();
-        $('#bookmarks').append(printBookmarkFolder(keys));
-
-        $('#reject').one("click", function(e) {
-            e.preventDefault();
-            $('#apply').unbind("click");
-            printBookmarks();
-            toggleAllButtons();
-        });
-        $('#apply').one("click", function(e) {
-            e.preventDefault();
-            $('#reject').unbind("click");
-            updateBookmarks(keys, true);
-            toggleAllButtons();
-        });
-    });
-}
-
-function previewGroup() {
-    var keys = {
-        children: []
-    };
-    chrome.bookmarks.getTree(function(root) {
-        root[0].children.forEach(function(folder) {
-            keys.children.push(folder);
-        });
-
-        group(keys);
-        $('#bookmarks').empty();
-        $('#bookmarks').append(printBookmarkFolder(keys));
-
-        $('#reject').one("click", function(e) {
-            e.preventDefault();
-            $('#apply').unbind("click");
-            printBookmarks();
-            toggleAllButtons();
-        });
-        $('#apply').one("click", function(e) {
-            e.preventDefault();
-            $('#reject').unbind("click");
-            updateBookmarks(keys, true);
-            toggleAllButtons();
-        });
+        callbackFunction(keys);
+        updateBookmarkListBuffer(keys);
     });
 }
 
@@ -319,6 +225,12 @@ function updateBookmarks(list, printAfter) {
 
         if (folder.id <= ROOT_TABS)
             return;
+
+        if (folder.rename) {
+            chrome.bookmarks.update(String(folder.id), {
+                'title': folder.title
+            });
+        }
 
         chrome.bookmarks.move(String(folder.id), {
             'parentId': folder.parentId,
@@ -398,12 +310,57 @@ function group(list) {
     });
 }
 
+function crop(list) {
+    list.children.forEach(function(folder) {
+        if (typeof folder.url === 'undefined' && folder.children.length > 0)
+            crop(folder);
+
+        if (typeof folder.url != 'undefined') {
+            var oldTitle = folder.title;
+            oldTitle = stripPunctuation(oldTitle);
+            while (oldTitle.length > 70) {
+                var lastSpace = oldTitle.lastIndexOf(" ");
+                var firstSpace = oldTitle.indexOf(" ");
+                if (lastSpace != -1 && lastSpace != firstSpace) {
+                    oldTitle = oldTitle.substring(0, lastSpace);
+                    folder.rename = true;
+                    folder.title = oldTitle;
+                } else {
+                    return;
+                }
+            }
+        }
+
+    });
+}
+
+function updateBookmarkListBuffer(keys) {
+    $('#bookmarks').empty();
+    $('#bookmarks').append(printBookmarkFolder(keys));
+
+    $('#reject').one("click", function(e) {
+        e.preventDefault();
+        $('#apply').unbind("click");
+        printBookmarks();
+        toggleAllButtons();
+    });
+    $('#apply').one("click", function(e) {
+        e.preventDefault();
+        $('#reject').unbind("click");
+        updateBookmarks(keys, true);
+        toggleAllButtons();
+    });
+}
+
 function toggleAllButtons() {
-    if($("#sort").hasClass("disabled")){
-        $('body').animate({scrollTop: 1},  "slow");
-    }
-    else{
-        $('body').animate({scrollTop: 300}, "slow");
+    if ($("#sort").hasClass("disabled")) {
+        $('body').animate({
+            scrollTop: 1
+        }, "slow");
+    } else {
+        $('body').animate({
+            scrollTop: 300
+        }, "slow");
     }
     toggleButtons(["#reject", "#apply"]);
     toggleButtons(["#sort", "#group", "#crop"]);
