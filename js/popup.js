@@ -18,11 +18,12 @@ $().ready(function() {
         e.preventDefault();
         toggleAllButtons();
         previewGroup();
+
     });
     $("#crop").click(function(e) {
         e.preventDefault();
-        cropBookmarks('1');
         toggleAllButtons();
+        previewCrop();
 
     });
 
@@ -295,6 +296,33 @@ function previewGroup() {
     });
 }
 
+function previewCrop() {
+    var keys = {
+        children: []
+    };
+    chrome.bookmarks.getTree(function(root) {
+        root[0].children.forEach(function(folder) {
+            keys.children.push(folder);
+        });
+
+        crop(keys);
+        $('#bookmarks').empty();
+        $('#bookmarks').append(printBookmarkFolder(keys));
+
+        $('#reject').one("click", function(e) {
+            e.preventDefault();
+            $('#apply').unbind("click");
+            printBookmarks();
+            toggleAllButtons();
+        });
+        $('#apply').one("click", function(e) {
+            e.preventDefault();
+            $('#reject').unbind("click");
+            updateBookmarks(keys, true);
+            toggleAllButtons();
+        });
+    });
+}
 function updateBookmarks(list, printAfter) {
     list.children.forEach(function(folder, key) {
         if (typeof folder.url === 'undefined') {
@@ -319,6 +347,12 @@ function updateBookmarks(list, printAfter) {
 
         if (folder.id <= ROOT_TABS)
             return;
+
+        if (folder.rename) {
+            chrome.bookmarks.update(String(folder.id), {
+                'title': folder.title
+            });
+        }
 
         chrome.bookmarks.move(String(folder.id), {
             'parentId': folder.parentId,
@@ -398,12 +432,42 @@ function group(list) {
     });
 }
 
+function crop(list) {
+    list.children.forEach(function(folder) {
+        if (typeof folder.url === 'undefined' && folder.children.length > 0)
+            crop(folder);
+
+        if(typeof folder.url != 'undefined'){
+            var oldTitle = folder.title;
+            oldTitle = stripPunctuation(oldTitle);
+            while (oldTitle.length > 70) {
+                var lastSpace=oldTitle.lastIndexOf(" ");
+                var firstSpace=oldTitle.indexOf(" ");
+                if(lastSpace!=-1&&lastSpace!=firstSpace){
+                    oldTitle=oldTitle.substring(0,lastSpace);
+
+                    folder.rename=true;
+                    folder.title=oldTitle;
+                }
+                else {
+                    return;
+                }
+                //var newTitle = oldTitle.split(" ")[0] + " " + (typeof oldTitle.split(" ")[1] === 'undefined'?"":oldTitle.split(" ")[1]); //just take the first 2 words(temporary solution)
+            }
+        }
+
+    });
+}
+
 function toggleAllButtons() {
-    if($("#sort").hasClass("disabled")){
-        $('body').animate({scrollTop: 1},  "slow");
-    }
-    else{
-        $('body').animate({scrollTop: 300}, "slow");
+    if ($("#sort").hasClass("disabled")) {
+        $('body').animate({
+            scrollTop: 1
+        }, "slow");
+    } else {
+        $('body').animate({
+            scrollTop: 300
+        }, "slow");
     }
     toggleButtons(["#reject", "#apply"]);
     toggleButtons(["#sort", "#group", "#crop"]);
