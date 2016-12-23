@@ -114,24 +114,6 @@ function printNodeFolder(bookmark) {
     return li;
 }
 
-function cropBookmarks(id) {
-    chrome.bookmarks.getChildren(id, function(children) {
-        children.forEach(function(bookmark) {
-            var oldTitle = bookmark.title;
-
-            if (bookmark.title.length > 10) {
-                oldTitle = stripPunctuation(oldTitle);
-                var newTitle = oldTitle.split(" ")[0] + " " + oldTitle.split(" ")[1]; //just take the first 2 words(temporary solution)
-                chrome.bookmarks.update(String(bookmark.id), {
-                    'title': newTitle
-                });
-            }
-        });
-
-        printBookmarks();
-    });
-}
-
 function getHostname(url) {
     var m = url.match(/^https?\:\/\/([^\/:?#]+)(?:[\/:?#]|$)/i);
     return m ? m[0] : null;
@@ -184,39 +166,6 @@ function addBookmark(parentId, title, url) {
         'title': title,
         'url': url
     });
-}
-
-function addFolder(parentId, title, callback, list, printAfter) {
-    console.log("looking for " + title);
-    chrome.bookmarks.search(String(title), function(result) {
-        var folderFound = false;
-        result.forEach(function(node) {
-            if (typeof node.url === 'undefined' && node.title === title) {
-                console.log("found " + node.title);
-                callback(node, list, printAfter);
-                folderFound = true;
-                return false;
-            }
-        });
-        if (!folderFound) {
-            chrome.bookmarks.create({
-                    'parentId': parentId,
-                    'title': title
-                },
-                function(newFolder) {
-                    console.log("added folder: " + newFolder.title);
-                    callback(newFolder, list, printAfter);
-                });
-        }
-    });
-}
-
-function rename(oldTitle, newTitle) {
-    chrome.bookmarks.search(oldTitle, function callback(results) {
-        chrome.bookmarks.update(String(results[0].id), {
-            'title': newTitle
-        });
-    })
 }
 
 function updateVal(currentLi, oldVal) {
