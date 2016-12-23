@@ -1,11 +1,27 @@
-/* Sort button*/
-
-.h1 {
-    position: relative;
+#top {
+    height: 120;
+    margin-top: 10;
 }
 
-.body {
-    background-color: aliceblue;
+#head {
+    text-align: center;
+    padding: inherit;
+}
+
+#group {
+    position: relative;
+    left: 23;
+}
+
+#short {
+    position: relative;
+    left: 46;
+}
+
+#tools {
+    position: relative;
+    bottom: 10;
+    right: 1;
 }
 
 #bookmarks {
@@ -15,6 +31,14 @@
     position: relative;
 }
 
+#bottom {
+    padding-bottom: 10;
+}
+
+}
+#apply {
+    height: 30;
+}
 
 /* Expand folder icon */
 
@@ -45,6 +69,7 @@
 .bLink {
     list-style-type: disc;
 }
+
 
 
 /*
