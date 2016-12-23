@@ -9,16 +9,18 @@ $().ready(function() {
     printBookmarks();
 
     $("#sort").click(function(e) {
+        e.preventDefault();
         toggleAllButtons();
         previewSort();
 
     });
     $("#group").click(function(e) {
+        e.preventDefault();
         toggleAllButtons();
         previewGroup();
-
     });
     $("#crop").click(function(e) {
+        e.preventDefault();
         cropBookmarks('1');
         toggleAllButtons();
 
@@ -251,11 +253,13 @@ function previewSort() {
         $('#bookmarks').append(printBookmarkFolder(keys));
 
         $('#reject').one("click", function(e) {
+            e.preventDefault();
             $('#apply').unbind("click");
             printBookmarks();
             toggleAllButtons();
         });
         $('#apply').one("click", function(e) {
+            e.preventDefault();
             $('#reject').unbind("click");
             updateBookmarks(keys, true);
             toggleAllButtons();
@@ -277,11 +281,13 @@ function previewGroup() {
         $('#bookmarks').append(printBookmarkFolder(keys));
 
         $('#reject').one("click", function(e) {
+            e.preventDefault();
             $('#apply').unbind("click");
             printBookmarks();
             toggleAllButtons();
         });
         $('#apply').one("click", function(e) {
+            e.preventDefault();
             $('#reject').unbind("click");
             updateBookmarks(keys, true);
             toggleAllButtons();
@@ -393,6 +399,12 @@ function group(list) {
 }
 
 function toggleAllButtons() {
+    if($("#sort").hasClass("disabled")){
+        $('body').animate({scrollTop: 1},  "slow");
+    }
+    else{
+        $('body').animate({scrollTop: 300}, "slow");
+    }
     toggleButtons(["#reject", "#apply"]);
     toggleButtons(["#sort", "#group", "#crop"]);
 }
