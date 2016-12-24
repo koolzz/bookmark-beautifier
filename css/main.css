@@ -1,8 +1,9 @@
-body{
+body {
     overflow-y: scroll;
     height: 800px;
     width: 410px;
 }
+
 #top {
     height: 120;
     margin-top: 10;
@@ -41,13 +42,13 @@ body{
     padding-bottom: 10;
 }
 
+
 }
 #apply {
     height: 30;
 }
 
 /* Expand folder icon */
-
 .dropIcon {
     width: 26px;
     margin-left: -26px;
@@ -59,33 +60,49 @@ body{
     outline: none;
     transition: all .2s ease-in-out;
 }
-
 .dropIcon:hover {
     color: #248232;
 }
-
 .container {
     background: #f2f2f2;
 }
-
 .bFolder {
     list-style-type: none;
 }
-
 .bLink {
     list-style-type: disc;
 }
-
 .panel-body .form-group {
     margin: 0;
 }
-
 .search {
     height: 50px;
     width: 350px;
+    border: none;
 }
-
-
+#search {
+    width: 335px;
+    padding-right: 20px;
+    display: inline-block;
+}
+.resetSearch {
+    margin-left: -20px;
+    width: 15px;
+    padding: 0;
+    background-color: #fff;
+    background-repeat: no-repeat;
+    border: none;
+    cursor: pointer;
+    overflow: hidden;
+    outline: none;
+    transition: all .15s ease-in-out;
+}
+.resetSearch:hover {
+    color: #94B9AF;
+}
+.resetSearch .fa {
+    font-size: 20px;
+}
 
 /*
 .bLink:before {
