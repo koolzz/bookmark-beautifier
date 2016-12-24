@@ -26,8 +26,14 @@ $().ready(function() {
     });
 
     $("#search").keyup(function() {
-        searchBookmark($(this).val());
-
+        if ($("#sort").hasClass("disabled"))
+            return;
+        if($(this).val().trim().length===0){
+            printBookmarks();
+        }
+        else {
+            searchBookmark($(this).val().trim());
+        }
     });
 
     $(document).click(function(event) {
