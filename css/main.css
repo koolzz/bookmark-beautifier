@@ -70,6 +70,16 @@
     list-style-type: disc;
 }
 
+.form-group {
+
+}
+
+.search {
+    margin-top: -30px;
+    height: 50px;
+    width: 350px;
+}
+
 
 
 /*
