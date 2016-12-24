@@ -25,6 +25,19 @@ $().ready(function() {
         previewFunction(crop);
     });
 
+    $("#search").keyup(function() {
+        searchBookmark($(this).val());
+
+    });
+
+    $(document).click(function(event) {
+        if ($(event.target).closest("#search").length) return;
+        printBookmarks();
+        $("#search").val('');
+        event.stopPropagation();
+    });
+
+
     $("#bookmarks").on('dblclick', 'li', function(e) {
         if ($('#bookmarks').find('.editSelectedVal').length != 0)
             return;
@@ -376,5 +389,20 @@ function toggleButtons(idList) {
             button.removeClass("active");
             button.addClass("disabled");
         }
+    });
+}
+
+function searchBookmark(text) {
+    var keys = {
+        children: []
+    };
+    chrome.bookmarks.search(text, function(results) {
+        $('#bookmarks').empty();
+        results.forEach(function(result) {
+            if (typeof result.url != 'undefined') {
+                keys.children.push(result);
+            }
+        });
+        $('#bookmarks').append(printBookmarkFolder(keys));
     });
 }
