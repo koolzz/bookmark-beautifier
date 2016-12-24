@@ -28,21 +28,19 @@ $().ready(function() {
     $("#search").keyup(function() {
         if ($("#sort").hasClass("disabled"))
             return;
-        if($(this).val().trim().length===0){
+        if ($(this).val().trim().length === 0) {
             printBookmarks();
-        }
-        else {
+        } else {
             searchBookmark($(this).val().trim());
         }
     });
 
     $(document).click(function(event) {
-        if ($(event.target).closest("#search").length) return;
+        if ($(event.target).closest("#search, #tools, #desision").length) return;
         printBookmarks();
         $("#search").val('');
         event.stopPropagation();
     });
-
 
     $("#bookmarks").on('dblclick', 'li', function(e) {
         if ($('#bookmarks').find('.editSelectedVal').length != 0)
@@ -63,10 +61,9 @@ $().ready(function() {
 var ROOT_TABS;
 
 function printBookmarks() {
-
-    $('#bookmarks').empty();
     chrome.bookmarks.getTree(function(root) {
         //console.log(root);
+        $('#bookmarks').empty();
         ROOT_TABS = root[0].children.length;
         root.forEach(function(folder) {
             $('#bookmarks').append(printBookmarkFolder(folder)
@@ -373,13 +370,23 @@ function updateBookmarkListBuffer(keys) {
 
 function toggleAllButtons() {
     if ($("#sort").hasClass("disabled")) {
+        $('#bookmarks').animate({
+            height: 505
+        }, 600);
+        $(".search").slideDown(600);
+        $("#decision").slideUp(500,function(){$("#decision").css('display','none');});
         $('body').animate({
             scrollTop: 1
-        }, "slow");
+        }, 700);
     } else {
+        $(".search").slideUp(600);
+        $('#bookmarks').animate({
+            height: 475
+        }, 600);
+        $("#decision").slideDown(500);
         $('body').animate({
             scrollTop: 300
-        }, "slow");
+        }, 700);
     }
     toggleButtons(["#reject", "#apply"]);
     toggleButtons(["#sort", "#group", "#crop"]);
