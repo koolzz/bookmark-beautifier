@@ -184,6 +184,14 @@ function addBookmark(parentId, title, url) {
     });
 }
 
+function rename(oldTitle, newTitle) {
+    chrome.bookmarks.search(oldTitle, function callback(results) {
+        chrome.bookmarks.update(String(results[0].id), {
+            'title': newTitle
+        });
+    })
+}
+
 function updateVal(currentLi, oldVal) {
     $(currentLi).html('<input class="editSelectedVal" type="text" value="' + oldVal + '" />');
     $(".editSelectedVal").focus();
