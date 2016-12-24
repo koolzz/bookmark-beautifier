@@ -122,7 +122,12 @@ function printNode(bookmark) {
     var li = $("<li>")
         .css('font-weight', 'normal')
         .addClass("bLink")
-        .text(bookmark.title);
+
+    var link = $("<a />", {
+        href : bookmark.url,
+        text : bookmark.title
+    });
+    li.append(link);
     return li;
 }
 
