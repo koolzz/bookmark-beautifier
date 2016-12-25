@@ -31,7 +31,7 @@ body {
 }
 
 #bookmarks {
-    height: 505;
+    height: 505px;
     /* Keeps the scrollbar on jquery animate*/
     overflow-y: auto !important;
     overflow-x: hidden;
@@ -41,7 +41,6 @@ body {
 #bottom {
     padding-bottom: 10;
 }
-
 
 }
 #apply {
@@ -66,11 +65,13 @@ body {
 .container {
     background: #f2f2f2;
 }
-.bFolder {
+#bFolder {
     list-style-type: none;
+    font-weight: bold;
 }
-.bLink {
+#bLink {
     list-style-type: disc;
+    font-weight: normal;
 }
 .panel-body .form-group {
     margin: 0;
@@ -91,6 +92,7 @@ body {
     padding: 0;
     background-color: #fff;
     background-repeat: no-repeat;
+    color: #AAAFB5;
     border: none;
     cursor: pointer;
     overflow: hidden;
@@ -98,7 +100,7 @@ body {
     transition: all .15s ease-in-out;
 }
 .resetSearch:hover {
-    color: #94B9AF;
+    color: #05668D;
 }
 .resetSearch .fa {
     font-size: 20px;

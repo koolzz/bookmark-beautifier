@@ -128,9 +128,7 @@ function deleteFolder(bookmarkFolder) {
 
 function printNode(bookmark) {
     var li = $("<li>")
-        .css('font-weight', 'normal')
-        .addClass("bLink")
-
+        .attr('id', 'bLink');
     var link = $("<a />", {
         href : bookmark.url,
         text : bookmark.title
@@ -141,8 +139,7 @@ function printNode(bookmark) {
 
 function printNodeFolder(bookmark) {
     var li = $("<li>")
-        .addClass("bFolder")
-        .css('font-weight', 'bold')
+        .attr('id', 'bFolder')
         .text(bookmark.title);
     return li;
 }
