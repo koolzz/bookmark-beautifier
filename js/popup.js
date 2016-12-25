@@ -45,11 +45,18 @@ $().ready(function() {
             searchBookmark($(this).val().trim());
         }
     });
-
+    $("#bookmarks").on('dblclick', 'a', function(e) {
+        e.stopPropagation();
+        if(EDIT_MODE)
+            return;
+        window.open(e.target.href,"_blank");
+    });
     $("#bookmarks").on('dblclick', 'li', function(e) {
+        e.stopPropagation();
+        if(!EDIT_MODE)
+            return;
         if ($('#bookmarks').find('.editSelectedVal').length != 0)
             return;
-        e.stopPropagation();
         var oldVal;
 
         if ($(this).children().length > 0) {
@@ -63,6 +70,7 @@ $().ready(function() {
 });
 
 var ROOT_TABS;
+var EDIT_MODE=false;
 
 function printBookmarks() {
     chrome.bookmarks.getTree(function(root) {
