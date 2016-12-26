@@ -28,13 +28,23 @@ $().ready(function() {
         $("#search").select();
     });
 
+    $("#edit").click(function(e) {
+        EDIT_MODE = !EDIT_MODE;
+        if (EDIT_MODE) {
+            $("#bookmarks, .selectedLink").removeClass('selectedLink');
+            $(".panel-heading").css("background-color", "#CF995F");
+        } else {
+            $(".panel-heading").css("background-color", "#009688");
+        }
+    });
+
     $("#search").keyup(function() {
         if ($("#sort").hasClass("disabled"))
             return;
-        $('.resetSearch').click(function(event) {
+        $('#resetSearch').click(function(event) {
             if ($(event.target).closest("#search, #tools, #desision").length) return;
             printBookmarks();
-            $('.resetSearch').unbind("click");
+            $('#resetSearch').unbind("click");
             $("#search").val('');
             event.stopPropagation();
         });
@@ -46,7 +56,6 @@ $().ready(function() {
         }
     });
     $("#bookmarks").on('click', '#bLink', function selectFunction(e) {
-        e.stopPropagation();
         if (EDIT_MODE)
             return;
         var link = $(e.currentTarget);
@@ -58,8 +67,7 @@ $().ready(function() {
         }
     });
 
-    $("#bookmarks").on('dblclick', 'li', function(e) {
-        e.stopPropagation();
+    $("#bookmarks").on('dblclick', 'a', function(e) {
         if (!EDIT_MODE)
             return;
         if ($('#bookmarks').find('.editSelectedVal').length != 0)
@@ -106,7 +114,6 @@ function printBookmarkFolder(bookmarkFolder) {
                 list.append(folder);
 
                 $(r).click(function(e) {
-                    e.stopPropagation();
                     if ($(folder).find('li').is(':visible')) {
                         $(folder).children().hide();
                         $(folder).find('.dropIcon').show();
@@ -222,11 +229,11 @@ function updateVal(currentLi, oldVal) {
             $(currentLi).html($(".editSelectedVal").val().trim());
         }
     });
-    $(document).click("click", function(e) {
+    $(document).on("click", function(e) {
         if ($(e.target).is(".editSelectedVal")) {
             return;
         } else {
-            $(".editSelectedVal").parent("li").html(oldVal);
+            $(".editSelectedVal").parent("a").html(oldVal);
             $(document).unbind("click");
         }
     });
@@ -403,7 +410,6 @@ function toggleAllButtons() {
             height: 505
         }, 600);
         $(".search").slideDown(600);
-        $(".resetSearch").slideDown(600);
         $("#decision").slideUp(500, function() {
             $("#decision").css('display', 'none');
         });
@@ -412,7 +418,6 @@ function toggleAllButtons() {
         }, 700);
     } else {
         $(".search").slideUp(600);
-        $(".resetSearch").slideUp(600);
         $('#bookmarks').animate({
             height: 475
         }, 600);
