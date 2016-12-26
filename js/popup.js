@@ -45,11 +45,25 @@ $().ready(function() {
             searchBookmark($(this).val().trim());
         }
     });
+    $("#bookmarks").on('click', '#bLink', function selectFunction(e) {
+        e.stopPropagation();
+        if (EDIT_MODE)
+            return;
+        var link = $(e.currentTarget);
+        if (link.hasClass("selectedLink")) {
+            window.open(e.target.href, "_blank");
+        } else {
+            $("#bookmarks, .selectedLink").removeClass('selectedLink');
+            link.addClass("selectedLink")
+        }
+    });
 
     $("#bookmarks").on('dblclick', 'li', function(e) {
+        e.stopPropagation();
+        if (!EDIT_MODE)
+            return;
         if ($('#bookmarks').find('.editSelectedVal').length != 0)
             return;
-        e.stopPropagation();
         var oldVal;
 
         if ($(this).children().length > 0) {
@@ -63,6 +77,7 @@ $().ready(function() {
 });
 
 var ROOT_TABS;
+var EDIT_MODE = false;
 
 function printBookmarks() {
     chrome.bookmarks.getTree(function(root) {
@@ -120,8 +135,12 @@ function deleteFolder(bookmarkFolder) {
 
 function printNode(bookmark) {
     var li = $("<li>")
-        .attr('id', 'bLink')
-        .text(bookmark.title);
+        .attr('id', 'bLink');
+    var link = $("<a />", {
+        href: bookmark.url,
+        text: bookmark.title
+    });
+    li.append(link);
     return li;
 }
 
