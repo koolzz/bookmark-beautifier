@@ -58,9 +58,20 @@ $().ready(function() {
     $("#bookmarks").on('click', '#bLink', function selectFunction(e) {
         if (EDIT_MODE)
             return;
-        var link = $(e.currentTarget);
+        var link;
+
+        console.log(e);
+        if($(e.target).closest('a').length){
+            link=$(e.target);
+        }
+        else{
+            link=$(e.target.children[0]);
+        }
+        console.log(link);
         if (link.hasClass("selectedLink")) {
-            window.open(e.target.href, "_blank");
+            console.log(link);
+
+            window.open(link[0].href, "_blank");
         } else {
             $("#bookmarks, .selectedLink").removeClass('selectedLink');
             link.addClass("selectedLink")
