@@ -483,7 +483,6 @@ function searchBookmark(text) {
     });
 }
 
-<<<<<<< Updated upstream
 function showEditButtons(){
   $(".search").slideUp(400);
   $("#add-folder").css('display', 'block');
@@ -494,7 +493,7 @@ function hideEditButtons(){
   $(".search").slideDown(400);
   $("#add-folder").css('display', 'none');
   $("#trash").css('display', 'none');
-=======
+
 function showEditButtons() {
     printBookmarks();
     $(".search").slideUp(400);
