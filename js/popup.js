@@ -6,6 +6,7 @@ $().ready(function() {
     });
 
     printBookmarks();
+    //deleteEmptyFolder();
 
     $("#sort, #group, #crop").click(function(e) {
         e.preventDefault();
@@ -145,12 +146,41 @@ function printBookmarkFolder(bookmarkFolder) {
                     $(folder).children().hide();
                     $(folder).find('.dropIcon').show();
                 }
-            } else if (bookmark.id > ROOT_TABS) {
-                deleteFolder(bookmark);
             }
         }
     });
     return list;
+}
+
+function deleteEmptyFolder(folder){
+    if(folder){
+        folder.children.forEach(function(bookmark) {
+            if (typeof bookmark.url === 'undefined') {
+                if (bookmark.children.length != 0) {
+                    deleteEmptyFolder(bookmark);
+                }
+                else if (bookmark.id > ROOT_TABS) {
+                    deleteFolder(bookmark);
+                }
+            }
+        });
+    }
+    else{
+        chrome.bookmarks.getTree(function(root) {
+            root.forEach(function(folder) {
+                folder.children.forEach(function(bookmark) {
+                    if (typeof bookmark.url === 'undefined') {
+                        if (bookmark.children.length != 0) {
+                            deleteEmptyFolder(bookmark);
+                        }
+                        else if (bookmark.id > ROOT_TABS) {
+                            deleteFolder(bookmark);
+                        }
+                    }
+                });
+            });
+        });
+    }
 }
 
 function deleteFolder(bookmarkFolder) {
