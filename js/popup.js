@@ -32,75 +32,82 @@ $().ready(function() {
     $("#edit").click(function(e) {
         EDIT_MODE = !EDIT_MODE;
         if (EDIT_MODE) {
-            showEditButtons()
+            showEditButtons();
             $("#bookmarks, .selectedLink").removeClass('selectedLink');
             $(".panel-heading").css("background-color", "#CF995F");
         } else {
-            hideEditButtons()
+            hideEditButtons();
             $(".panel-heading").css("background-color", "#009688");
         }
     });
 
+    $('#add-folder').click(function(e) {
+        showSearchLine();
+    })
+
     $("#search").keyup(function() {
-        if ($("#sort").hasClass("disabled"))
-            return;
-        $('#resetSearch').click(function(event) {
-            if ($(event.target).closest("#search, #tools, #desision").length) return;
-            printBookmarks();
-            $('#resetSearch').unbind("click");
-            $("#search").val('');
-            event.stopPropagation();
-        });
-        if ($(this).val().trim().length === 0) {
-            $("#search").val('');
-            printBookmarks();
+        if (EDIT_MODE) {
+            $(this).keypress(function(e) {
+                if (e.which == 13) {
+                    if ($(this).val().trim().length != 0) {
+                        addNewButton($(this).val().trim());
+                        $("#search").val('');
+                    }
+                }
+            });
+
+            $('#resetSearch').click(function(event) {
+                if ($(event.target).closest("#search, #tools, #desision").length) return;
+                $('#resetSearch').unbind("click");
+                $("#search").val('');
+                event.stopPropagation();
+            });
         } else {
-            searchBookmark($(this).val().trim());
+            if ($("#sort").hasClass("disabled"))
+                return;
+            $('#resetSearch').click(function(event) {
+                if ($(event.target).closest("#search, #tools, #desision").length) return;
+                printBookmarks();
+                $('#resetSearch').unbind("click");
+                $("#search").val('');
+                event.stopPropagation();
+            });
+            if ($(this).val().trim().length === 0) {
+                $("#search").val('');
+                printBookmarks();
+            } else {
+                searchBookmark($(this).val().trim());
+            }
         }
+
     });
+
     $("#bookmarks").on('click', '#bLink', function selectFunction(e) {
         if (EDIT_MODE)
             return;
-        var link;
-
-        console.log(e);
-
-        if ($(e.target).closest('a').length) {
-            link = $(e.target);
-        } else {
-            link = $(e.target.children[0]);
-
-        }
-        console.log(link);
+        var link = $(e.currentTarget);
         if (link.hasClass("selectedLink")) {
-            console.log(link);
-
-            window.open(link[0].href, "_blank");
+            window.open(e.target.href, "_blank");
         } else {
             $("#bookmarks, .selectedLink").removeClass('selectedLink');
             link.addClass("selectedLink")
         }
     });
 
-    $("#bookmarks").on('dblclick', 'li', function(e) {
-        if ($(e.target).closest('a').length) {
-            e = e.target;
-        } else {
-            e = e.target.children[0];
-        }
+    $("#bookmarks").on('dblclick', 'a', function(e) {
         if (!EDIT_MODE)
             return;
         if ($('#bookmarks').find('.editSelectedVal').length != 0)
             return;
         var oldVal;
 
-        if ($(e).children().length > 0) {
-            oldVal = $(e).clone().children().remove().end().text();
+        if ($(this).children().length > 0) {
+            oldVal = $(this).clone().children().remove().end().text();
             return; //TODO enable renaming folders
         } else {
-            oldVal = $(e).html();
+            oldVal = $(this).html();
         }
-        updateVal($(e), oldVal);
+        updateVal($(this), oldVal);
     });
 });
 
@@ -125,27 +132,27 @@ function printBookmarkFolder(bookmarkFolder) {
         if (typeof bookmark.url != 'undefined') {
             list.append(printNode(bookmark));
         } else {
-            if (bookmark.children.length != 0) {
-                var folder = printNodeFolder(bookmark);
+            var folder = printNodeFolder(bookmark);
 
-                var r = $("<button type=\"submit\" class=\"dropIcon\"><i class=\"fa fa-caret-down fa-lg\"></i></button>");
-                folder.prepend(r);
-                folder.append(printBookmarkFolder(bookmark));
-                list.append(folder);
+            var r = $("<button type=\"submit\" class=\"dropIcon\"><i class=\"fa fa-caret-down fa-lg\"></i></button>");
+            folder.prepend(r);
+            folder.append(printBookmarkFolder(bookmark));
+            list.append(folder);
 
-                $(r).click(function(e) {
-                    if ($(folder).find('li').is(':visible')) {
-                        $(folder).children().hide();
-                        $(folder).find('.dropIcon').show();
-                    } else {
-                        $(folder).children().show();
-                    }
-
-                });
-                if (bookmark.id > ROOT_TABS) {
+            $(r).click(function(e) {
+                if ($(folder).find('li').is(':visible')) {
                     $(folder).children().hide();
                     $(folder).find('.dropIcon').show();
+                } else {
+                    $(folder).children().show();
                 }
+
+
+            });
+            if (bookmark.id > ROOT_TABS) {
+                $(folder).children().hide();
+                $(folder).find('.dropIcon').show();
+
             }
         }
     });
@@ -274,7 +281,7 @@ function updateVal(currentLi, oldVal) {
     $(".editSelectedVal").focus();
     $(".editSelectedVal").keyup(function(event) {
         if (event.keyCode == 13) {
-            rename(currentLi[0].href, $(".editSelectedVal").val().trim());
+            rename(oldVal, $(".editSelectedVal").val().trim());
             $(currentLi).html($(".editSelectedVal").val().trim());
         }
     });
@@ -508,13 +515,32 @@ function searchBookmark(text) {
 }
 
 function showEditButtons() {
-    $(".search").slideUp(400);
+    $(".search").slideUp(400, function print() {
+        printBookmarks();
+    });
     $("#add-folder").fadeIn(400);
     $("#trash").fadeIn(400);
+    $("#search").val('');
 }
 
 function hideEditButtons() {
     $(".search").slideDown(400);
     $("#add-folder").fadeOut(400);
     $("#trash").fadeOut(400);
+    $("#search").val('');
+    $('#search').attr("placeholder", "Type bookmark name");
+}
+
+function showSearchLine() {
+    $(".search").slideDown(400);
+    $('#search').attr("placeholder", "New folder name");
+}
+
+function addNewButton(name) {
+    chrome.bookmarks.create({
+        'parentId': '1',
+        'title': name
+    }, function callback() {
+        printBookmarks();
+    });
 }
