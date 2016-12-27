@@ -67,20 +67,25 @@ $().ready(function() {
         }
     });
 
-    $("#bookmarks").on('dblclick', 'a', function(e) {
+    $("#bookmarks").on('dblclick', 'li', function(e) {
+        if ($(e.target).closest('a').length) {
+            e = e.target;
+        } else {
+            e = e.target.children[0];
+        }
         if (!EDIT_MODE)
             return;
         if ($('#bookmarks').find('.editSelectedVal').length != 0)
             return;
         var oldVal;
 
-        if ($(this).children().length > 0) {
-            oldVal = $(this).clone().children().remove().end().text();
+        if ($(e).children().length > 0) {
+            oldVal = $(e).clone().children().remove().end().text();
             return; //TODO enable renaming folders
         } else {
-            oldVal = $(this).html();
+            oldVal = $(e).html();
         }
-        updateVal($(this), oldVal);
+        updateVal($(e), oldVal);
     });
 });
 
@@ -225,7 +230,7 @@ function updateVal(currentLi, oldVal) {
     $(".editSelectedVal").focus();
     $(".editSelectedVal").keyup(function(event) {
         if (event.keyCode == 13) {
-            rename(oldVal, $(".editSelectedVal").val().trim());
+            rename(currentLi[0].href, $(".editSelectedVal").val().trim());
             $(currentLi).html($(".editSelectedVal").val().trim());
         }
     });
