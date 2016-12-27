@@ -483,16 +483,6 @@ function searchBookmark(text) {
     });
 }
 
-function showEditButtons(){
-  $(".search").slideUp(400);
-  $("#add-folder").css('display', 'block');
-  $("#trash").css('display', 'block');
-}
-
-function hideEditButtons(){
-  $(".search").slideDown(400);
-  $("#add-folder").css('display', 'none');
-  $("#trash").css('display', 'none');
 
 function showEditButtons() {
     printBookmarks();
