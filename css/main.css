@@ -32,6 +32,7 @@ body {
 
 #bookmarks {
     height: 505px;
+    margin-top: 0px;
     /* Keeps the scrollbar on jquery animate*/
     overflow-y: auto !important;
     overflow-x: hidden;
@@ -66,7 +67,7 @@ body {
 .container {
     background: #f2f2f2;
 }
-#bookmarkHeading{
+#bookmarkHeading {
     width: 315px;
     display: inline-block;
 }
@@ -84,6 +85,7 @@ body {
 }
 #bookmarks #bLink a:hover {
     /*background-color: #AAAFB5;*/
+
     text-decoration: none;
 }
 #bookmarks .selectedLink {
@@ -119,8 +121,7 @@ body {
 #resetSearch:hover {
     color: #05668D;
 }
-
-#edit{
+#edit {
     background-color: transparent;
     color: #fff;
     padding: 5 0 0 0;
@@ -132,6 +133,44 @@ body {
 #edit:hover {
     color: #05668D;
 }
+#add-folder {
+    margin-left: 280px;
+    margin-top:-21px;
+    padding: 0;
+    background-color: transparent;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    overflow: hidden;
+    outline: none;
+
+    display: none;
+
+    transition: all .15s ease-in-out;
+}
+#add-folder:hover {
+    color: #05668D;
+}
+
+#trash {
+    margin-left: 245px;
+    margin-top:-21px;
+    padding: 0;
+    background-color: transparent;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    overflow: hidden;
+    outline: none;
+
+    display: none;
+
+    transition: all .15s ease-in-out;
+}
+#trash:hover {
+    color: #05668D;
+}
+
 /*
 .bLink:before {
   content: "\f111";

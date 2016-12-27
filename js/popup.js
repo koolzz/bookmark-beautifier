@@ -31,9 +31,11 @@ $().ready(function() {
     $("#edit").click(function(e) {
         EDIT_MODE = !EDIT_MODE;
         if (EDIT_MODE) {
+          showEditButtons()
             $("#bookmarks, .selectedLink").removeClass('selectedLink');
             $(".panel-heading").css("background-color", "#CF995F");
         } else {
+          hideEditButtons()
             $(".panel-heading").css("background-color", "#009688");
         }
     });
@@ -456,4 +458,16 @@ function searchBookmark(text) {
         });
         $('#bookmarks').append(printBookmarkFolder(keys));
     });
+}
+
+function showEditButtons(){
+  $(".search").slideUp(400);
+  $("#add-folder").css('display', 'block');
+  $("#trash").css('display', 'block');
+}
+
+function hideEditButtons(){
+  $(".search").slideDown(400);
+  $("#add-folder").css('display', 'none');
+  $("#trash").css('display', 'none');
 }
