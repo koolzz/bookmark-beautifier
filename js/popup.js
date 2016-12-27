@@ -63,10 +63,12 @@ $().ready(function() {
         var link;
 
         console.log(e);
+
         if ($(e.target).closest('a').length) {
             link = $(e.target);
         } else {
             link = $(e.target.children[0]);
+
         }
         console.log(link);
         if (link.hasClass("selectedLink")) {
