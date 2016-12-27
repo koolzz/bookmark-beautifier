@@ -10,12 +10,9 @@
     <link rel="stylesheet" type="text/css" href="css/font.css">
     <!-- Bootstrap Material Design -->
     <link rel="stylesheet" type="text/css" href="css/bootstrap-material-design.min.css">
-
 </head>
 
 <body>
-
-
     <div class="container">
         <div id="top" class="panel panel-default">
             <div id="head" class="panel-body">
@@ -38,6 +35,8 @@
             <div class="panel-heading">
                 <h3 class="panel-title" id="bookmarkHeading">Bookmarks</h3>
                 <button type="submit" id="edit"><i class="fa fa-edit fa-lg"></i></button>
+                <button type="submit" id="add-folder"><i class="fa fa-folder fa-lg"></i></button>
+                <button type="submit" id="trash"><i class="fa fa-trash fa-lg"></i></button>
             </div>
             <div class="panel-body">
                 <div class="search">
@@ -46,9 +45,8 @@
                         <button type="submit" id="resetSearch"><i class="fa fa-close fa-lg"></i></button>
                     </div>
                 </div>
-
                 <div id="bookmarks">
-                    <ul id="main">
+                    <ul id="main" class="list">
                     </ul>
                 </div>
             </div>
