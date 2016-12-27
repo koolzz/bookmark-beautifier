@@ -118,57 +118,31 @@ body {
     outline: none;
     transition: all .15s ease-in-out;
 }
-#resetSearch:hover {
-    color: #05668D;
-}
-#edit {
+#edit, #add-folder, #trash {
     background-color: transparent;
     color: #fff;
-    padding: 5 0 0 0;
     border: none;
     cursor: pointer;
     overflow: hidden;
     outline: none;
+    transition: all .15s ease-in-out;
 }
-#edit:hover {
+#edit:hover, #add-folder:hover, #trash:hover, #resetSearch:hover {
     color: #05668D;
+}
+#add-folder, #trash {
+    padding: 0;
+    margin-top: -21px;
+    display: none;
+}
+#edit {
+    padding: 5 0 0 0;
 }
 #add-folder {
     margin-left: 280px;
-    margin-top:-21px;
-    padding: 0;
-    background-color: transparent;
-    color: #fff;
-    border: none;
-    cursor: pointer;
-    overflow: hidden;
-    outline: none;
-
-    display: none;
-
-    transition: all .15s ease-in-out;
 }
-#add-folder:hover {
-    color: #05668D;
-}
-
 #trash {
     margin-left: 245px;
-    margin-top:-21px;
-    padding: 0;
-    background-color: transparent;
-    color: #fff;
-    border: none;
-    cursor: pointer;
-    overflow: hidden;
-    outline: none;
-
-    display: none;
-
-    transition: all .15s ease-in-out;
-}
-#trash:hover {
-    color: #05668D;
 }
 
 /*
