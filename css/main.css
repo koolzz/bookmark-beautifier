@@ -85,7 +85,7 @@ body {
 }
 #bookmarks #bLink a:hover {
     /*background-color: #AAAFB5;*/
-
+    
     text-decoration: none;
 }
 #bookmarks .selectedLink {
@@ -119,29 +119,26 @@ body {
     transition: all .15s ease-in-out;
 }
 #edit, #add-folder, #trash {
+    padding: 5 0 0 0;
     background-color: transparent;
     color: #fff;
     border: none;
     cursor: pointer;
     overflow: hidden;
     outline: none;
-    transition: all .15s ease-in-out;
 }
 #edit:hover, #add-folder:hover, #trash:hover, #resetSearch:hover {
     color: #05668D;
 }
 #add-folder, #trash {
-    padding: 0;
     margin-top: -21px;
     display: none;
-}
-#edit {
-    padding: 5 0 0 0;
 }
 #add-folder {
     margin-left: 280px;
 }
 #trash {
+    padding-top: 4px;
     margin-left: 245px;
 }
 

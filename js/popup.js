@@ -31,11 +31,11 @@ $().ready(function() {
     $("#edit").click(function(e) {
         EDIT_MODE = !EDIT_MODE;
         if (EDIT_MODE) {
-          showEditButtons()
+            showEditButtons()
             $("#bookmarks, .selectedLink").removeClass('selectedLink');
             $(".panel-heading").css("background-color", "#CF995F");
         } else {
-          hideEditButtons()
+            hideEditButtons()
             $(".panel-heading").css("background-color", "#009688");
         }
     });
@@ -60,29 +60,44 @@ $().ready(function() {
     $("#bookmarks").on('click', '#bLink', function selectFunction(e) {
         if (EDIT_MODE)
             return;
-        var link = $(e.currentTarget);
+        var link;
+
+        console.log(e);
+        if ($(e.target).closest('a').length) {
+            link = $(e.target);
+        } else {
+            link = $(e.target.children[0]);
+        }
+        console.log(link);
         if (link.hasClass("selectedLink")) {
-            window.open(e.target.href, "_blank");
+            console.log(link);
+
+            window.open(link[0].href, "_blank");
         } else {
             $("#bookmarks, .selectedLink").removeClass('selectedLink');
             link.addClass("selectedLink")
         }
     });
 
-    $("#bookmarks").on('dblclick', 'a', function(e) {
+    $("#bookmarks").on('dblclick', 'li', function(e) {
+        if ($(e.target).closest('a').length) {
+            e = e.target;
+        } else {
+            e = e.target.children[0];
+        }
         if (!EDIT_MODE)
             return;
         if ($('#bookmarks').find('.editSelectedVal').length != 0)
             return;
         var oldVal;
 
-        if ($(this).children().length > 0) {
-            oldVal = $(this).clone().children().remove().end().text();
+        if ($(e).children().length > 0) {
+            oldVal = $(e).clone().children().remove().end().text();
             return; //TODO enable renaming folders
         } else {
-            oldVal = $(this).html();
+            oldVal = $(e).html();
         }
-        updateVal($(this), oldVal);
+        updateVal($(e), oldVal);
     });
 });
 
@@ -227,7 +242,7 @@ function updateVal(currentLi, oldVal) {
     $(".editSelectedVal").focus();
     $(".editSelectedVal").keyup(function(event) {
         if (event.keyCode == 13) {
-            rename(oldVal, $(".editSelectedVal").val().trim());
+            rename(currentLi[0].href, $(".editSelectedVal").val().trim());
             $(currentLi).html($(".editSelectedVal").val().trim());
         }
     });
@@ -460,14 +475,14 @@ function searchBookmark(text) {
     });
 }
 
-function showEditButtons(){
-  $(".search").slideUp(400);
-  $("#add-folder").css('display', 'block');
-  $("#trash").css('display', 'block');
+function showEditButtons() {
+    $(".search").slideUp(400);
+    $("#add-folder").fadeIn(400);
+    $("#trash").fadeIn(400);
 }
 
-function hideEditButtons(){
-  $(".search").slideDown(400);
-  $("#add-folder").css('display', 'none');
-  $("#trash").css('display', 'none');
+function hideEditButtons() {
+    $(".search").slideDown(400);
+    $("#add-folder").fadeOut(400);
+    $("#trash").fadeOut(400);
 }
