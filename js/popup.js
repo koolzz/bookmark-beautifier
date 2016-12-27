@@ -146,14 +146,13 @@ function printBookmarkFolder(bookmarkFolder) {
                 } else {
                     $(folder).children().show();
                 }
-<<<<<<< HEAD
+
 
             });
             if (bookmark.id > ROOT_TABS) {
                 $(folder).children().hide();
                 $(folder).find('.dropIcon').show();
-=======
->>>>>>> e71668ace57d3f2774f3a1680faf61554e6d4f5e
+
             }
         }
     });
