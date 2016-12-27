@@ -31,11 +31,11 @@ $().ready(function() {
     $("#edit").click(function(e) {
         EDIT_MODE = !EDIT_MODE;
         if (EDIT_MODE) {
-          showEditButtons()
+            showEditButtons();
             $("#bookmarks, .selectedLink").removeClass('selectedLink');
             $(".panel-heading").css("background-color", "#CF995F");
         } else {
-          hideEditButtons()
+            hideEditButtons();
             $(".panel-heading").css("background-color", "#009688");
         }
     });
@@ -50,6 +50,7 @@ $().ready(function() {
                 if (e.which == 13) {
                     if ($(this).val().trim().length != 0) {
                         addNewButton($(this).val().trim());
+                        $("#search").val('');
                     }
                 }
             });
@@ -130,29 +131,25 @@ function printBookmarkFolder(bookmarkFolder) {
         if (typeof bookmark.url != 'undefined') {
             list.append(printNode(bookmark));
         } else {
-            if (bookmark.children.length != 0) {
-                var folder = printNodeFolder(bookmark);
+            var folder = printNodeFolder(bookmark);
 
-                var r = $("<button type=\"submit\" class=\"dropIcon\"><i class=\"fa fa-caret-down fa-lg\"></i></button>");
-                folder.prepend(r);
-                folder.append(printBookmarkFolder(bookmark));
-                list.append(folder);
+            var r = $("<button type=\"submit\" class=\"dropIcon\"><i class=\"fa fa-caret-down fa-lg\"></i></button>");
+            folder.prepend(r);
+            folder.append(printBookmarkFolder(bookmark));
+            list.append(folder);
 
-                $(r).click(function(e) {
-                    if ($(folder).find('li').is(':visible')) {
-                        $(folder).children().hide();
-                        $(folder).find('.dropIcon').show();
-                    } else {
-                        $(folder).children().show();
-                    }
-
-                });
-                if (bookmark.id > ROOT_TABS) {
+            $(r).click(function(e) {
+                if ($(folder).find('li').is(':visible')) {
                     $(folder).children().hide();
                     $(folder).find('.dropIcon').show();
+                } else {
+                    $(folder).children().show();
                 }
-            } else if (bookmark.id > ROOT_TABS) {
-                deleteFolder(bookmark);
+
+            });
+            if (bookmark.id > ROOT_TABS) {
+                $(folder).children().hide();
+                $(folder).find('.dropIcon').show();
             }
         }
     });
@@ -483,21 +480,10 @@ function searchBookmark(text) {
     });
 }
 
-<<<<<<< Updated upstream
-function showEditButtons(){
-  $(".search").slideUp(400);
-  $("#add-folder").css('display', 'block');
-  $("#trash").css('display', 'block');
-}
-
-function hideEditButtons(){
-  $(".search").slideDown(400);
-  $("#add-folder").css('display', 'none');
-  $("#trash").css('display', 'none');
-=======
 function showEditButtons() {
-    printBookmarks();
-    $(".search").slideUp(400);
+    $(".search").slideUp(400, function print() {
+        printBookmarks();
+    });
     $("#add-folder").fadeIn(400);
     $("#trash").fadeIn(400);
     $("#search").val('');
@@ -513,7 +499,7 @@ function hideEditButtons() {
 
 function showSearchLine() {
     $(".search").slideDown(400);
-    $('#search').attr("placeholder", "New button name");
+    $('#search').attr("placeholder", "New folder name");
 }
 
 function addNewButton(name) {
