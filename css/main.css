@@ -128,7 +128,7 @@ body {
     outline: none;
 }
 #edit:hover, #add-folder:hover, #trash:hover, #resetSearch:hover {
-    color: #05668D;
+    color: #000000;
 }
 #add-folder, #trash {
     margin-top: -21px;
