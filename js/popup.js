@@ -1,5 +1,6 @@
 var ROOT_TABS;
 var EDIT_MODE = false;
+var fold_bool = true;
 
 $().ready(function() {
     'use strict';
@@ -27,6 +28,9 @@ $().ready(function() {
     $("#crop").click(function(e) {
         previewFunction(crop);
     });
+    $("#learn").click(function(e) {
+      window.open("https://github.com/koolzz/bookmark-beautifier", "_blank");
+    });
 
     $("#search").click(function(e) {
         $("#search").select();
@@ -45,8 +49,13 @@ $().ready(function() {
     });
 
     $('#add-folder').click(function(e) {
+      if (fold_bool) {
         showSearchLine();
-    })
+        fold_bool=false;
+      }else{$(".search").slideUp(400);
+    fold_bool=true;}
+    }
+   );
 
     $("#search").keyup(function() {
         if (EDIT_MODE) {
@@ -55,7 +64,7 @@ $().ready(function() {
                     if ($(this).val().trim().length != 0) {
                         addNewButton($(this).val().trim());
                         $("#search").val('');
-                    }
+                    }else{$(".search").slideUp(400);}
                 }
             });
 
