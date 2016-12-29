@@ -100,18 +100,20 @@ $().ready(function() {
     });
 
     $("#bookmarks").on('click', '#bLink', function selectFunction(e) {
+        console.log(e);
         if (EDIT_MODE)
             return;
-        var link = $(e.currentTarget);
-        if (link.hasClass("selectedLink")) {
-            window.open(e.target.href, "_blank");
+        var li = $(e.currentTarget);
+        if (li.hasClass("selectedLink")) {
+            window.open(li[0].children[0].href, "_blank");
         } else {
             $("#bookmarks, .selectedLink").removeClass('selectedLink');
-            link.addClass("selectedLink")
+            li.addClass("selectedLink")
         }
     });
 
     $("#bookmarks").on('dblclick', 'a', function(e) {
+        console.log(e);
         if (!EDIT_MODE)
             return;
         if ($('#bookmarks').find('.editSelectedVal').length != 0)
