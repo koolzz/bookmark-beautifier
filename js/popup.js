@@ -29,7 +29,7 @@ $().ready(function() {
         previewFunction(crop);
     });
     $("#learn").click(function(e) {
-      window.open("https://github.com/koolzz/bookmark-beautifier", "_blank");
+        window.open("https://github.com/koolzz/bookmark-beautifier", "_blank");
     });
 
     $("#search").click(function(e) {
@@ -49,13 +49,12 @@ $().ready(function() {
     });
 
     $('#add-folder').click(function(e) {
-      if (fold_bool) {
-        showSearchLine();
-        fold_bool=false;
-      }else{$(".search").slideUp(400);
-    fold_bool=true;}
-    }
-   );
+        if ($(".search").is(":visible")) {
+            $(".search").slideUp(400);
+        } else {
+            showSearchLine();
+        }
+    });
 
     $("#search").keyup(function() {
         if (EDIT_MODE) {
@@ -64,7 +63,7 @@ $().ready(function() {
                     if ($(this).val().trim().length != 0) {
                         addNewButton($(this).val().trim());
                         $("#search").val('');
-                    }else{$(".search").slideUp(400);}
+                    }
                 }
             });
 
