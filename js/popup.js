@@ -1,6 +1,5 @@
 var ROOT_TABS;
 var EDIT_MODE = false;
-var fold_bool = true;
 
 $().ready(function() {
     'use strict';
