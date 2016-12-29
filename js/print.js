@@ -1,18 +1,22 @@
-function printBookmarks(makeSortable) {
+function printBookmarks(makeSortable, slideDownChildren, showChildren) {
     chrome.bookmarks.getTree(function(root) {
         //console.log(root);
         $('#bookmarks').empty();
         ROOT_TABS = root[0].children.length;
         root.forEach(function(folder) {
-            $('#bookmarks').append(printBookmarkFolder(folder)
+            $('#bookmarks').append(printBookmarkFolder(folder, showChildren)
                 .css('padding-right', "2px"));
-            if (makeSortable)
+            if (makeSortable) {
                 sortableList();
+            }
+            if (slideDownChildren) {
+                showFolderChildren(true);
+            }
         });
     });
 }
 
-function printBookmarkFolder(bookmarkFolder) {
+function printBookmarkFolder(bookmarkFolder, notShowChildren) {
     var list = $("<ul>");
     bookmarkFolder.children.forEach(function(bookmark) {
         if (typeof bookmark.url != 'undefined') {
@@ -21,7 +25,7 @@ function printBookmarkFolder(bookmarkFolder) {
             var folder = printNodeFolder(bookmark);
             var r = $("<button type=\"submit\" class=\"dropIcon\"><i class=\"fa fa-angle-double-down fa-lg\"></i></button>");
             folder.prepend(r);
-            folder.append(printBookmarkFolder(bookmark));
+            folder.append(printBookmarkFolder(bookmark, notShowChildren));
             list.append(folder);
 
             $(r).click(function(e) {
@@ -33,11 +37,13 @@ function printBookmarkFolder(bookmarkFolder) {
                 }
 
             });
+            if (notShowChildren)
+                return;
             if (bookmark.id > ROOT_TABS) {
                 $(folder).children().hide();
                 $(folder).find('.dropIcon').show();
-
             }
+
         }
     });
     return list;
@@ -131,5 +137,25 @@ function updateBookmarkListBuffer(keys) {
         $('#reject').unbind("click");
         updateBookmarks(keys, true);
         toggleAllButtons();
+    });
+}
+
+function showFolderChildren(collapse) {
+    $("#bookmarks ul").each(function(key, e) {
+        if (!collapse) {
+            //ignores main ul, which shows root folders
+            if (key > 0) {
+                var parentTitle = $(e).parent().contents().filter(function() {
+                    return this.nodeType == 3;
+                })[0].nodeValue;
+                if (parentTitle === "Bookmarks bar" || parentTitle === "Other bookmarks" || parentTitle === "Mobile bookmarks")
+                    return;
+                $(e).slideUp(300);
+            }
+        } else {
+            if (!$(e).is(":visible")) {
+                $(e).slideDown(300);
+            }
+        }
     });
 }

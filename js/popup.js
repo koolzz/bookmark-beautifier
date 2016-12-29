@@ -38,11 +38,18 @@ $().ready(function() {
     $("#edit").click(function(e) {
         EDIT_MODE = !EDIT_MODE;
         if (EDIT_MODE) {
+            $('body').animate({
+                scrollTop: 300
+            }, 700);
             showEditButtons();
             $("#bookmarks, .selectedLink").removeClass('selectedLink');
             $(".panel-heading").css("background-color", "#CF995F");
         } else {
+            $('body').animate({
+                scrollTop: 1
+            }, 700);
             hideEditButtons();
+            showFolderChildren(false);
             $(".panel-heading").css("background-color", "#009688");
         }
     });
@@ -143,7 +150,7 @@ function sortableList() {
                         'parentId': folder.parentId,
                         'index': index
                     }, function() {
-                        printBookmarks(true);
+                        printBookmarks(true, false, true);
                     });
                 });
             },
@@ -169,7 +176,7 @@ function sortableList() {
                             'parentId': id,
                             'index': index
                         }, function() {
-                            printBookmarks(true);
+                            printBookmarks(true, false, true);
                         });
                     });
                 });
@@ -350,7 +357,7 @@ function searchBookmark(text) {
 
 function showEditButtons() {
     $(".search").slideUp(400, function print() {
-        printBookmarks(true);
+        printBookmarks(true, true);
     });
     $("#add-folder").fadeIn(400);
     $("#trash").fadeIn(400);
