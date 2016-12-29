@@ -134,16 +134,23 @@ function sortableList() {
         var group = key > 0 ? "subfolders" : "mainfolder";
         Sortable.create(e, {
             group: {
-                name:group,
-                pull:true,
-                put:true
+                name: group,
+                pull: true,
+                put: true
             },
             animation: 150,
             onUpdate: function(evt) {
                 var item = evt.item;
                 var parent = $(item).parent();
                 var href = item.children[0].href;
-                var title = $(item).context.innerText;
+                var title;
+                if (typeof href === 'undefined') {
+                    title = $(item).contents().filter(function() {
+                        return this.nodeType == 3;
+                    })[0].nodeValue;
+                } else {
+                    var title = $(item).context.innerText;
+                }
                 var index = evt.newIndex < evt.oldIndex ? evt.newIndex : evt.newIndex + 1;
                 chrome.bookmarks.search({
                     'url': href,
@@ -165,7 +172,14 @@ function sortableList() {
                     return this.nodeType == 3;
                 })[0].nodeValue;
                 var href = item.children[0].href;
-                var title = $(item).context.innerText;
+                var title;
+                if (typeof href === 'undefined') {
+                    title = $(item).contents().filter(function() {
+                        return this.nodeType == 3;
+                    })[0].nodeValue;
+                } else {
+                    var title = $(item).context.innerText;
+                }
                 var index = evt.newIndex;
                 chrome.bookmarks.search({
                     'title': parentTitle
