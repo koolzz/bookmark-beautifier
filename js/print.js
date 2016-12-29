@@ -26,6 +26,8 @@ function printBookmarkFolder(bookmarkFolder, notShowChildren) {
             var r = $("<button type=\"submit\" class=\"dropIcon\"><i class=\"fa fa-angle-double-down fa-lg\"></i></button>");
             folder.prepend(r);
             folder.append(printBookmarkFolder(bookmark, notShowChildren));
+            if(EDIT_MODE&&bookmark.children.length===0)
+                folder.addClass("is-empty");
             list.append(folder);
 
             $(r).click(function(e) {

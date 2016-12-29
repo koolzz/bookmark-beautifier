@@ -75,6 +75,9 @@ body {
     list-style-type: none;
     font-weight: bold;
 }
+#bFolder ul{
+     min-height: 26px;
+}
 #bLink {
     list-style-type:none;
     font-weight: normal;

@@ -133,7 +133,11 @@ function sortableList() {
     $("#bookmarks ul").each(function(key, e) {
         var group = key > 0 ? "subfolders" : "mainfolder";
         Sortable.create(e, {
-            group: group,
+            group: {
+                name:group,
+                pull:true,
+                put:true
+            },
             animation: 150,
             onUpdate: function(evt) {
                 var item = evt.item;
