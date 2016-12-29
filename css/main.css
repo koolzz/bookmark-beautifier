@@ -76,8 +76,16 @@ body {
     font-weight: bold;
 }
 #bLink {
-    list-style-type: disc;
+    list-style-type:none;
     font-weight: normal;
+}
+#bLink:before{
+    padding-right: 7px;
+    margin-left: -19px;
+    height: 16px;
+    font-family:'FontAwesome';
+    font-size: 1.333em;
+    content:"\f107";
 }
 #bookmarks #bLink a {
     color: #333;
@@ -141,14 +149,3 @@ body {
     padding-top: 4px;
     margin-left: 245px;
 }
-
-/*
-.bLink:before {
-  content: "\f111";
-  font-family: FontAwesome;
-  display: inline-block;
-  margin-left: -2.5em;
-  width: 2.5em;
-  font-size: 0.5em;
-}
-*/

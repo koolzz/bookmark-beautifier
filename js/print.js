@@ -19,7 +19,7 @@ function printBookmarkFolder(bookmarkFolder) {
             list.append(printNode(bookmark));
         } else {
             var folder = printNodeFolder(bookmark);
-            var r = $("<button type=\"submit\" class=\"dropIcon\"><i class=\"fa fa-caret-down fa-lg\"></i></button>");
+            var r = $("<button type=\"submit\" class=\"dropIcon\"><i class=\"fa fa-angle-double-down fa-lg\"></i></button>");
             folder.prepend(r);
             folder.append(printBookmarkFolder(bookmark));
             list.append(folder);
