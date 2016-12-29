@@ -27,6 +27,9 @@ $().ready(function() {
     $("#crop").click(function(e) {
         previewFunction(crop);
     });
+    $("#learn").click(function(e) {
+        window.open("https://github.com/koolzz/bookmark-beautifier", "_blank");
+    });
 
     $("#search").click(function(e) {
         $("#search").select();
@@ -45,8 +48,12 @@ $().ready(function() {
     });
 
     $('#add-folder').click(function(e) {
-        showSearchLine();
-    })
+        if ($(".search").is(":visible")) {
+            $(".search").slideUp(400);
+        } else {
+            showSearchLine();
+        }
+    });
 
     $("#search").keyup(function() {
         if (EDIT_MODE) {
