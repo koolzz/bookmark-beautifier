@@ -62,6 +62,18 @@ $().ready(function() {
         }
     });
 
+    $('#trash').click(function(e) {
+        var list = $(".selectedLink");
+        var r = confirm("Delete " + list.length + " selected bookmarks?");
+
+        if (r === true) {
+            $(list).each(function(key, bookmark) {
+                var link = bookmark.children[0];
+                deleteFolder(link.text, link.href, (key === list.length - 1) ? true : false);
+            });
+        }
+    });
+
     $("#search").keyup(function() {
         if (EDIT_MODE) {
             $(this).keypress(function(e) {
@@ -123,7 +135,7 @@ $().ready(function() {
                 clicks = 0;
                 li.removeClass("selectedLink");
                 clearTimeout(timeout);
-                if (window.event.ctrlKey) 
+                if (window.event.ctrlKey)
                     return
                 if ($('#bookmarks').find('.editSelectedVal').length != 0)
                     return;
@@ -256,6 +268,18 @@ function deleteEmptyFolder(folder) {
 function deleteFolder(bookmarkFolder) {
     chrome.bookmarks.remove(bookmarkFolder.id, function() {
         console.log(bookmarkFolder.title + " removed");
+    });
+}
+
+function deleteFolder(title, url, callback) {
+    chrome.bookmarks.search({
+        'title': title,
+        'url': url
+    }, function(result) {
+        chrome.bookmarks.remove(result[0].id, function() {
+            if (callback)
+                printBookmarks(true, false, true);
+        });
     });
 }
 
