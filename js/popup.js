@@ -67,7 +67,7 @@ $().ready(function() {
             $(this).keypress(function(e) {
                 if (e.which == 13) {
                     if ($(this).val().trim().length != 0) {
-                        addNewButton($(this).val().trim());
+                        addNewFolder($(this).val().trim());
                         $("#search").val('');
                     }
                 }
@@ -404,11 +404,11 @@ function showSearchLine() {
     $('#search').attr("placeholder", "New folder name");
 }
 
-function addNewButton(name) {
+function addNewFolder(name) {
     chrome.bookmarks.create({
         'parentId': '1',
         'title': name
     }, function callback() {
-        printBookmarks();
+        printBookmarks(true, false, true);
     });
 }
