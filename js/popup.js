@@ -98,37 +98,54 @@ $().ready(function() {
         }
 
     });
-
+    var timeout = null,
+        clicks = 0,
+        delay = 350;
     $("#bookmarks").on('click', '#bLink', function selectFunction(e) {
-        if (EDIT_MODE)
-            return;
-        var li = $(e.currentTarget);
-        if (li.hasClass("selectedLink")) {
-            window.open(li[0].children[0].href, "_blank");
+        if (EDIT_MODE) {
+            e.preventDefault();
+            if (!window.event.ctrlKey) {
+                $(".selectedLink").removeClass("selectedLink");
+            }
+            clicks++;
+            var li = $(e.target).is('a') ? $(e.currentTarget) : $(e.target);
+            if (clicks === 1) {
+                if (li.hasClass("selectedLink")) {
+                    li.removeClass("selectedLink");
+                    clicks = 0;
+                } else {
+                    li.addClass("selectedLink");
+                    timeout = setTimeout(function() {
+                        clicks = 0;
+                    }, delay);
+                }
+            } else {
+                clicks = 0;
+                li.removeClass("selectedLink");
+                clearTimeout(timeout);
+                if (window.event.ctrlKey) 
+                    return
+                if ($('#bookmarks').find('.editSelectedVal').length != 0)
+                    return;
+                var target = $(e.target).is('a') ? e.currentTarget : e.target;
+                var oldVal = $(target).children()[0].text;
+                var url = $(target).children()[0].href;
+                updateVal($(target), oldVal, url);
+
+            }
         } else {
-            $("#bookmarks, .selectedLink").removeClass('selectedLink');
-            li.addClass("selectedLink")
+            var li = $(e.currentTarget);
+            if (li.hasClass("selectedLink")) {
+                window.open(li[0].children[0].href, "_blank");
+            } else {
+                $("#bookmarks, .selectedLink").removeClass('selectedLink');
+                li.addClass("selectedLink");
+            }
         }
     });
 
-    $("#bookmarks").on('dblclick', 'li', function(e) {
-        if (!EDIT_MODE)
-            return;
-        if ($('#bookmarks').find('.editSelectedVal').length != 0)
-            return;
-        var oldVal;
-        var url;
-
-        var target=$(e.target).is('a')?e.target:$(e.target)[0].children[0];
-
-        if ($(target).is('a')){
-            oldVal = $(target).html();
-            url = target.href;
-        } else {
-            oldVal = $(this).clone().children().remove().end().text();
-            return; //TODO enable renaming folders
-        }
-        updateVal($(target), oldVal,url);
+    $("#bookmarks").on('dblclick', '#bLink', function(e) {
+        e.preventDefault();
     });
 });
 
@@ -298,7 +315,7 @@ function addBookmark(parentId, title, url) {
 
 function rename(oldTitle, url, newTitle) {
     chrome.bookmarks.search({
-        'title': oldTitle?oldTitle:undefined,
+        'title': oldTitle ? oldTitle : undefined,
         'url': url
     }, function callback(results) {
         chrome.bookmarks.update(String(results[0].id), {
@@ -312,18 +329,21 @@ function updateVal(currentLi, oldVal, url) {
     $(".editSelectedVal").focus();
     $(".editSelectedVal").keyup(function(event) {
         if (event.keyCode == 13) {
-            rename(oldVal,url, $(".editSelectedVal").val().trim());
-            $(currentLi).html($(".editSelectedVal").val().trim());
+            rename(oldVal, url, $(".editSelectedVal").val().trim());
+            $(currentLi).html('<a href="' + url + '">' + $(".editSelectedVal").val().trim() + '</a>');
         }
     });
-    $(document).on("click", function(e) {
-        if ($(e.target).is(".editSelectedVal")) {
-            return;
-        } else {
-            $(".editSelectedVal").parent("a").html(oldVal);
-            $(document).unbind("click");
-        }
-    });
+    setTimeout(function() {
+        $(document).on("click", function(e) {
+            if ($(e.target).is(".editSelectedVal")) {
+                return;
+            } else {
+                $(".editSelectedVal").parent("li").html('<a href="' + url + '">' + oldVal + '</a>');
+                $(document).unbind("click");
+            }
+        });
+    }, 100);
+
 }
 
 function toggleAllButtons() {
