@@ -100,7 +100,6 @@ $().ready(function() {
     });
 
     $("#bookmarks").on('click', '#bLink', function selectFunction(e) {
-        console.log(e);
         if (EDIT_MODE)
             return;
         var li = $(e.currentTarget);
@@ -112,21 +111,24 @@ $().ready(function() {
         }
     });
 
-    $("#bookmarks").on('dblclick', 'a', function(e) {
-        console.log(e);
+    $("#bookmarks").on('dblclick', 'li', function(e) {
         if (!EDIT_MODE)
             return;
         if ($('#bookmarks').find('.editSelectedVal').length != 0)
             return;
         var oldVal;
+        var url;
 
-        if ($(this).children().length > 0) {
+        var target=$(e.target).is('a')?e.target:$(e.target)[0].children[0];
+
+        if ($(target).is('a')){
+            oldVal = $(target).html();
+            url = target.href;
+        } else {
             oldVal = $(this).clone().children().remove().end().text();
             return; //TODO enable renaming folders
-        } else {
-            oldVal = $(this).html();
         }
-        updateVal($(this), oldVal);
+        updateVal($(target), oldVal,url);
     });
 });
 
@@ -294,20 +296,23 @@ function addBookmark(parentId, title, url) {
     });
 }
 
-function rename(oldTitle, newTitle) {
-    chrome.bookmarks.search(oldTitle, function callback(results) {
+function rename(oldTitle, url, newTitle) {
+    chrome.bookmarks.search({
+        'title': oldTitle?oldTitle:undefined,
+        'url': url
+    }, function callback(results) {
         chrome.bookmarks.update(String(results[0].id), {
             'title': newTitle
         });
     })
 }
 
-function updateVal(currentLi, oldVal) {
+function updateVal(currentLi, oldVal, url) {
     $(currentLi).html('<input class="editSelectedVal" type="text" value="' + oldVal + '" />');
     $(".editSelectedVal").focus();
     $(".editSelectedVal").keyup(function(event) {
         if (event.keyCode == 13) {
-            rename(oldVal, $(".editSelectedVal").val().trim());
+            rename(oldVal,url, $(".editSelectedVal").val().trim());
             $(currentLi).html($(".editSelectedVal").val().trim());
         }
     });
