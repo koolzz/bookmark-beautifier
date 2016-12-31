@@ -1,4 +1,4 @@
-function printBookmarks(makeSortable, slideDownChildren, showChildren) {
+function printBookmarks(makeSortable, slideDownChildren, showChildren, callbackList) {
     chrome.bookmarks.getTree(function(root) {
         //console.log(root);
         $('#bookmarks').empty();
@@ -11,6 +11,11 @@ function printBookmarks(makeSortable, slideDownChildren, showChildren) {
             }
             if (slideDownChildren) {
                 showFolderChildren(true);
+            }
+            if(callbackList){
+                for (var i = 0, len = callbackList.length; i < len; i++) {
+                  callbackList[i]();
+                }
             }
         });
     });

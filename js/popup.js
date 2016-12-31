@@ -453,6 +453,11 @@ function addNewFolder(name) {
         'parentId': '1',
         'title': name
     }, function callback() {
-        printBookmarks(true, false, true);
+        printBookmarks(true, false, true, [function(){
+            var length= -250+ $($("#bookmarks")[0].children[0].firstChild.lastChild.lastChild).offset().top-$($("#bookmarks")[0].children[0].firstChild.lastChild.firstChild).offset().top;
+            $('#bookmarks').animate({
+                scrollTop: length
+            }, 700);
+        }]);
     });
 }
