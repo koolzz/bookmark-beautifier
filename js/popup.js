@@ -30,6 +30,9 @@ $().ready(function() {
     $("#learn").click(function(e) {
         window.open("https://github.com/koolzz/bookmark-beautifier", "_blank");
     });
+    $("#backup").click(function(e) {
+        window.open("https://support.google.com/chrome/answer/96816?hl=en", "_blank");
+    });
 
     $("#search").click(function(e) {
         $("#search").select();

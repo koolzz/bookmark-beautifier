@@ -1,15 +1,19 @@
 {
-  "name": "bookmark beautify",
-  "version": "1.1",
-  "description": "A browser action with sorting managing bookmarks.",
-  "permissions": [
-    "bookmarks"
-  ],
-  "browser_action": {
-      "default_title": "My Bookmarks",
-      "default_icon": "icon.png",
-      "default_popup": "popup.html"
-  },
-  "manifest_version": 2,
-  "content_security_policy": "script-src 'self' https://ajax.googleapis.com; object-src 'self'"
+    "manifest_version": 2,
+    "name": "Bookmark beautify",
+    "version": "0.0.0.1",
+    "description": "A browser extension that sorts and organizes bookmarks, also has an edit mode.",
+    "permissions": [
+        "bookmarks"
+    ],
+    "icons": {
+        "128": "icon_128.png",
+        "64": "icon_64.png",
+        "16": "icon_16.png"
+    },
+    "browser_action": {
+        "default_title": "My Bookmarks",
+        "default_icon": "icon_128.png",
+        "default_popup": "popup.html"
+    }
 }
