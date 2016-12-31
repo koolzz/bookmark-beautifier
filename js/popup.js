@@ -171,22 +171,16 @@ function sortableList() {
                 pull: true,
                 put: true
             },
+            ghostClass: "sortable-ghost",
             animation: 150,
             onUpdate: function(evt) {
                 var item = evt.item;
-                var parent = $(item).parent();
-                var href = item.children[0].href;
-                var title;
-                if (typeof href === 'undefined') {
-                    title = $(item).contents().filter(function() {
-                        return this.nodeType == 3;
-                    })[0].nodeValue;
-                } else {
-                    var title = $(item).context.innerText;
-                }
+                var href = $(item).children('a').href;
+                var title = $(item).children('a').text();
+                console.log(title);
+                console.log(href);
                 var index = evt.newIndex < evt.oldIndex ? evt.newIndex : evt.newIndex + 1;
                 chrome.bookmarks.search({
-                    'url': href,
                     'title': title
                 }, function(result) {
                     var folder = result[0];
@@ -201,18 +195,9 @@ function sortableList() {
             onAdd: function(evt) {
                 var item = evt.item;
                 var old = evt.from;
-                var parentTitle = $(item).parent().parent().contents().filter(function() {
-                    return this.nodeType == 3;
-                })[0].nodeValue;
-                var href = item.children[0].href;
-                var title;
-                if (typeof href === 'undefined') {
-                    title = $(item).contents().filter(function() {
-                        return this.nodeType == 3;
-                    })[0].nodeValue;
-                } else {
-                    var title = $(item).context.innerText;
-                }
+                var parentTitle = $(item).parent('ul').siblings('a').text();
+                var href = $(item).children('a').href;
+                var title = $(item).children('a').text();
                 var index = evt.newIndex;
                 chrome.bookmarks.search({
                     'title': parentTitle
@@ -453,8 +438,8 @@ function addNewFolder(name) {
         'parentId': '1',
         'title': name
     }, function callback() {
-        printBookmarks(true, false, true, [function(){
-            var length= -250+ $($("#bookmarks")[0].children[0].firstChild.lastChild.lastChild).offset().top-$($("#bookmarks")[0].children[0].firstChild.lastChild.firstChild).offset().top;
+        printBookmarks(true, false, true, [function() {
+            var length = -250 + $($("#bookmarks")[0].children[0].firstChild.lastChild.lastChild).offset().top - $($("#bookmarks")[0].children[0].firstChild.lastChild.firstChild).offset().top;
             $('#bookmarks').animate({
                 scrollTop: length
             }, 700);

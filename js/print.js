@@ -6,15 +6,20 @@ function printBookmarks(makeSortable, slideDownChildren, showChildren, callbackL
         root.forEach(function(folder) {
             $('#bookmarks').append(printBookmarkFolder(folder, showChildren)
                 .css('padding-right', "2px"));
+            $('#bookmarks .bFolder').each(function(index, val) {
+                var depth = $(val).parents("ul").length,
+                    padding = 20;
+                $(val).children().find('a').css('padding-left', depth * padding);
+            });
             if (makeSortable) {
                 sortableList();
             }
             if (slideDownChildren) {
                 showFolderChildren(true);
             }
-            if(callbackList){
+            if (callbackList) {
                 for (var i = 0, len = callbackList.length; i < len; i++) {
-                  callbackList[i]();
+                    callbackList[i]();
                 }
             }
         });
@@ -28,18 +33,22 @@ function printBookmarkFolder(bookmarkFolder, notShowChildren) {
             list.append(printNode(bookmark));
         } else {
             var folder = printNodeFolder(bookmark);
-            var r = $("<button type=\"submit\" class=\"dropIcon\"><i class=\"fa fa-angle-double-down fa-lg\"></i></button>");
-            folder.prepend(r);
+            var r = $("<button type=\"submit\" class=\"dropIcon\"><i class=\"fa fa-chevron-right\"></i></button>");
+            $(folder).find("a").prepend(r);
             folder.append(printBookmarkFolder(bookmark, notShowChildren));
-            if(EDIT_MODE&&bookmark.children.length===0)
+            if (EDIT_MODE && bookmark.children.length === 0)
                 folder.addClass("is-empty");
             list.append(folder);
-
             $(r).click(function(e) {
                 if ($(folder).find('li').is(':visible')) {
+                    $('.fa', this).removeClass("fa-chevron-down");
+                    $('.fa', this).addClass("fa-chevron-right");
                     $(folder).children().hide();
                     $(folder).find('.dropIcon').show();
+                    $(folder).find('a').css('display', 'inline-block');
                 } else {
+                    $('.fa', this).removeClass("fa-chevron-right");
+                    $('.fa', this).addClass("fa-chevron-down");
                     $(folder).children().show();
                 }
 
@@ -49,6 +58,10 @@ function printBookmarkFolder(bookmarkFolder, notShowChildren) {
             if (bookmark.id > ROOT_TABS) {
                 $(folder).children().hide();
                 $(folder).find('.dropIcon').show();
+                $(folder).find('a').css('display', 'inline-block');
+            } else {
+                $(folder).children('a').find('.fa').removeClass("fa-chevron-right");
+                $(folder).children('a').find('.fa').addClass("fa-chevron-down");
             }
 
         }
@@ -58,7 +71,7 @@ function printBookmarkFolder(bookmarkFolder, notShowChildren) {
 
 function printNode(bookmark) {
     var li = $("<li>")
-        .attr('class','bLink');
+        .attr('class', 'bLink');
     var link = $("<a />", {
         href: bookmark.url,
         text: bookmark.title
@@ -69,8 +82,11 @@ function printNode(bookmark) {
 
 function printNodeFolder(bookmark) {
     var li = $("<li>")
-        .attr('class', 'bFolder')
-        .text(bookmark.title);
+        .attr('class', 'bFolder');
+    var link = $("<a />", {
+        text: bookmark.title
+    });
+    li.append(link);
     return li;
 }
 
@@ -157,11 +173,18 @@ function showFolderChildren(collapse) {
                 })[0].nodeValue;
                 if (parentTitle === "Bookmarks bar" || parentTitle === "Other bookmarks" || parentTitle === "Mobile bookmarks")
                     return;
-                $(e).slideUp(300);
+                $(e).slideUp(300, function() {
+                    $(e).siblings('a').find('.fa').removeClass("fa-chevron-down");
+                    $(e).siblings('a').find('.fa').addClass("fa-chevron-right");
+                });
             }
         } else {
             if (!$(e).is(":visible")) {
-                $(e).slideDown(300);
+                $(e).slideDown(300, function() {
+                    $(e).siblings('a').find('.fa').removeClass("fa-chevron-right");
+                    $(e).siblings('a').find('.fa').addClass("fa-chevron-down");
+                });
+
             }
         }
     });
