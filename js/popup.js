@@ -113,7 +113,7 @@ $().ready(function() {
     var timeout = null,
         clicks = 0,
         delay = 350;
-    $("#bookmarks").on('click', '#bLink', function selectFunction(e) {
+    $("#bookmarks").on('click', '.bLink', function selectFunction(e) {
         if (EDIT_MODE) {
             e.preventDefault();
             if (!window.event.ctrlKey) {
@@ -156,7 +156,7 @@ $().ready(function() {
         }
     });
 
-    $("#bookmarks").on('dblclick', '#bLink', function(e) {
+    $("#bookmarks").on('dblclick', '.bLink', function(e) {
         e.preventDefault();
     });
 });

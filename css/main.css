@@ -71,18 +71,18 @@ body {
     width: 315px;
     display: inline-block;
 }
-#bFolder {
+#bookmarks .bFolder {
     list-style-type: none;
     font-weight: bold;
 }
-#bFolder ul{
-     min-height: 26px;
+#bookmarks .bFolder ul{
+     min-height: 15px;
 }
-#bLink {
+#bookmarks .bLink {
     list-style-type:none;
     font-weight: normal;
 }
-#bLink:before{
+#bookmarks .bLink:before{
     padding-right: 7px;
     margin-left: -19px;
     height: 16px;
@@ -90,11 +90,11 @@ body {
     font-size: 1.333em;
     content:"\f107";
 }
-#bookmarks #bLink a {
+#bookmarks .bLink a {
     color: #333;
     text-decoration: none;
 }
-#bookmarks #bLink a:hover {
+#bookmarks .bLink a:hover {
     /*background-color: #AAAFB5;*/
 
     text-decoration: none;

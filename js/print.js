@@ -58,7 +58,7 @@ function printBookmarkFolder(bookmarkFolder, notShowChildren) {
 
 function printNode(bookmark) {
     var li = $("<li>")
-        .attr('id', 'bLink');
+        .attr('class','bLink');
     var link = $("<a />", {
         href: bookmark.url,
         text: bookmark.title
@@ -69,7 +69,7 @@ function printNode(bookmark) {
 
 function printNodeFolder(bookmark) {
     var li = $("<li>")
-        .attr('id', 'bFolder')
+        .attr('class', 'bFolder')
         .text(bookmark.title);
     return li;
 }
