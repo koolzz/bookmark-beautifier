@@ -4,8 +4,7 @@ function printBookmarks(makeSortable, slideDownChildren, showChildren, callbackL
         $('#bookmarks').empty();
         ROOT_TABS = root[0].children.length;
         root.forEach(function(folder) {
-            $('#bookmarks').append(printBookmarkFolder(folder, showChildren)
-                .css('padding-right', "2px"));
+            $('#bookmarks').append(printBookmarkFolder(folder, showChildren));
             $('#bookmarks .bFolder').each(function(index, val) {
                 var depth = $(val).parents("ul").length,
                     padding = 20;
@@ -148,7 +147,11 @@ function updateBookmarks(list, printAfter) {
 function updateBookmarkListBuffer(keys) {
     $('#bookmarks').empty();
     $('#bookmarks').append(printBookmarkFolder(keys));
-
+    $('#bookmarks .bFolder').each(function(index, val) {
+        var depth = $(val).parents("ul").length,
+            padding = 20;
+        $(val).children().find('a').css('padding-left', depth * padding);
+    });
     $('#reject').one("click", function(e) {
         e.preventDefault();
         $('#apply').unbind("click");
