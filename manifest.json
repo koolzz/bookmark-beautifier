@@ -1,6 +1,7 @@
 {
     "manifest_version": 2,
-    "name": "Bookmark beautify",
+    "name": "Bookmark beautifier",
+    "short_name":"Bbeautifier",
     "version": "0.0.0.1",
     "description": "A browser extension that sorts and organizes bookmarks, also has an edit mode.",
     "permissions": [
@@ -12,7 +13,7 @@
         "16": "icon_16.png"
     },
     "browser_action": {
-        "default_title": "My Bookmarks",
+        "default_title": "Bookmark beautifier",
         "default_icon": "icon_128.png",
         "default_popup": "popup.html"
     }
