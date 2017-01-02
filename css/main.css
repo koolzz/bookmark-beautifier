@@ -80,6 +80,9 @@ a .dropIcon:hover {
     width: 350px;
     border: none;
 }
+.search .form-group{
+    overflow-x: hidden;
+}
 #search {
     width: 350px;
     padding-right: 20px;
@@ -101,6 +104,7 @@ a .dropIcon:hover {
     transition: all .15s ease-in-out;
 }
 #edit, #add-folder, #trash {
+    margin-top: -20px;
     padding: 5 0 0 0;
     background-color: transparent;
     color: #fff;
@@ -116,20 +120,30 @@ a .dropIcon:hover {
     opacity: 0.65;
 }
 #add-folder, #trash {
-    margin-top: -21px;
     display: none;
 }
+#edit{
+    margin-left: 335px;
+}
 #add-folder {
-    margin-left: 280px;
+    margin-left: 297px;
 }
 #trash {
     padding-top: 4px;
-    margin-left: 245px;
+    margin-left: 262px;
 }
 #bookmarks ul {
     margin: 0;
     padding: 0;
     list-style-type: none;
+}
+#bookmarks :nth-child(n+1) ul:empty {
+    min-height: 20px;
+    color: #555;
+}
+#bookmarks :nth-child(n+1) ul:empty:after {
+    padding-left: 40%;
+    content: "Drag link here";
 }
 #bookmarks .bFolder a {
     display: inline-block;
@@ -140,18 +154,6 @@ a .dropIcon:hover {
     font-weight: bold;
     border-top: 1px solid #ddd;
 }
-#bookmarks :nth-child(n+1) ul:empty {
-    min-height: 20px;
-    color: #555;
-}
-#bookmarks :nth-child(n+1) ul:empty:after {
-    padding-left: 40%;
-    content: "Drag link here";
-}
-#bookmarks a:hover {
-    background-color: #369;
-    color: #FFF;
-}
 #bookmarks .bLink a {
     display: inline-block;
     color: #000;
@@ -161,6 +163,10 @@ a .dropIcon:hover {
     font-weight: normal;
     border-top: 1px solid #ddd;
     min-height: 20px;
+}
+#bookmarks a:hover {
+    background-color: #369;
+    color: #FFF;
 }
 #bookmarks .bLink a:empty{
     height: 40px;
@@ -176,6 +182,7 @@ a .dropIcon:hover {
 }
 #bookmarks .selectedLink a {
     background-color: #369;
+    color: #FFF;
 }
 #bookmarks .editSelectedVal {
     background-color: rgba(0, 0, 0, 0.1);
