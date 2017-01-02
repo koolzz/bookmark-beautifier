@@ -39,11 +39,14 @@ $().ready(function() {
     });
 
     $("#edit").click(function(e) {
+        if($(this).hasClass("disabled"))
+            return;
         EDIT_MODE = !EDIT_MODE;
         if (EDIT_MODE) {
             $('body').animate({
                 scrollTop: 300
             }, 700);
+            toggleButtons(["#sort", "#group", "#crop"]);
             showEditButtons();
             $("#bookmarks, .selectedLink").removeClass('selectedLink');
             $(".panel-heading").css("background-color", "#CF995F");
@@ -51,8 +54,9 @@ $().ready(function() {
             $('body').animate({
                 scrollTop: 1
             }, 700);
+            toggleButtons(["#sort", "#group", "#crop"]);
             hideEditButtons();
-            showFolderChildren(false);
+            //hideFolderChildren();
             $(".panel-heading").css("background-color", "#009688");
         }
     });
@@ -165,7 +169,6 @@ $().ready(function() {
 });
 
 function sortableList() {
-
     $("#bookmarks ul").each(function(key, e) {
         var group = key > 0 ? "subfolders" : "mainfolder";
         Sortable.create(e, {
@@ -179,9 +182,7 @@ function sortableList() {
             onUpdate: function(evt) {
                 var item = evt.item;
                 var href = $(item).children('a').href;
-                var title = $(item).children('a').text();
-                console.log(title);
-                console.log(href);
+                var title = $(item).children('a').text(); 
                 var index = evt.newIndex < evt.oldIndex ? evt.newIndex : evt.newIndex + 1;
                 chrome.bookmarks.search({
                     'title': title
@@ -191,7 +192,7 @@ function sortableList() {
                         'parentId': folder.parentId,
                         'index': index
                     }, function() {
-                        printBookmarks(true, false, true);
+                        printBookmarks([sortableList],true);
                     });
                 });
             },
@@ -214,8 +215,8 @@ function sortableList() {
                         chrome.bookmarks.move(folder.id, {
                             'parentId': id,
                             'index': index
-                        }, function() {
-                            printBookmarks(true, false, true);
+                        }, function() {sortableList, showFolderChildren,
+                            printBookmarks([sortableList],true);
                         });
                     });
                 });
@@ -266,7 +267,7 @@ function deleteFolder(title, url, callback) {
     }, function(result) {
         chrome.bookmarks.remove(result[0].id, function() {
             if (callback)
-                printBookmarks(true, false, true);
+                printBookmarks([sortableList],true);
         });
     });
 }
@@ -381,7 +382,7 @@ function toggleAllButtons() {
         }, 700);
     }
     toggleButtons(["#reject", "#apply"]);
-    toggleButtons(["#sort", "#group", "#crop"]);
+    toggleButtons(["#sort", "#group", "#crop","#edit"]);
 }
 
 function toggleButtons(idList) {
@@ -414,7 +415,7 @@ function searchBookmark(text) {
 
 function showEditButtons() {
     $(".search").slideUp(400, function print() {
-        printBookmarks(true, true);
+        printBookmarks([sortableList, showFolderChildren]);
     });
     $("#add-folder").fadeIn(400);
     $("#trash").fadeIn(400);
@@ -422,8 +423,9 @@ function showEditButtons() {
 }
 
 function hideEditButtons() {
+    hideFolderChildren();
     $(".search").slideDown(400, function print() {
-        printBookmarks(false);
+        printBookmarks();
     });
     $("#add-folder").fadeOut(400);
     $("#trash").fadeOut(400);
@@ -441,11 +443,11 @@ function addNewFolder(name) {
         'parentId': '1',
         'title': name
     }, function callback() {
-        printBookmarks(true, false, true, [function() {
+        printBookmarks([sortableList, function() {
             var length = -250 + $($("#bookmarks")[0].children[0].firstChild.lastChild.lastChild).offset().top - $($("#bookmarks")[0].children[0].firstChild.lastChild.firstChild).offset().top;
             $('#bookmarks').animate({
                 scrollTop: length
             }, 700);
-        }]);
+        }],true);
     });
 }

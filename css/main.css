@@ -109,8 +109,11 @@ a .dropIcon:hover {
     overflow: hidden;
     outline: none;
 }
-#edit:hover, #add-folder:hover, #trash:hover, #resetSearch:hover {
+#edit:hover:not(.disabled), #add-folder:hover, #trash:hover, #resetSearch:hover {
     color: #000000;
+}
+#edit.disabled{
+    opacity: 0.65;
 }
 #add-folder, #trash {
     margin-top: -21px;
@@ -157,11 +160,19 @@ a .dropIcon:hover {
     text-decoration: none;
     font-weight: normal;
     border-top: 1px solid #ddd;
+    min-height: 20px;
+}
+#bookmarks .bLink a:empty{
+    height: 40px;
+}
+#bookmarks .bLink a:empty:after{
+    font-style: italic;
+    content: "No title";
 }
 #bookmarks>ul {
     border-left: 1px solid #ddd;
     border-right: 1px solid #ddd;
-    border-bottom: : 1px solid #ddd;
+    border-bottom: 1px solid #ddd;
 }
 #bookmarks .selectedLink a {
     background-color: #369;

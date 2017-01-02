@@ -1,4 +1,4 @@
-function printBookmarks(makeSortable, slideDownChildren, showChildren, callbackList) {
+function printBookmarks(callbackList,showChildren) {
     chrome.bookmarks.getTree(function(root) {
         //console.log(root);
         $('#bookmarks').empty();
@@ -10,12 +10,6 @@ function printBookmarks(makeSortable, slideDownChildren, showChildren, callbackL
                     padding = 20;
                 $(val).children().find('a').css('padding-left', depth * padding);
             });
-            if (makeSortable) {
-                sortableList();
-            }
-            if (slideDownChildren) {
-                showFolderChildren(true);
-            }
             if (callbackList) {
                 for (var i = 0, len = callbackList.length; i < len; i++) {
                     callbackList[i]();
@@ -166,29 +160,29 @@ function updateBookmarkListBuffer(keys) {
     });
 }
 
-function showFolderChildren(collapse) {
+function showFolderChildren() {
     $("#bookmarks ul").each(function(key, e) {
-        if (!collapse) {
-            //ignores main ul, which shows root folders
-            if (key > 0) {
-                var parentTitle = $(e).parent().contents().filter(function() {
-                    return this.nodeType == 3;
-                })[0].nodeValue;
-                if (parentTitle === "Bookmarks bar" || parentTitle === "Other bookmarks" || parentTitle === "Mobile bookmarks")
-                    return;
-                $(e).slideUp(300, function() {
-                    $(e).siblings('a').find('.fa').removeClass("fa-chevron-down");
-                    $(e).siblings('a').find('.fa').addClass("fa-chevron-right");
-                });
-            }
-        } else {
+            var parentTitle = $(e).siblings('a').text();
+            if (parentTitle === "Bookmarks bar" || parentTitle === "Other bookmarks" || parentTitle === "Mobile bookmarks")
+                return;
             if (!$(e).is(":visible")) {
                 $(e).slideDown(300, function() {
                     $(e).siblings('a').find('.fa').removeClass("fa-chevron-right");
                     $(e).siblings('a').find('.fa').addClass("fa-chevron-down");
                 });
-
             }
+    });
+}
+function hideFolderChildren(){
+    $("#bookmarks ul").each(function(key, e) {
+        if (key > 0) {
+            var parentTitle = $(e).siblings('a').text(); 
+            if (parentTitle === "Bookmarks bar" || parentTitle === "Other bookmarks" || parentTitle === "Mobile bookmarks")
+                return;
+            $(e).slideUp(300, function() {
+                $(e).siblings('a').find('.fa').removeClass("fa-chevron-down");
+                $(e).siblings('a').find('.fa').addClass("fa-chevron-right");
+            });
         }
     });
 }
