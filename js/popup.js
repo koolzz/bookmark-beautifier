@@ -182,7 +182,7 @@ function sortableList() {
             onUpdate: function(evt) {
                 var item = evt.item;
                 var href = $(item).children('a').href;
-                var title = $(item).children('a').text(); 
+                var title = $(item).children('a').text();
                 var index = evt.newIndex < evt.oldIndex ? evt.newIndex : evt.newIndex + 1;
                 chrome.bookmarks.search({
                     'title': title
@@ -315,6 +315,11 @@ function addLinksToFolder(newFolder, list, printAfter) {
 function sortByName(a, b) {
     var aName = a.title.toLowerCase();
     var bName = b.title.toLowerCase();
+    //We want folders to always be before normal links
+    if(typeof a.url === 'undefined'&&typeof b.url != 'undefined')
+        return -1;
+    if(typeof a.url != 'undefined'&&typeof b.url === 'undefined')
+        return 1;
     return ((aName < bName) ? -1 : ((aName > bName) ? 1 : 0));
 }
 
