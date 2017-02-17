@@ -70,6 +70,10 @@ function printNode(bookmark) {
         text: bookmark.title
     });
     li.append(link);
+
+    var hostname = $('<a>').prop('href', bookmark.url).prop('hostname'); 
+    li.find("a").prepend("<img class=\"linkIcon\" src="+("https://www.google.com/s2/favicons?domain="+hostname)+"/>")
+    
     return li;
 }
 
