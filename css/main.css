@@ -65,6 +65,15 @@ a .dropIcon {
 a .dropIcon:hover {
     color: #248232;
 }
+a .linkIcon {
+    padding: 0 3px 0 0;
+    font-weight: normal;
+    background-color: transparent;
+    background-repeat: no-repeat;
+    border: none;
+    overflow: hidden;
+    outline: none;
+}
 .container {
     background: #f2f2f2;
 }
