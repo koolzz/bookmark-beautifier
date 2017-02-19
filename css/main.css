@@ -1,204 +1,78 @@
+html {
+    overflow: hidden;
+    display: block;
+}
+
 body {
-    overflow-y: scroll;
-    height: 800px;
-    width: 410px;
+    height: 600px;
+    width: 291px;
+    background-color: #009688;
 }
 
-#top {
-    height: 120;
-    margin-top: 10;
+.header {
+    background-color: #009688;
+    width: 308px;
+    height: 47px;
 }
 
-#head {
-    text-align: center;
-    padding: inherit;
+.bookmarks {
+    background-color: #ffffff;
+    height: 503px;
+    width: 308px;
 }
 
-#group {
-    position: relative;
-    left: 23;
-}
-
-#crop {
-    position: relative;
-    left: 46;
-}
-
-#tools {
-    position: relative;
-    bottom: 10;
-    right: 1;
-}
-
-#bookmarks {
-    height: 505px;
-    margin-top: 0px;
-    /* Keeps the scrollbar on jquery animate*/
-    overflow-y: auto !important;
-    overflow-x: hidden;
-    position: relative;
-}
-
-#bottom {
-    padding-bottom: 10;
-}
-
-
-}
-#apply {
-    height: 30;
-}
-
-/* Expand folder icon */
-a .dropIcon {
-    padding: 0 3px 0 0;
-    color: #555;
-    font-weight: normal;
-    background-color: transparent;
-    background-repeat: no-repeat;
-    border: none;
-    cursor: pointer;
-    overflow: hidden;
-    outline: none;
-    transition: all .2s ease-in-out;
-}
-a .dropIcon:hover {
-    color: #248232;
-}
-a .linkIcon {
-    padding: 0 3px 0 0;
-    font-weight: normal;
-    background-color: transparent;
-    background-repeat: no-repeat;
-    border: none;
-    overflow: hidden;
-    outline: none;
-}
-.container {
-    background: #f2f2f2;
-}
-#bookmarkHeading {
-    width: 315px;
-    display: inline-block;
-}
-.panel-body .form-group {
-    margin: 0;
-}
-.search {
+.footer {
+  margin-bottom: 0px;
+    background-color: #009688;
+    width: 308px;
     height: 50px;
-    width: 350px;
-    border: none;
 }
-.search .form-group{
-    overflow-x: hidden;
+
+.sort{
+  position: relative;
+  margin-left: 20px;
+  margin-top: 8px;
+  height: 29px;
+  width: 29px;
 }
+
+.group{
+  position: relative;
+  margin-left: 39px;
+  margin-top: 8px;
+  height: 34px;
+  width: 34px;
+}
+
+.cut{
+  position: relative;
+  margin-left: 39px;
+  margin-top: 8px;
+  height: 31px;
+  width: 31px;
+}
+
+.new_folder{
+  position: relative;
+  margin-left: 39px;
+  margin-top: 8px;
+  height: 30px;
+  width: 31px;
+}
+/*
 #search {
-    width: 350px;
-    padding-right: 20px;
-    display: inline-block;
-    overflow: hidden;
+  position: relative;
+  margin-left: 11px;
+    width: 280px;
+    color: #ffffff;
+    font size: 15px;
 }
-#resetSearch {
-    margin-left: 335px;
-    margin-top: -30px;
-    width: 15px;
-    padding: 0;
-    background-color: #fff;
-    background-repeat: no-repeat;
-    color: #AAAFB5;
-    border: none;
-    cursor: pointer;
-    overflow: hidden;
-    outline: none;
-    transition: all .15s ease-in-out;
+
+::-webkit-input-placeholder {
+    color: pink;
 }
-#edit, #add-folder, #trash {
-    margin-top: -20px;
-    padding: 5 0 0 0;
-    background-color: transparent;
-    color: #fff;
-    border: none;
-    cursor: pointer;
-    overflow: hidden;
-    outline: none;
-}
-#edit:hover:not(.disabled), #add-folder:hover, #trash:hover, #resetSearch:hover {
-    color: #000000;
-}
-#edit.disabled{
-    opacity: 0.65;
-}
-#add-folder, #trash {
-    display: none;
-}
-#edit{
-    margin-left: 335px;
-}
-#add-folder {
-    margin-left: 297px;
-}
-#trash {
-    padding-top: 4px;
-    margin-left: 262px;
-}
-#bookmarks ul {
-    margin: 0;
-    padding: 0;
-    list-style-type: none;
-}
-#bookmarks :nth-child(n+1) ul:empty {
-    min-height: 20px;
-    color: #555;
-}
-#bookmarks :nth-child(n+1) ul:empty:after {
-    padding-left: 40%;
-    content: "Drag link here";
-}
-#bookmarks .bFolder a {
-    display: inline-block;
-    color: #000;
-    width: 100%;
-    padding: 10px 12px 10px 8px;
-    text-decoration: none;
-    font-weight: bold;
-    border-top: 1px solid #ddd;
-}
-#bookmarks .bLink a {
-    display: inline-block;
-    color: #000;
-    width: 100%;
-    padding: 10px 3px 10px 17px;
-    text-decoration: none;
-    font-weight: normal;
-    border-top: 1px solid #ddd;
-    min-height: 20px;
-}
-#bookmarks a:hover {
-    background-color: #369;
-    color: #FFF;
-}
-#bookmarks .bLink a:empty{
-    height: 40px;
-}
-#bookmarks .bLink a:empty:after{
-    font-style: italic;
-    content: "No title";
-}
-#bookmarks>ul {
-    border-left: 1px solid #ddd;
-    border-right: 1px solid #ddd;
-    border-bottom: 1px solid #ddd;
-}
-#bookmarks .selectedLink a {
-    background-color: #369;
-    color: #FFF;
-}
-#bookmarks .editSelectedVal {
-    background-color: rgba(0, 0, 0, 0.1);
-    width: 100%;
-    padding: 10px 12px 10px 8px;
-    border-top: 1px solid #ddd;
-}
-#bookmarks .ghost a {
-    opacity: 0.4;
-}
+
+.search_icon {
+    width: 22px;
+    height: 22px;
+}*/
