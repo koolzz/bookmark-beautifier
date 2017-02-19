@@ -5,7 +5,7 @@ html {
 
 body {
     height: 600px;
-    width: 291px;
+    width: 308px;
     background-color: #009688;
 }
 
@@ -20,13 +20,17 @@ body {
 
 #search {
     position: relative;
-    margin-left: 11px;
+    margin-left: 14px;
     top: 3px;
-    width: 270px;
+    width: 280px;
     color: #ffffff;
     font size: 15px;
     display: inline-block;
     overflow: hidden;
+}
+
+#search::-webkit-input-placeholder {
+    color: #ffffff;
 }
 
 .search_icon {
@@ -43,6 +47,8 @@ body {
     background-color: #ffffff;
     height: 503px;
     width: 308px;
+    border-left: 1px double #fafbfb;
+    border-right: 1px double #fafbfb;
 }
 
 
@@ -57,7 +63,7 @@ body {
 
 .sort {
     position: relative;
-    margin-left: 20px;
+    margin-left: 28px;
     margin-top: 8px;
     height: 29px;
     width: 29px;
