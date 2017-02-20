@@ -1,4 +1,4 @@
-function printBookmarks(callbackList,showChildren) {
+function printBookmarks(callbackList, showChildren) {
     chrome.bookmarks.getTree(function(root) {
         //console.log(root);
         $('#bookmarks').empty();
@@ -26,7 +26,7 @@ function printBookmarkFolder(bookmarkFolder, notShowChildren) {
             list.append(printNode(bookmark));
         } else {
             var folder = printNodeFolder(bookmark);
-            var r = $("<button type=\"submit\" class=\"dropIcon\"><i class=\"fa fa-chevron-right\"></i></button>");
+            var r = $("<img src=\"icons/folder-arrow.png\" class=\"dropIcon\">");
             $(folder).find("a").prepend(r);
             folder.append(printBookmarkFolder(bookmark, notShowChildren));
             if (EDIT_MODE && bookmark.children.length === 0)
@@ -36,12 +36,14 @@ function printBookmarkFolder(bookmarkFolder, notShowChildren) {
                 if ($(folder).find('li').is(':visible')) {
                     $('.fa', this).removeClass("fa-chevron-down");
                     $('.fa', this).addClass("fa-chevron-right");
+                    //$('.dropIcon', this).css('transform', 'rotate(270deg)');
                     $(folder).children().hide();
                     $(folder).find('.dropIcon').show();
                     $(folder).find('a').css('display', 'inline-block');
                 } else {
                     $('.fa', this).removeClass("fa-chevron-right");
                     $('.fa', this).addClass("fa-chevron-down");
+                    //$('.dropIcon', this).css('transform', 'rotate(0deg)');
                     $(folder).children().show();
                 }
 
@@ -71,9 +73,9 @@ function printNode(bookmark) {
     });
     li.append(link);
 
-    var hostname = $('<a>').prop('href', bookmark.url).prop('hostname'); 
-    li.find("a").prepend("<img class=\"linkIcon\" src="+("https://www.google.com/s2/favicons?domain="+hostname)+"/>")
-    
+    var hostname = $('<a>').prop('href', bookmark.url).prop('hostname');
+    li.find("a").prepend("<img class=\"linkIcon\" src=" + ("https://www.google.com/s2/favicons?domain=" + hostname) + "/>")
+
     return li;
 }
 
@@ -166,21 +168,22 @@ function updateBookmarkListBuffer(keys) {
 
 function showFolderChildren() {
     $("#bookmarks ul").each(function(key, e) {
-            var parentTitle = $(e).siblings('a').text();
-            if (parentTitle === "Bookmarks bar" || parentTitle === "Other bookmarks" || parentTitle === "Mobile bookmarks")
-                return;
-            if (!$(e).is(":visible")) {
-                $(e).slideDown(300, function() {
-                    $(e).siblings('a').find('.fa').removeClass("fa-chevron-right");
-                    $(e).siblings('a').find('.fa').addClass("fa-chevron-down");
-                });
-            }
+        var parentTitle = $(e).siblings('a').text();
+        if (parentTitle === "Bookmarks bar" || parentTitle === "Other bookmarks" || parentTitle === "Mobile bookmarks")
+            return;
+        if (!$(e).is(":visible")) {
+            $(e).slideDown(300, function() {
+                $(e).siblings('a').find('.fa').removeClass("fa-chevron-right");
+                $(e).siblings('a').find('.fa').addClass("fa-chevron-down");
+            });
+        }
     });
 }
-function hideFolderChildren(){
+
+function hideFolderChildren() {
     $("#bookmarks ul").each(function(key, e) {
         if (key > 0) {
-            var parentTitle = $(e).siblings('a').text(); 
+            var parentTitle = $(e).siblings('a').text();
             if (parentTitle === "Bookmarks bar" || parentTitle === "Other bookmarks" || parentTitle === "Mobile bookmarks")
                 return;
             $(e).slideUp(300, function() {

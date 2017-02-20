@@ -11,7 +11,7 @@ $().ready(function() {
     printBookmarks();
     //deleteEmptyFolder();
 
-    $("#sort, #group, #crop").click(function(e) {
+    $(".sort, .group, .crop").click(function(e) {
         e.preventDefault();
         toggleAllButtons();
     });
@@ -29,9 +29,6 @@ $().ready(function() {
     });
     $("#learn").click(function(e) {
         window.open("https://github.com/koolzz/bookmark-beautifier", "_blank");
-    });
-    $("#backup").click(function(e) {
-        window.open("https://support.google.com/chrome/answer/96816?hl=en", "_blank");
     });
 
     $("#search").click(function(e) {

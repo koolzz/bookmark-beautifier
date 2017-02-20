@@ -29,8 +29,18 @@ body {
     overflow: hidden;
 }
 
+#search:focus {
+    border-color: inherit;
+    -webkit-box-shadow: none;
+    box-shadow: none;
+}
+
 #search::-webkit-input-placeholder {
     color: #ffffff;
+}
+
+#search:focus::-webkit-input-placeholder {
+    color: transparent
 }
 
 .search_icon {
@@ -43,12 +53,92 @@ body {
 
 /* Bookmarks */
 
-.bookmarks {
+#bookmarks {
     background-color: #ffffff;
+    overflow-y: auto !important;
+    overflow-x: hidden;
     height: 503px;
     width: 308px;
-    border-left: 1px double #fafbfb;
-    border-right: 1px double #fafbfb;
+    font size: 19px;
+}
+
+#bookmarks ul {
+    margin: 0;
+    padding: 0;
+    list-style-type: none;
+}
+
+#bookmarks :nth-child(n+1) ul:empty:after {
+    border-bottom: 1px solid #ddd;
+}
+
+#bookmarks .bFolder a {
+    display: inline-block;
+    color: #000;
+    width: 308px;
+    padding: 17px 12px 13px 8px;
+    text-decoration: none;
+    font-weight: normal;
+    border-top: 1px solid #ddd;
+    font size: 19px;
+}
+
+#bookmarks .bLink a {
+    display: inline-block;
+    color: #000;
+    width: 308px;
+    padding: 17px 3px 13px 17px;
+    text-decoration: none;
+    font-weight: normal;
+    border-top: 1px solid #ddd;
+    min-height: 20px;
+    font size: 19px;
+}
+
+#bookmarks .bLink a:empty {
+    height: 40px;
+}
+
+#bookmarks .bLink a:empty:after {
+    font-style: italic;
+    content: "No title";
+}
+
+#bookmarks>ul {
+    border-left: 1px solid #ddd;
+    border-right: 1px solid #ddd;
+    border-bottom: 1px solid #ddd;
+}
+
+#bookmarks .selectedLink a {
+    background-color: #F0F5FF;
+}
+
+#bookmarks .editSelectedVal {
+    background-color: rgba(0, 0, 0, 0.1);
+    width: 308px;
+    padding: 10px 12px 10px 8px;
+    border-top: 1px solid #ddd;
+}
+
+#bookmarks .ghost a {
+    opacity: 0.4;
+}
+
+.dropIcon {
+    position: relative;
+    margin-top: -2px;
+    /*margin-left: 13px;   только для для bookmarks bar, other bookmarks*/
+    width: 17px;
+    height: 17px;
+    transform: rotate(270deg);
+}
+
+.linkIcon {
+    position: relative;
+    margin-top: -2px;
+    width: 17px;
+    height: 17px;
 }
 
 
