@@ -4,18 +4,14 @@ var EDIT_MODE = false;
 $().ready(function() {
     'use strict';
 
-    $("#resetSearch").hide();
+    showSearchIcon();
+    showToolsBar();
 
     $(window).blur(function() {
         window.close;
     });
 
     printBookmarks();
-    //deleteEmptyFolder();
-
-    $(".sort, .group, .crop").click(function(e) {
-        e.preventDefault();
-    });
 
     $("#sort").click(function(e) {
         previewFunction(sort);
@@ -385,4 +381,14 @@ function showReserSearch() {
 function showSearchIcon() {
     $("#resetSearch").hide();
     $(".search_icon").show();
+}
+
+function showDecisionBar(){
+  $('#tools').hide();
+  $('.decision').show();
+}
+
+function showToolsBar(){
+  $('.decision').hide();
+  $('#tools').show();
 }

@@ -104,7 +104,7 @@ function previewFunction(callbackFunction) {
         root[0].children.forEach(function(folder) {
             keys.children.push(folder);
         });
-
+        showDecisionBar();
         callbackFunction(keys);
         updateBookmarkListBuffer(keys);
     });
@@ -157,17 +157,23 @@ function updateBookmarkListBuffer(keys) {
     $('#bookmarks .bFolder').each(function(index, val) {
         var depth = $(val).parents("ul").length,
             padding = 20;
-        $(val).children().find('a').css('padding-left', depth * padding);
+        if (root.id > FIRST_TABS) {
+            $(val).children().find('a').css('padding-left', depth * padding);
+        } else {
+            $(val).children().find('a').css('padding-left', depth * padding + 13);
+        }
     });
     $('#reject').one("click", function(e) {
         e.preventDefault();
         $('#apply').unbind("click");
         printBookmarks();
+        showToolsBar();
     });
     $('#apply').one("click", function(e) {
         e.preventDefault();
         $('#reject').unbind("click");
         updateBookmarks(keys, true);
+        showToolsBar();
     });
 }
 

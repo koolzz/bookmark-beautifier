@@ -169,7 +169,7 @@ body {
     height: 50px;
 }
 
-.sort {
+#sort {
     position: relative;
     margin-left: 28px;
     margin-top: 8px;
@@ -177,7 +177,7 @@ body {
     width: 29px;
 }
 
-.group {
+#group {
     position: relative;
     margin-left: 55px;
     margin-top: 8px;
@@ -185,7 +185,7 @@ body {
     width: 34px;
 }
 
-.cut {
+#crop {
     position: relative;
     margin-left: 55px;
     margin-top: 8px;
@@ -193,10 +193,30 @@ body {
     width: 31px;
 }
 
-.new_folder {
+#new_folder {
     position: relative;
     margin-left: 55px;
     margin-top: 8px;
     height: 30px;
     width: 31px;
+}
+
+.decision {
+    width: 358px;
+}
+
+#apply {
+    position: absolute;
+    width: 27px;
+    height: 27px;
+    margin-left: 124px;
+    margin-top: 11px;
+}
+
+#reject {
+    position: absolute;
+    width: 25px;
+    height: 25px;
+    margin-left: 209px;
+    margin-top: 11px;
 }
