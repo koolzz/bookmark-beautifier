@@ -50,6 +50,21 @@ body {
     height: 17px;
 }
 
+#resetSearch {
+    width: 15px;
+    position: relative;
+    left: 276px;
+    top: -27px;
+    padding: 0;
+    background-color: #009688;
+    background-repeat: no-repeat;
+    color: #ffffff;
+    border: none;
+    cursor: pointer;
+    overflow: hidden;
+    outline: none;
+    transition: all .15s ease-in-out;
+}
 
 /* Bookmarks */
 
@@ -95,6 +110,7 @@ body {
     font size: 19px;
 }
 
+
 #bookmarks .bLink a:empty {
     height: 40px;
 }
@@ -131,7 +147,19 @@ body {
     /*margin-left: 13px;   только для для bookmarks bar, other bookmarks*/
     width: 17px;
     height: 17px;
+}
+
+#root{
+  margin-left: 13px;
+}
+
+
+.right {
     transform: rotate(270deg);
+}
+
+.down {
+    transform: rotate(90deg);
 }
 
 .linkIcon {

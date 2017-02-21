@@ -3,12 +3,18 @@ function printBookmarks(callbackList, showChildren) {
         //console.log(root);
         $('#bookmarks').empty();
         ROOT_TABS = root[0].children.length;
+        FIRST_TABS = root[0].children[0].children.length;
         root.forEach(function(folder) {
             $('#bookmarks').append(printBookmarkFolder(folder, showChildren));
             $('#bookmarks .bFolder').each(function(index, val) {
                 var depth = $(val).parents("ul").length,
                     padding = 20;
-                $(val).children().find('a').css('padding-left', depth * padding);
+                if (root.id > FIRST_TABS){
+                  $(val).children().find('a').css('padding-left', depth * padding);
+                } else{
+                  $(val).children().find('a').css('padding-left', depth * padding + 13);
+                }
+
             });
             if (callbackList) {
                 for (var i = 0, len = callbackList.length; i < len; i++) {
@@ -26,24 +32,26 @@ function printBookmarkFolder(bookmarkFolder, notShowChildren) {
             list.append(printNode(bookmark));
         } else {
             var folder = printNodeFolder(bookmark);
-            var r = $("<img src=\"icons/folder-arrow.png\" class=\"dropIcon\">");
-            $(folder).find("a").prepend(r);
+
+            if (bookmark.id > ROOT_TABS) {
+                var r = $("<i class=\"fa\"><img src=\"icons/right.png\" class=\"dropIcon\"></i>");
+                $(folder).find("a").prepend(r);
+            } else {
+                var r = $("<img src=\"icons/right.png\" class=\"dropIcon\" id=\"root\">");
+                $(folder).find("a").prepend(r);
+            }
             folder.append(printBookmarkFolder(bookmark, notShowChildren));
             if (EDIT_MODE && bookmark.children.length === 0)
                 folder.addClass("is-empty");
             list.append(folder);
             $(r).click(function(e) {
                 if ($(folder).find('li').is(':visible')) {
-                    $('.fa', this).removeClass("fa-chevron-down");
-                    $('.fa', this).addClass("fa-chevron-right");
-                    //$('.dropIcon', this).css('transform', 'rotate(270deg)');
+                    $('.dropIcon', this).attr('src', 'icons/right.png');
                     $(folder).children().hide();
                     $(folder).find('.dropIcon').show();
                     $(folder).find('a').css('display', 'inline-block');
                 } else {
-                    $('.fa', this).removeClass("fa-chevron-right");
-                    $('.fa', this).addClass("fa-chevron-down");
-                    //$('.dropIcon', this).css('transform', 'rotate(0deg)');
+                    $('.dropIcon', this).attr('src', 'icons/down.png');
                     $(folder).children().show();
                 }
 
@@ -55,8 +63,7 @@ function printBookmarkFolder(bookmarkFolder, notShowChildren) {
                 $(folder).find('.dropIcon').show();
                 $(folder).find('a').css('display', 'inline-block');
             } else {
-                $(folder).children('a').find('.fa').removeClass("fa-chevron-right");
-                $(folder).children('a').find('.fa').addClass("fa-chevron-down");
+                $(folder).children('a').find('.dropIcon').attr('src', 'icons/down.png');
             }
 
         }
@@ -156,13 +163,11 @@ function updateBookmarkListBuffer(keys) {
         e.preventDefault();
         $('#apply').unbind("click");
         printBookmarks();
-        toggleAllButtons();
     });
     $('#apply').one("click", function(e) {
         e.preventDefault();
         $('#reject').unbind("click");
         updateBookmarks(keys, true);
-        toggleAllButtons();
     });
 }
 
@@ -173,8 +178,7 @@ function showFolderChildren() {
             return;
         if (!$(e).is(":visible")) {
             $(e).slideDown(300, function() {
-                $(e).siblings('a').find('.fa').removeClass("fa-chevron-right");
-                $(e).siblings('a').find('.fa').addClass("fa-chevron-down");
+                $(e).siblings('a').find('.dropIcon').attr('src', 'icons/down.png');
             });
         }
     });
@@ -187,8 +191,7 @@ function hideFolderChildren() {
             if (parentTitle === "Bookmarks bar" || parentTitle === "Other bookmarks" || parentTitle === "Mobile bookmarks")
                 return;
             $(e).slideUp(300, function() {
-                $(e).siblings('a').find('.fa').removeClass("fa-chevron-down");
-                $(e).siblings('a').find('.fa').addClass("fa-chevron-right");
+                $(e).siblings('a').find('.dropIcon').attr('src', 'icons/right.png');
             });
         }
     });

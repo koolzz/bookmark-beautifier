@@ -1,3 +1,4 @@
+
 function sort(list) {
     list.children.sort(sortByName);
     list.children.forEach(function(folder) {

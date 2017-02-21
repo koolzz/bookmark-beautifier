@@ -4,6 +4,8 @@ var EDIT_MODE = false;
 $().ready(function() {
     'use strict';
 
+    $("#resetSearch").hide();
+
     $(window).blur(function() {
         window.close;
     });
@@ -13,7 +15,6 @@ $().ready(function() {
 
     $(".sort, .group, .crop").click(function(e) {
         e.preventDefault();
-        toggleAllButtons();
     });
 
     $("#sort").click(function(e) {
@@ -33,29 +34,6 @@ $().ready(function() {
 
     $("#search").click(function(e) {
         $("#search").select();
-    });
-
-    $("#edit").click(function(e) {
-        if($(this).hasClass("disabled"))
-            return;
-        EDIT_MODE = !EDIT_MODE;
-        if (EDIT_MODE) {
-            $('body').animate({
-                scrollTop: 300
-            }, 700);
-            toggleButtons(["#sort", "#group", "#crop"]);
-            showEditButtons();
-            $("#bookmarks, .selectedLink").removeClass('selectedLink');
-            $(".panel-heading").css("background-color", "#CF995F");
-        } else {
-            $('body').animate({
-                scrollTop: 1
-            }, 700);
-            toggleButtons(["#sort", "#group", "#crop"]);
-            hideEditButtons();
-            //hideFolderChildren();
-            $(".panel-heading").css("background-color", "#009688");
-        }
     });
 
     $('#add-folder').click(function(e) {
@@ -101,6 +79,7 @@ $().ready(function() {
             $('#resetSearch').click(function(event) {
                 if ($(event.target).closest("#search, #tools, #desision").length) return;
                 printBookmarks();
+                showSearchIcon();
                 $('#resetSearch').unbind("click");
                 $("#search").val('');
                 event.stopPropagation();
@@ -109,6 +88,7 @@ $().ready(function() {
                 $("#search").val('');
                 printBookmarks();
             } else {
+                showReserSearch();
                 searchBookmark($(this).val().trim());
             }
         }
@@ -189,7 +169,7 @@ function sortableList() {
                         'parentId': folder.parentId,
                         'index': index
                     }, function() {
-                        printBookmarks([sortableList],true);
+                        printBookmarks([sortableList], true);
                     });
                 });
             },
@@ -212,8 +192,10 @@ function sortableList() {
                         chrome.bookmarks.move(folder.id, {
                             'parentId': id,
                             'index': index
-                        }, function() {sortableList, showFolderChildren,
-                            printBookmarks([sortableList],true);
+                        }, function() {
+                            sortableList,
+                            showFolderChildren,
+                            printBookmarks([sortableList], true);
                         });
                     });
                 });
@@ -264,7 +246,7 @@ function deleteFolder(title, url, callback) {
     }, function(result) {
         chrome.bookmarks.remove(result[0].id, function() {
             if (callback)
-                printBookmarks([sortableList],true);
+                printBookmarks([sortableList], true);
         });
     });
 }
@@ -313,9 +295,9 @@ function sortByName(a, b) {
     var aName = a.title.toLowerCase();
     var bName = b.title.toLowerCase();
     //We want folders to always be before normal links
-    if(typeof a.url === 'undefined'&&typeof b.url != 'undefined')
+    if (typeof a.url === 'undefined' && typeof b.url != 'undefined')
         return -1;
-    if(typeof a.url != 'undefined'&&typeof b.url === 'undefined')
+    if (typeof a.url != 'undefined' && typeof b.url === 'undefined')
         return 1;
     return ((aName < bName) ? -1 : ((aName > bName) ? 1 : 0));
 }
@@ -361,44 +343,6 @@ function updateVal(currentLi, oldVal, url) {
 
 }
 
-function toggleAllButtons() {
-    if ($("#sort").hasClass("disabled")) {
-        $('#bookmarks').animate({
-            height: 505
-        }, 600);
-        $(".search").slideDown(600);
-        $("#decision").slideUp(500, function() {
-            $("#decision").css('display', 'none');
-        });
-        $('body').animate({
-            scrollTop: 1
-        }, 700);
-    } else {
-        $(".search").slideUp(600);
-        $('#bookmarks').animate({
-            height: 475
-        }, 600);
-        $("#decision").slideDown(500);
-        $('body').animate({
-            scrollTop: 300
-        }, 700);
-    }
-    toggleButtons(["#reject", "#apply"]);
-    toggleButtons(["#sort", "#group", "#crop","#edit"]);
-}
-
-function toggleButtons(idList) {
-    idList.forEach(function(id) {
-        var button = $(id);
-        if (button.hasClass("disabled")) {
-            button.removeClass("disabled");
-            button.addClass("active");
-        } else {
-            button.removeClass("active");
-            button.addClass("disabled");
-        }
-    });
-}
 
 function searchBookmark(text) {
     var keys = {
@@ -415,31 +359,6 @@ function searchBookmark(text) {
     });
 }
 
-function showEditButtons() {
-    $(".search").slideUp(400, function print() {
-        printBookmarks([sortableList, showFolderChildren]);
-    });
-    $("#add-folder").fadeIn(400);
-    $("#trash").fadeIn(400);
-    $("#search").val('');
-}
-
-function hideEditButtons() {
-    hideFolderChildren();
-    $(".search").slideDown(400, function print() {
-        printBookmarks();
-    });
-    $("#add-folder").fadeOut(400);
-    $("#trash").fadeOut(400);
-    $("#search").val('');
-    $('#search').attr("placeholder", "Type bookmark name");
-}
-
-function showSearchLine() {
-    $(".search").slideDown(400);
-    $('#search').attr("placeholder", "New folder name");
-}
-
 function addNewFolder(name) {
     chrome.bookmarks.create({
         'parentId': '1',
@@ -450,6 +369,20 @@ function addNewFolder(name) {
             $('#bookmarks').animate({
                 scrollTop: length
             }, 700);
-        }],true);
+        }], true);
     });
+}
+
+function showSearchLine(){
+
+}
+
+function showReserSearch(){
+  $("#resetSearch").show();
+  $(".search_icon").hide();
+}
+
+function showSearchIcon(){
+  $("#resetSearch").hide();
+  $(".search_icon").show();
 }
