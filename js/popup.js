@@ -373,16 +373,16 @@ function addNewFolder(name) {
     });
 }
 
-function showSearchLine(){
+function showSearchLine() {
 
 }
 
-function showReserSearch(){
-  $("#resetSearch").show();
-  $(".search_icon").hide();
+function showReserSearch() {
+    $("#resetSearch").show();
+    $(".search_icon").hide();
 }
 
-function showSearchIcon(){
-  $("#resetSearch").hide();
-  $(".search_icon").show();
+function showSearchIcon() {
+    $("#resetSearch").hide();
+    $(".search_icon").show();
 }

@@ -66,6 +66,7 @@ body {
     transition: all .15s ease-in-out;
 }
 
+
 /* Bookmarks */
 
 #bookmarks {
@@ -95,7 +96,7 @@ body {
     text-decoration: none;
     font-weight: normal;
     border-top: 1px solid #ddd;
-    font size: 19px;
+    font size: 15px;
 }
 
 #bookmarks .bLink a {
@@ -109,7 +110,6 @@ body {
     min-height: 20px;
     font size: 19px;
 }
-
 
 #bookmarks .bLink a:empty {
     height: 40px;
@@ -144,22 +144,12 @@ body {
 .dropIcon {
     position: relative;
     margin-top: -2px;
-    /*margin-left: 13px;   только для для bookmarks bar, other bookmarks*/
-    width: 17px;
+    width: 22px;
     height: 17px;
 }
 
-#root{
-  margin-left: 13px;
-}
-
-
-.right {
-    transform: rotate(270deg);
-}
-
-.down {
-    transform: rotate(90deg);
+#root {
+    margin-left: 13px;
 }
 
 .linkIcon {

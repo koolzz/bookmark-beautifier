@@ -9,10 +9,10 @@ function printBookmarks(callbackList, showChildren) {
             $('#bookmarks .bFolder').each(function(index, val) {
                 var depth = $(val).parents("ul").length,
                     padding = 20;
-                if (root.id > FIRST_TABS){
-                  $(val).children().find('a').css('padding-left', depth * padding);
-                } else{
-                  $(val).children().find('a').css('padding-left', depth * padding + 13);
+                if (root.id > FIRST_TABS) {
+                    $(val).children().find('a').css('padding-left', depth * padding);
+                } else {
+                    $(val).children().find('a').css('padding-left', depth * padding + 13);
                 }
 
             });
@@ -37,7 +37,7 @@ function printBookmarkFolder(bookmarkFolder, notShowChildren) {
                 var r = $("<i class=\"fa\"><img src=\"icons/right.png\" class=\"dropIcon\"></i>");
                 $(folder).find("a").prepend(r);
             } else {
-                var r = $("<img src=\"icons/right.png\" class=\"dropIcon\" id=\"root\">");
+                var r = $("<i class=\"fa\"><img src=\"icons/right.png\" class=\"dropIcon\" id=\"root\"> </i>");
                 $(folder).find("a").prepend(r);
             }
             folder.append(printBookmarkFolder(bookmark, notShowChildren));
