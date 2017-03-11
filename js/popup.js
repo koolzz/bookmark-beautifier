@@ -11,7 +11,7 @@ $().ready(function() {
         window.close;
     });
 
-    printBookmarks();
+    printBookmarks([sortableList]);
 
     $("#sort").click(function(e) {
         previewFunction(sort);
@@ -165,7 +165,7 @@ function sortableList() {
                         'parentId': folder.parentId,
                         'index': index
                     }, function() {
-                        printBookmarks([sortableList], true);
+                        printBookmarks([sortableList]);
                     });
                 });
             },
