@@ -52,6 +52,7 @@ $().ready(function() {
             });
         }
         hideTrashIcon();
+        showToolsBar();
     });
 
     $("#create_new_folder").keyup(function(e) {
@@ -478,5 +479,4 @@ function showTrashIcon() {
 
 function hideTrashIcon(){
   $("#trash").animate({top: 560, opacity:'0'},500);
-  $("#trash").hide();
 }
