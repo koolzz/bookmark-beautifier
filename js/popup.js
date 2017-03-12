@@ -36,6 +36,11 @@ $().ready(function() {
         showNewFolderBar();
     });
 
+    $("#reject_folder").click(function() {
+        $("#create_new_folder").val('');
+        showToolsBar();
+    });
+
     $('#trash').click(function(e) {
         var list = $(".selectedLink");
         var r = confirm("Delete " + list.length + " selected bookmarks?");
@@ -57,11 +62,6 @@ $().ready(function() {
             }
             showToolsBar();
         }
-
-        $("#reject_folder").click(function() {
-            $("#create_new_folder").val('');
-            showToolsBar();
-        });
 
         $("#apply_folder").click(function() {
           if ($("#create_new_folder").val().trim().length != 0) {
