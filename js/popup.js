@@ -32,12 +32,8 @@ $().ready(function() {
         $("#search").select();
     });
 
-    $('#add-folder').click(function(e) {
-        if ($(".search").is(":visible")) {
-            $(".search").slideUp(400);
-        } else {
-            showSearchLine();
-        }
+    $('#new_folder').click(function(e) {
+        showNewFolderBar();
     });
 
     $('#trash').click(function(e) {
@@ -49,48 +45,53 @@ $().ready(function() {
                 var link = bookmark.children[0];
                 deleteFolder(link.text, link.href, (key === list.length - 1) ? true : false);
             });
-            hideTrashIcon();
         }
+        hideTrashIcon();
     });
 
-    $("#search").keyup(function() {
-        if (EDIT_MODE) {
-            $(this).keypress(function(e) {
-                if (e.which == 13) {
-                    if ($(this).val().trim().length != 0) {
-                        addNewFolder($(this).val().trim());
-                        $("#search").val('');
-                    }
-                }
-            });
-
-            $('#resetSearch').click(function(event) {
-                if ($(event.target).closest("#search, #tools, #desision").length) return;
-                $('#resetSearch').unbind("click");
-                $("#search").val('');
-                event.stopPropagation();
-            });
-        } else {
-            if ($("#sort").hasClass("disabled"))
-                return;
-            $('#resetSearch').click(function(event) {
-                if ($(event.target).closest("#search, #tools, #desision").length) return;
-                printBookmarks();
-                showSearchIcon();
-                $('#resetSearch').unbind("click");
-                $("#search").val('');
-                event.stopPropagation();
-            });
-            if ($(this).val().trim().length === 0) {
-                $("#search").val('');
-                showSearchIcon();
-                printBookmarks();
-            } else {
-                showReserSearch();
-                searchBookmark($(this).val().trim());
+    $("#create_new_folder").keyup(function(e) {
+        if (e.which == 13) {
+            if ($(this).val().trim().length != 0) {
+                addNewFolder($(this).val().trim());
+                $("#create_new_folder").val('');
             }
+            showToolsBar();
         }
 
+        $("#reject_folder").click(function() {
+            $("#create_new_folder").val('');
+            showToolsBar();
+        });
+
+        $("#apply_folder").click(function() {
+          if ($("#create_new_folder").val().trim().length != 0) {
+              addNewFolder($("#create_new_folder").val().trim());
+              $("#create_new_folder").val('');
+          }
+          showToolsBar();
+        });
+
+      });
+
+    $("#search").keyup(function() {
+        if ($("#sort").hasClass("disabled"))
+            return;
+        $('#resetSearch').click(function(event) {
+            if ($(event.target).closest("#search, #tools, #desision").length) return;
+            printBookmarks();
+            showSearchIcon();
+            $('#resetSearch').unbind("click");
+            $("#search").val('');
+            event.stopPropagation();
+        });
+        if ($(this).val().trim().length === 0) {
+            $("#search").val('');
+            showSearchIcon();
+            printBookmarks();
+        } else {
+            showReserSearch();
+            searchBookmark($(this).val().trim());
+        }
     });
     var timeout = null,
         openLink = null,
@@ -441,10 +442,6 @@ function addNewFolder(name) {
     });
 }
 
-function showSearchLine() {
-  //add folder
-}
-
 function showReserSearch() {
     $("#resetSearch").show();
     $(".search_icon").hide();
@@ -462,9 +459,17 @@ function showDecisionBar() {
 
 function showToolsBar() {
     $('.decision').hide();
+    $('.add_new_folder').hide();
     $('#tools').show();
 }
 
+// New Folder section
+function showNewFolderBar(){
+  $('#tools').hide();
+  $('.add_new_folder').show();
+}
+
+// trash icon
 function showTrashIcon() {
   $("#trash").animate({top: 500, opacity:'1'},500);
 }
