@@ -460,6 +460,7 @@ function showDecisionBar() {
 function showToolsBar() {
     $('.decision').hide();
     $('.add_new_folder').hide();
+    $('#trash').hide();
     $('#tools').show();
 }
 
@@ -471,9 +472,11 @@ function showNewFolderBar(){
 
 // trash icon
 function showTrashIcon() {
+  $("#trash").show();
   $("#trash").animate({top: 500, opacity:'1'},500);
 }
 
 function hideTrashIcon(){
   $("#trash").animate({top: 560, opacity:'0'},500);
+  $("#trash").hide();
 }
