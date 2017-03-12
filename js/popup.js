@@ -91,48 +91,95 @@ $().ready(function() {
 
     });
     var timeout = null,
+        openLink = null,
         clicks = 0,
-        delay = 350;
-    $("#bookmarks").on('click', '.bLink', function selectFunction(e) {
-        if (EDIT_MODE) {
-            e.preventDefault();
-            if (!window.event.ctrlKey) {
-                $(".selectedLink").removeClass("selectedLink");
-            }
-            clicks++;
-            var li = $(e.target).is('a') ? $(e.currentTarget) : $(e.target);
-            if (clicks === 1) {
-                if (li.hasClass("selectedLink")) {
+        openLinkDelay = 300,
+        editLinkdelay = 300;
+    $("#bookmarks").on('click', '.bLink', '.selectedLink', function selectFunction(e) {
+        e.preventDefault();
+        clicks++;
+        var li = $(e.currentTarget);
+        if (clicks === 1) {
+            if (li.hasClass("selectedLink")) {
+                /* Click on already selected target
+                 *
+                 * If pressing ctrl
+                 *   Check for ctrl press, deselect on repeated click when in ctrl mode
+                 *
+                 * Else
+                 *   open link after delay
+                 *   delay is used to distingwish between doubleclick for editing title
+                 */
+
+                if (window.event.ctrlKey) {
                     li.removeClass("selectedLink");
                     clicks = 0;
                 } else {
-                    li.addClass("selectedLink");
-                    timeout = setTimeout(function() {
-                        clicks = 0;
-                    }, delay);
+                    if ($(".selectedLink").length > 1) {
+                        $(".selectedLink").removeClass("selectedLink");
+                        li.addClass("selectedLink");
+                        timeout = setTimeout(function() {
+                            clicks = 0;
+                        }, editLinkdelay);
+                        return;
+                    } else {
+                        openLink = setTimeout(function() {
+                            window.open($(li)[0].children[0].href, "_blank");
+                        }, openLinkDelay);
+                    }
                 }
             } else {
-                clicks = 0;
-                li.removeClass("selectedLink");
-                clearTimeout(timeout);
-                if (window.event.ctrlKey)
-                    return
-                if ($('#bookmarks').find('.editSelectedVal').length != 0)
-                    return;
-                var target = $(e.target).is('a') ? e.currentTarget : e.target;
-                var oldVal = $(target).children()[0].text;
-                var url = $(target).children()[0].href;
-                updateVal($(target), oldVal, url);
-
-            }
-        } else {
-            var li = $(e.currentTarget);
-            if (li.hasClass("selectedLink")) {
-                window.open(li[0].children[0].href, "_blank");
-            } else {
-                $("#bookmarks, .selectedLink").removeClass('selectedLink');
+                /* Click on non selected link
+                 *
+                 * If pressing ctrl
+                 *   select link
+                 *
+                 * Else
+                 *   deselect all selected links, select clicked one
+                 */
+                clearTimeout(openLink);
+                if (window.event.ctrlKey) {
+                    clicks = 0;
+                } else {
+                    timeout = setTimeout(function() {
+                        clicks = 0;
+                    }, editLinkdelay);
+                    $(".selectedLink").removeClass("selectedLink");
+                }
                 li.addClass("selectedLink");
             }
+        } else {
+            /* Double click detected
+             *
+             * Clear timeouts to avoid openning links
+             *
+             * If link is not selected or in ctrl mode don't enter edit mode
+             */
+            clearTimeout(openLink);
+            clearTimeout(timeout);
+            if (!li.hasClass("selectedLink")) {
+                if (!window.event.ctrlKey) {
+                    timeout = setTimeout(function() {
+                        clicks = 0;
+                    }, editLinkdelay);
+                    $(".selectedLink").removeClass("selectedLink");
+                }
+                li.addClass("selectedLink");
+                return;
+            } else {
+                clicks = 0;
+            }
+            if (window.event.ctrlKey)
+                return;
+            if ($('#bookmarks').find('.editSelectedVal').length != 0)
+                return;
+
+            li.removeClass("selectedLink");
+            var target = li;
+            var oldVal = li.children()[0].text;
+            var url = li.children()[0].href;
+            updateVal(li[0], oldVal, url);
+
         }
     });
 
@@ -318,12 +365,25 @@ function rename(oldTitle, url, newTitle) {
 }
 
 function updateVal(currentLi, oldVal, url) {
+    var depth = $(currentLi).parents("ul").length - 1,
+        padding = 20,
+        hostname = $('<a>').prop('href', url).prop('hostname');
+
     $(currentLi).html('<input class="editSelectedVal" type="text" value="' + oldVal + '" />');
+    $(currentLi).find('.editSelectedVal').css('padding-left', depth * padding + 13);
     $(".editSelectedVal").focus();
     $(".editSelectedVal").keyup(function(event) {
         if (event.keyCode == 13) {
             rename(oldVal, url, $(".editSelectedVal").val().trim());
-            $(currentLi).html('<a href="' + url + '">' + $(".editSelectedVal").val().trim() + '</a>');
+            var li = $(currentLi);
+            var a = $("<a>")
+                .attr('href', url)
+                .text($(".editSelectedVal").val().trim());
+            li.empty();
+            li.append(a[0]);
+            li.find('a').prepend("<img class=\"linkIcon\" src=" + ("https://www.google.com/s2/favicons?domain=" + hostname) + "/>");
+            li.find('a').css('padding-left', depth * padding + 13);
+
         }
     });
     setTimeout(function() {
@@ -331,7 +391,16 @@ function updateVal(currentLi, oldVal, url) {
             if ($(e.target).is(".editSelectedVal")) {
                 return;
             } else {
-                $(".editSelectedVal").parent("li").html('<a href="' + url + '">' + oldVal + '</a>');
+                var hostname = $('<a>').prop('href', url).prop('hostname');
+                var li = $(".editSelectedVal").parent("li");
+
+                var a = $("<a>")
+                    .attr('href', url)
+                    .text(oldVal);
+                li.empty();
+                li.append(a[0]);
+                li.find('a').prepend("<img class=\"linkIcon\" src=" + ("https://www.google.com/s2/favicons?domain=" + hostname) + "/>");
+                li.find('a').css('padding-left', depth * padding + 13);
                 $(document).unbind("click");
             }
         });
@@ -383,12 +452,12 @@ function showSearchIcon() {
     $(".search_icon").show();
 }
 
-function showDecisionBar(){
-  $('#tools').hide();
-  $('.decision').show();
+function showDecisionBar() {
+    $('#tools').hide();
+    $('.decision').show();
 }
 
-function showToolsBar(){
-  $('.decision').hide();
-  $('#tools').show();
+function showToolsBar() {
+    $('.decision').hide();
+    $('#tools').show();
 }

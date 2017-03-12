@@ -103,7 +103,7 @@ body {
     display: inline-block;
     color: #000;
     width: 358px;
-    padding: 17px 3px 13px 17px;
+    padding: 14px 3px 14px 17px;
     text-decoration: none;
     font-weight: normal;
     border-top: 1px solid #ddd;
@@ -133,8 +133,8 @@ body {
 #bookmarks .editSelectedVal {
     background-color: rgba(0, 0, 0, 0.1);
     width: 358px;
-    padding: 10px 12px 10px 8px;
-    border-top: 1px solid #ddd;
+    padding: 14px 12px 14px 8px;
+    border: none;
 }
 
 #bookmarks .ghost a {
@@ -155,6 +155,7 @@ body {
 .linkIcon {
     position: relative;
     margin-top: -2px;
+    margin-right: 6px;
     width: 17px;
     height: 17px;
 }
