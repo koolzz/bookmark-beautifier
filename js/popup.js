@@ -49,6 +49,7 @@ $().ready(function() {
                 var link = bookmark.children[0];
                 deleteFolder(link.text, link.href, (key === list.length - 1) ? true : false);
             });
+            hideTrashIcon();
         }
     });
 
@@ -82,6 +83,7 @@ $().ready(function() {
             });
             if ($(this).val().trim().length === 0) {
                 $("#search").val('');
+                showSearchIcon();
                 printBookmarks();
             } else {
                 showReserSearch();
@@ -100,6 +102,7 @@ $().ready(function() {
         clicks++;
         var li = $(e.currentTarget);
         if (clicks === 1) {
+            showTrashIcon();
             if (li.hasClass("selectedLink")) {
                 /* Click on already selected target
                  *
@@ -439,7 +442,7 @@ function addNewFolder(name) {
 }
 
 function showSearchLine() {
-
+  //add folder
 }
 
 function showReserSearch() {
@@ -460,4 +463,12 @@ function showDecisionBar() {
 function showToolsBar() {
     $('.decision').hide();
     $('#tools').show();
+}
+
+function showTrashIcon() {
+  $("#trash").animate({top: 500, opacity:'1'},500);
+}
+
+function hideTrashIcon(){
+  $("#trash").animate({top: 560, opacity:'0'},500);
 }

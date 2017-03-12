@@ -221,3 +221,12 @@ body {
     margin-left: 209px;
     margin-top: 11px;
 }
+
+#trash{
+  position: absolute;
+  opacity: 0;
+  top: 560px;
+  width: 4rem;
+  height: 4rem;
+  left: 160;
+}
