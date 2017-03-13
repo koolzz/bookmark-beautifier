@@ -68,14 +68,14 @@ $().ready(function() {
         }
 
         $("#apply_folder").click(function() {
-          if ($("#create_new_folder").val().trim().length != 0) {
-              addNewFolder($("#create_new_folder").val().trim());
-              $("#create_new_folder").val('');
-          }
-          showToolsBar();
+            if ($("#create_new_folder").val().trim().length != 0) {
+                addNewFolder($("#create_new_folder").val().trim());
+                $("#create_new_folder").val('');
+            }
+            showToolsBar();
         });
 
-      });
+    });
 
     $("#search").keyup(function() {
         if ($("#sort").hasClass("disabled"))
@@ -106,7 +106,7 @@ $().ready(function() {
         e.preventDefault();
         var li = $(e.currentTarget);
 
-        if (li.find(".editSelectedVal").length>0) {
+        if (li.find(".editSelectedVal").length > 0) {
             return;
         }
 
@@ -462,30 +462,39 @@ function showSearchIcon() {
 }
 
 function showDecisionBar() {
-    $('#tools').hide();
-    $('.decision').animate({opacity:1},200);
+    $('#tools').hide(200, function() {
+        $('.decision').show(200);
+    });
+
 }
 
 function showToolsBar() {
-    $('.decision').animate({opacity:0},200);
+    $('.decision').hide();
     $('.add_new_folder').hide();
     $('#trash').hide();
-    $('#tools').show();
+    $('#tools').show(400);
 }
 
 // New Folder section
-function showNewFolderBar(){
-  $('#tools').hide();
-  $('.add_new_folder').show();
+function showNewFolderBar() {
+    $('#tools').hide(200, function() {
+        $('.add_new_folder').show(300);
+    });
 }
 
 // trash icon
 function showTrashIcon() {
-  $("#trash").show();
-  $("#trash").animate({top: 500, opacity:1},500);
+    $("#trash").show();
+    $("#trash").animate({
+        top: 500,
+        opacity: 1
+    }, 500);
 }
 
-function hideTrashIcon(){
-  $("#trash").animate({top: 560, opacity:0},500);
-  showToolsBar();
+function hideTrashIcon() {
+    $("#trash").animate({
+        top: 560,
+        opacity: 0
+    }, 500);
+    showToolsBar();
 }
