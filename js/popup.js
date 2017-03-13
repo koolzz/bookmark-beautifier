@@ -101,8 +101,13 @@ $().ready(function() {
         editLinkdelay = 300;
     $("#bookmarks").on('click', '.bLink', '.selectedLink', function selectFunction(e) {
         e.preventDefault();
-        clicks++;
         var li = $(e.currentTarget);
+        
+        if (li.find(".editSelectedVal").length>0) {
+            return;
+        }
+        
+        clicks++;
         if (clicks === 1) {
             showTrashIcon();
             if (li.hasClass("selectedLink")) {
