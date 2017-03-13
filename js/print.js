@@ -97,6 +97,7 @@ function printNodeFolder(bookmark) {
 }
 
 function previewFunction(callbackFunction) {
+    hideTrashIcon();
     var keys = {
         children: []
     };

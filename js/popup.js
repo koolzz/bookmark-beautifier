@@ -15,17 +15,14 @@ $().ready(function() {
 
     $("#sort").click(function(e) {
         previewFunction(sort);
-        hideTrashIcon();
     });
 
     $("#group").click(function(e) {
         previewFunction(group);
-        hideTrashIcon();
     });
 
     $("#crop").click(function(e) {
         previewFunction(crop);
-        hideTrashIcon();
     });
 
     $("#learn").click(function(e) {
@@ -126,6 +123,9 @@ $().ready(function() {
 
                 if (window.event.ctrlKey) {
                     li.removeClass("selectedLink");
+                    if ($(".selectedLink").length ==0) {
+                        hideTrashIcon();
+                    }
                     clicks = 0;
                 } else {
                     if ($(".selectedLink").length > 1) {
@@ -495,6 +495,5 @@ function hideTrashIcon() {
     $("#trash").animate({
         top: 560,
         opacity: 0
-    }, 500);
-    showToolsBar();
+    }, 250);
 }
