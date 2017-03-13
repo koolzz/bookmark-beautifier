@@ -15,14 +15,17 @@ $().ready(function() {
 
     $("#sort").click(function(e) {
         previewFunction(sort);
+        hideTrashIcon();
     });
 
     $("#group").click(function(e) {
         previewFunction(group);
+        hideTrashIcon();
     });
 
     $("#crop").click(function(e) {
         previewFunction(crop);
+        hideTrashIcon();
     });
     $("#learn").click(function(e) {
         window.open("https://github.com/koolzz/bookmark-beautifier", "_blank");
@@ -52,7 +55,6 @@ $().ready(function() {
             });
         }
         hideTrashIcon();
-        showToolsBar();
     });
 
     $("#create_new_folder").keyup(function(e) {
@@ -102,11 +104,11 @@ $().ready(function() {
     $("#bookmarks").on('click', '.bLink', '.selectedLink', function selectFunction(e) {
         e.preventDefault();
         var li = $(e.currentTarget);
-        
+
         if (li.find(".editSelectedVal").length>0) {
             return;
         }
-        
+
         clicks++;
         if (clicks === 1) {
             showTrashIcon();
@@ -484,4 +486,5 @@ function showTrashIcon() {
 
 function hideTrashIcon(){
   $("#trash").animate({top: 560, opacity:'0'},500);
+  showToolsBar();
 }
