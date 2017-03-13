@@ -69,6 +69,14 @@ body {
 
 /* Bookmarks */
 
+#learn {
+  position: absolute;
+  width: 1.5rem;
+  height: 1.5rem;
+  top: 60px;
+  right: 30px;
+}
+
 #bookmarks {
     background-color: #ffffff;
     overflow-y: auto !important;

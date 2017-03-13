@@ -27,6 +27,7 @@ $().ready(function() {
         previewFunction(crop);
         hideTrashIcon();
     });
+    
     $("#learn").click(function(e) {
         window.open("https://github.com/koolzz/bookmark-beautifier", "_blank");
     });
