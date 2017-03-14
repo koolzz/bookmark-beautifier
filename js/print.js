@@ -122,14 +122,17 @@ function updateBookmarks(list, printAfter) {
                     folder.children.forEach(function(bookmark) {
                         bookmark.parentId = e.id;
                     });
-                    if (key === list.children.length - 1)
+                    if (printAfter && key === list.children.length - 1)
                         updateBookmarks(folder, true);
                     else
                         updateBookmarks(folder, false);
                 });
                 return;
             } else {
-                updateBookmarks(folder, false);
+                if (key === list.children.length - 1)
+                    updateBookmarks(folder, true);
+                else
+                    updateBookmarks(folder, false);
             }
         }
 
@@ -141,13 +144,13 @@ function updateBookmarks(list, printAfter) {
                 'title': folder.title
             });
         }
-
         chrome.bookmarks.move(String(folder.id), {
             'parentId': folder.parentId,
             'index': key
         }, function callback() {
-            if (printAfter && key === list.children.length - 1)
-                printBookmarks();
+            if (printAfter && key === list.children.length - 1){
+                printBookmarks([sortableList]);
+            }
         });
     });
 }
@@ -167,7 +170,7 @@ function updateBookmarkListBuffer(keys) {
     $('#reject').one("click", function(e) {
         e.preventDefault();
         $('#apply').unbind("click");
-        printBookmarks();
+        printBookmarks([sortableList]);
         showToolsBar();
     });
     $('#apply').one("click", function(e) {

@@ -224,6 +224,7 @@ function sortableList() {
                 put: true
             },
             ghostClass: "sortable-ghost",
+            filter:".editSelectedVal",
             animation: 150,
             onUpdate: function(evt) {
                 var item = evt.item;
