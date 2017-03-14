@@ -1,6 +1,7 @@
 <html>
 
 <head>
+
     <script src="js/jquery.min.js"></script>
     <script src="js/popup.js"></script>
     <script src="js/print.js"></script>
@@ -16,48 +17,33 @@
 </head>
 
 <body>
-    <div class="container">
-        <div id="top" class="panel panel-default">
-            <div id="head" class="panel-body">
-                <h2>Bookmark manager</h2>
-                <a class="btn btn-primary btn-lg" id="learn">Learn more</a>
-                <a class="btn btn-primary btn-lg" id="backup">Backup</a>
-            </div>
-        </div>
+    <div class="header">
+        <input type="text" class="form-control" id="search" placeholder="Search">
+        <img src="icons/search.png" class="search_icon" />
+        <button type="submit" id="resetSearch"><i class="fa fa-close fa-lg"></i></button>
     </div>
+    <img src="icons/question-mark.svg" id="learn" />
+    <div id="bookmarks">
 
-    <div class="container">
-        <p class="bs-component" id="tools" style="margin-bottom: 0px">
-            <a href="#" id="sort" class="btn btn-raised btn-success" title="Sorts all your bookmarks in alphabetical order">Sort</a>
-            <a href="#" id="group" class="btn btn-raised btn-info" title="If you have bookmarks with a single domain, the plugin adds them to a folder">Group</a>
-            <a href="#" id="crop" class="btn btn-raised btn-warning" title="Change name of the bookmark">Shorten</a>
-        </p>
     </div>
-    <div class="container">
-        <div class="panel panel-primary" style="margin-bottom: 5px">
-            <div class="panel-heading">
-                <h3 class="panel-title" id="bookmarkHeading">Bookmarks</h3>
-                <button type="submit" id="edit"><i class="fa fa-edit fa-lg"></i></button>
-                <button type="submit" id="add-folder"><i class="fa fa-folder fa-lg"></i></button>
-                <button type="submit" id="trash"><i class="fa fa-trash fa-lg"></i></button>
-            </div>
-            <div class="panel-body">
-                <div class="search">
-                    <div class="form-group">
-                        <input type="text" class="form-control" id="search" placeholder="Type bookmark name" />
-                        <button type="submit" id="resetSearch"><i class="fa fa-close fa-lg"></i></button>
-                    </div>
-                </div>
-                <div id="bookmarks">
-                </div>
-            </div>
+    <span id="tooltiptext">Tooltip text</span> 
+    <div class="footer">
+        <div id="tools">
+            <img src="icons/sort.png" id="sort" />
+            <img src="icons/group-button.png" id="group" />
+            <img src="icons/crop.png" id="crop">
+            <img src="icons/add-folder.png" id="new_folder" />
         </div>
-    </div>
-    <div class="container">
-        <p class="btn-group btn-group-justified" id="decision" style="display:none">
-            <a href="#" id="apply" class="btn btn-raised btn-primary btn-sm disabled " title="Update bookmark changes">Apply <i class="fa fa-check" aria-hidden="true"></i></a>
-            <a href="#" id="reject" class="btn btn-raised btn-danger btn-sm disabled " title="Discard bookmark changes">Reject <i class="fa fa-close" aria-hidden="true"></i></a>
-        </p>
+        <div class="decision">
+            <img src="icons/check.png" id="apply">
+            <img src="icons/cancel.png" id="reject">
+        </div>
+        <img src="icons/delete-button.png" id="trash" />
+        <div class="add_new_folder">
+            <input type="text" class="form-control" id="create_new_folder" placeholder="New Folder">
+            <img src="icons/check.png" id="apply_folder">
+            <img src="icons/cancel.png" id="reject_folder">
+        </div>
     </div>
 </body>
 
