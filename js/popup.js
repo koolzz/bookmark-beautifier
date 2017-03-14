@@ -462,8 +462,8 @@ function showSearchIcon() {
 }
 
 function showDecisionBar() {
-    $('#tools').hide(200, function() {
-        $('.decision').show(200);
+    $('#tools').fadeOut(300, function() {
+        $('.decision').fadeIn(300);
     });
 
 }
@@ -472,13 +472,13 @@ function showToolsBar() {
     $('.decision').hide();
     $('.add_new_folder').hide();
     $('#trash').hide();
-    $('#tools').show(400);
+    $('#tools').fadeIn(400);
 }
 
 // New Folder section
 function showNewFolderBar() {
-    $('#tools').hide(200, function() {
-        $('.add_new_folder').show(300);
+    $('#tools').hide(300, function() {
+        $('.add_new_folder').fadeIn(300);
     });
 }
 
