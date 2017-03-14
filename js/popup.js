@@ -507,7 +507,7 @@ function showTrashIcon() {
 
 function hideTrashIcon() {
     $("#trash").animate({
-        top: 560,
+        top: 590,
         opacity: 0
     }, 250);
 }
