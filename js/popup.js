@@ -17,16 +17,16 @@ $().ready(function() {
         previewFunction(sort);
     });
 
-    var text ={
-        "sort":"Sort bookmarks",
-        "group":"Group by domain name",
-        "crop":"Shorten long link titles",
-        "new_folder":"Add a new folder",
+    var text = {
+        "sort": "Sort bookmarks",
+        "group": "Group by domain name",
+        "crop": "Shorten long link titles",
+        "new_folder": "Add a new folder",
     }
-    $("#sort, #group, #crop, #new_folder").hover(function(e) { 
+    $("#sort, #group, #crop, #new_folder").hover(function(e) {
         $("#tooltiptext").text(text[e.currentTarget.id]);
         $("#tooltiptext").fadeIn(150);
-    },function(e) { 
+    }, function(e) {
         $("#tooltiptext").fadeOut(150);
     });
 
@@ -136,7 +136,7 @@ $().ready(function() {
 
                 if (window.event.ctrlKey) {
                     li.removeClass("selectedLink");
-                    if ($(".selectedLink").length ==0) {
+                    if ($(".selectedLink").length == 0) {
                         hideTrashIcon();
                     }
                     clicks = 0;
@@ -224,8 +224,23 @@ function sortableList() {
                 put: true
             },
             ghostClass: "sortable-ghost",
-            filter:".editSelectedVal",
+            filter: ".editSelectedVal",
+            handle: 'a',
             animation: 150,
+            onStart: function( /**Event*/ evt) {
+                $(".bFolder").each(function(key, folder) {
+                    if ($(folder).hasClass("sortable-chosen"))
+                        return;
+                    var ul = $(folder).children('ul');
+                    if (ul.children().length == 0) {
+                        ul.show();
+                        $(".bfolder").addClass("showspace");
+                    }
+                });
+            },
+            onEnd: function( /**Event*/ evt) {
+                $(".showspace").removeClass("showspace");
+            },
             onUpdate: function(evt) {
                 var item = evt.item;
                 var href = $(item).children('a').href;
@@ -246,7 +261,7 @@ function sortableList() {
             onAdd: function(evt) {
                 var item = evt.item;
                 var old = evt.from;
-                var parentTitle = $(item).parent('ul').siblings('a').text();
+                var parentTitle = $(item).parent('ul').siblings('a').text().trim();
                 var href = $(item).children('a').href;
                 var title = $(item).children('a').text();
                 var index = evt.newIndex;
@@ -265,7 +280,7 @@ function sortableList() {
                         }, function() {
                             sortableList,
                             showFolderChildren,
-                            printBookmarks([sortableList], true);
+                            printBookmarks([sortableList]);
                         });
                     });
                 });

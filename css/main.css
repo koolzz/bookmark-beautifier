@@ -38,7 +38,7 @@ body {
     border-color: inherit;
     -webkit-box-shadow: none;
     box-shadow: none;
-    
+
 }
 
 #search::-webkit-input-placeholder, #create_new_folder::-webkit-input-placeholder {
@@ -103,10 +103,6 @@ body {
     margin: 0;
     padding: 0;
     list-style-type: none;
-}
-
-#bookmarks :nth-child(n+1) ul:empty:after {
-    border-bottom: 1px solid #ddd;
 }
 
 #bookmarks .bFolder a {
@@ -299,4 +295,12 @@ body {
     text-align: center;
 
     font-size: 16px;
+}
+#bookmarks .showspace   ul:empty{
+    min-height: 20px;
+
+}
+#bookmarks .showspace   ul:empty:after {
+    padding-left: 40%;
+    content: "Drag link here";
 }
