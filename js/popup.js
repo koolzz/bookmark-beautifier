@@ -17,16 +17,16 @@ $().ready(function() {
         previewFunction(sort);
     });
 
-    var text ={
-        "sort":"Sort bookmarks",
-        "group":"Group by domain name",
-        "crop":"Shorten long link titles",
-        "new_folder":"Add a new folder",
+    var text = {
+        "sort": "Sort bookmarks",
+        "group": "Group by domain name",
+        "crop": "Shorten long link titles",
+        "new_folder": "Add a new folder",
     }
-    $("#sort, #group, #crop, #new_folder").hover(function(e) { 
+    $("#sort, #group, #crop, #new_folder").hover(function(e) {
         $("#tooltiptext").text(text[e.currentTarget.id]);
         $("#tooltiptext").fadeIn(150);
-    },function(e) { 
+    }, function(e) {
         $("#tooltiptext").fadeOut(150);
     });
 
@@ -103,7 +103,7 @@ $().ready(function() {
             showSearchIcon();
             printBookmarks();
         } else {
-            showReserSearch();
+            showResetSearch();
             searchBookmark($(this).val().trim());
         }
     });
@@ -136,7 +136,7 @@ $().ready(function() {
 
                 if (window.event.ctrlKey) {
                     li.removeClass("selectedLink");
-                    if ($(".selectedLink").length ==0) {
+                    if ($(".selectedLink").length == 0) {
                         hideTrashIcon();
                     }
                     clicks = 0;
@@ -224,7 +224,7 @@ function sortableList() {
                 put: true
             },
             ghostClass: "sortable-ghost",
-            filter:".editSelectedVal",
+            filter: ".editSelectedVal",
             animation: 150,
             onUpdate: function(evt) {
                 var item = evt.item;
@@ -465,14 +465,14 @@ function addNewFolder(name) {
     });
 }
 
-function showReserSearch() {
+function showResetSearch() {
     $("#resetSearch").show();
-    $(".search_icon").hide();
+    $("#search_icon").hide();
 }
 
 function showSearchIcon() {
     $("#resetSearch").hide();
-    $(".search_icon").show();
+    $("#search_icon").show();
 }
 
 function showDecisionBar() {

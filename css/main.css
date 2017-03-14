@@ -31,19 +31,19 @@ body {
     padding-bottom: 0.1;
     font-family: "Roboto";
 }
+
 #search:hover {
     opacity: 0.5;
 }
+
 #search:focus, #create_new_folder:focus {
     border-color: inherit;
     -webkit-box-shadow: none;
     box-shadow: none;
-    
 }
 
 #search::-webkit-input-placeholder, #create_new_folder::-webkit-input-placeholder {
     color: rgb(255, 255, 255);
-
 }
 
 #search:focus::-webkit-input-placeholder, #create_new_folder:focus::-webkit-input-placeholder {
@@ -56,16 +56,17 @@ body {
     width: 1.7rem;
     height: 1.7rem;
     opacity: inherit;
-
 }
+
 #search_icon:hover {
     opacity: 0.5;
 }
+
 #resetSearch {
-    width: 15px;
-    position: relative;
-    left: 326px;
-    top: -27px;
+    width: 14px;
+    position: absolute;
+    left: 295px;
+    top: 18px;
     padding: 0;
     background-color: #009688;
     background-repeat: no-repeat;
@@ -78,12 +79,13 @@ body {
 }
 
 #learn {
-  position: relative;
-  width: 1.8rem;
-  margin-bottom: 3px;
-  margin-left: 10px;
-  color: white;
+    position: absolute;
+    width: 1.8rem;
+    top: 15px;
+    left: 327px;
+    color: white;
 }
+
 #learn:hover {
     opacity: 0.5;
 }
@@ -119,9 +121,11 @@ body {
     border-top: 1px solid #ddd;
     font size: 15px;
 }
+
 .bLink:hover {
     border: 1px;
 }
+
 #bookmarks .bLink a {
     display: inline-block;
     color: #000;
@@ -192,37 +196,43 @@ body {
     width: 358px;
     height: 50px;
 }
+
 #sort {
     position: relative;
     margin-left: 28px;
     margin-top: 8px;
     height: 29px;
 }
+
 #group {
     position: relative;
     margin-left: 55px;
     margin-top: 8px;
     height: 34px;
-
 }
+
 #crop {
     position: relative;
     margin-left: 55px;
     margin-top: 8px;
     height: 31px;
 }
+
 #new_folder {
     position: relative;
     margin-left: 55px;
     margin-top: 8px;
     height: 30px;
 }
+
 #sort:hover, #group:hover, #crop:hover, #new_folder:hover {
     opacity: 0.5;
 }
+
 .decision {
     width: 358px;
 }
+
 #apply {
     position: absolute;
     width: 27px;
@@ -238,33 +248,37 @@ body {
     margin-left: 209px;
     margin-top: 11px;
 }
+
 #apply:hover, #reject:hover {
     opacity: 0.5;
 }
-#trash{
-  position: absolute;
-  opacity: 0;
-  top: 560px;
-  width: 4rem;
-  height: 4rem;
-  left: 292;
+
+#trash {
+    position: absolute;
+    opacity: 0;
+    top: 560px;
+    width: 4rem;
+    height: 4rem;
+    left: 292;
 }
+
 #trash:hover {
     opacity: 0.5;
 }
-.add_new_folder{
-  position: absolute;
+
+.add_new_folder {
+    position: absolute;
 }
 
-#create_new_folder{
-  position: absolute;
-  margin-left: 12px;
-  margin-top: 5px;
-  width: 227px;
-  font-size: 15px;
-  color: #ffffff;
-  display: inline-block;
-  overflow: hidden;
+#create_new_folder {
+    position: absolute;
+    margin-left: 12px;
+    margin-top: 5px;
+    width: 227px;
+    font-size: 15px;
+    color: #ffffff;
+    display: inline-block;
+    overflow: hidden;
     padding-top: 15px;
     padding-bottom: 0.1;
     opacity: 0.8;
@@ -286,17 +300,18 @@ body {
     margin-left: 310px;
     margin-top: 13px;
 }
+
 #apply_folder:hover, #reject_folder:hover {
     opacity: 0.5;
 }
-#tooltiptext{
+
+#tooltiptext {
     position: absolute;
-    top:528px;
+    top: 528px;
     display: none;
     width: 358px;
     background-color: #323a46;
     color: #fff;
     text-align: center;
-
     font-size: 16px;
 }
