@@ -269,3 +269,16 @@ body {
     margin-left: 310px;
     margin-top: 13px;
 }
+
+#tooltiptext{
+    position: absolute;
+    top:528px;
+    display: none;
+
+    width: 358px;
+    background-color: #555;
+    color: #fff;
+    text-align: center;
+
+    font-size: 16px;
+}

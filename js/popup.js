@@ -17,6 +17,19 @@ $().ready(function() {
         previewFunction(sort);
     });
 
+    var text ={
+        "sort":"Sort bookmarks",
+        "group":"Group by domain name",
+        "crop":"Shorten long link titles",
+        "new_folder":"Add a new folder",
+    }
+    $("#sort, #group, #crop, #new_folder").hover(function(e) { 
+        $("#tooltiptext").text(text[e.currentTarget.id]);
+        $("#tooltiptext").fadeIn(150);
+    },function(e) { 
+        $("#tooltiptext").fadeOut(150);
+    });
+
     $("#group").click(function(e) {
         previewFunction(group);
     });
