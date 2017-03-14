@@ -21,35 +21,46 @@ body {
 #search {
     position: relative;
     margin-left: 14px;
-    top: 3px;
-    width: 330px;
-    font size: 15px;
+    top: 2px;
+    width: 300px;
+    font-size: 12px;
     color: #ffffff;
     display: inline-block;
     overflow: hidden;
+    padding-top: 15px;
+    padding-bottom: 0.1;
+    font-family: "Roboto";
 }
-
+#search:hover {
+    opacity: 0.5;
+}
 #search:focus, #create_new_folder:focus {
     border-color: inherit;
     -webkit-box-shadow: none;
     box-shadow: none;
+    
 }
 
 #search::-webkit-input-placeholder, #create_new_folder::-webkit-input-placeholder {
-    color: #ffffff;
+    color: rgb(255, 255, 255);
+
 }
 
 #search:focus::-webkit-input-placeholder, #create_new_folder:focus::-webkit-input-placeholder {
-    color: transparent
+    color: transparent;
 }
 
-.search_icon {
+#search_icon {
     margin-left: -21px;
-    margin-top: 8px;
-    width: 17px;
-    height: 17px;
-}
+    margin-bottom: 3px;
+    width: 1.7rem;
+    height: 1.7rem;
+    opacity: inherit;
 
+}
+#search_icon:hover {
+    opacity: 0.5;
+}
 #resetSearch {
     width: 15px;
     position: relative;
@@ -66,16 +77,18 @@ body {
     transition: all .15s ease-in-out;
 }
 
+#learn {
+  position: relative;
+  width: 1.8rem;
+  margin-bottom: 3px;
+  margin-left: 10px;
+  color: white;
+}
+#learn:hover {
+    opacity: 0.5;
+}
 
 /* Bookmarks */
-
-#learn {
-  position: absolute;
-  width: 1.5rem;
-  height: 1.5rem;
-  top: 60px;
-  right: 30px;
-}
 
 #bookmarks {
     background-color: #ffffff;
@@ -106,7 +119,9 @@ body {
     border-top: 1px solid #ddd;
     font size: 15px;
 }
-
+.bLink:hover {
+    border: 1px;
+}
 #bookmarks .bLink a {
     display: inline-block;
     color: #000;
@@ -177,43 +192,37 @@ body {
     width: 358px;
     height: 50px;
 }
-
 #sort {
     position: relative;
     margin-left: 28px;
     margin-top: 8px;
     height: 29px;
-    width: 29px;
 }
-
 #group {
     position: relative;
     margin-left: 55px;
     margin-top: 8px;
     height: 34px;
-    width: 34px;
-}
 
+}
 #crop {
     position: relative;
     margin-left: 55px;
     margin-top: 8px;
     height: 31px;
-    width: 31px;
 }
-
 #new_folder {
     position: relative;
     margin-left: 55px;
     margin-top: 8px;
     height: 30px;
-    width: 31px;
 }
-
+#sort:hover, #group:hover, #crop:hover, #new_folder:hover {
+    opacity: 0.5;
+}
 .decision {
     width: 358px;
 }
-
 #apply {
     position: absolute;
     width: 27px;
@@ -224,12 +233,14 @@ body {
 
 #reject {
     position: absolute;
-    width: 25px;
-    height: 25px;
+    width: 28px;
+    height: 28px;
     margin-left: 209px;
     margin-top: 11px;
 }
-
+#apply:hover, #reject:hover {
+    opacity: 0.5;
+}
 #trash{
   position: absolute;
   opacity: 0;
@@ -238,7 +249,9 @@ body {
   height: 4rem;
   left: 292;
 }
-
+#trash:hover {
+    opacity: 0.5;
+}
 .add_new_folder{
   position: absolute;
 }
@@ -252,6 +265,10 @@ body {
   color: #ffffff;
   display: inline-block;
   overflow: hidden;
+    padding-top: 15px;
+    padding-bottom: 0.1;
+    opacity: 0.8;
+    font-family: "Roboto";
 }
 
 #apply_folder {
@@ -264,19 +281,20 @@ body {
 
 #reject_folder {
     position: absolute;
-    width: 25px;
-    height: 25px;
+    width: 27px;
+    height: 27px;
     margin-left: 310px;
     margin-top: 13px;
 }
-
+#apply_folder:hover, #reject_folder:hover {
+    opacity: 0.5;
+}
 #tooltiptext{
     position: absolute;
     top:528px;
     display: none;
-
     width: 358px;
-    background-color: #555;
+    background-color: #323a46;
     color: #fff;
     text-align: center;
 
