@@ -506,7 +506,7 @@ function showToolsBar() {
 
 // New Folder section
 function showNewFolderBar() {
-    $('#tools').hide(300, function() {
+    $('#tools').fadeOut(300, function() {
         $('.add_new_folder').fadeIn(300);
     });
 }
