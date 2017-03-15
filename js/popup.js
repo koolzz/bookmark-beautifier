@@ -103,7 +103,7 @@ $().ready(function() {
             showSearchIcon();
             printBookmarks();
         } else {
-            showReserSearch();
+            showResetSearch();
             searchBookmark($(this).val().trim());
         }
     });
@@ -480,14 +480,14 @@ function addNewFolder(name) {
     });
 }
 
-function showReserSearch() {
+function showResetSearch() {
     $("#resetSearch").show();
-    $(".search_icon").hide();
+    $("#search_icon").hide();
 }
 
 function showSearchIcon() {
     $("#resetSearch").hide();
-    $(".search_icon").show();
+    $("#search_icon").show();
 }
 
 function showDecisionBar() {
@@ -522,7 +522,7 @@ function showTrashIcon() {
 
 function hideTrashIcon() {
     $("#trash").animate({
-        top: 560,
+        top: 590,
         opacity: 0
     }, 250);
 }
