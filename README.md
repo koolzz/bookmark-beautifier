@@ -1,16 +1,17 @@
-# Bookmark Beautifier
-A google chrome extension that sorts and manages bookmarks.
+# ![logo](https://cloud.githubusercontent.com/assets/17416048/23990418/a5bcf738-0a3e-11e7-8326-34e2633c65ba.png)   Bookmark Beautifier
+Chrome browser extension for sorting and organizing bookmarks. Simplifies the bookmark managing process by providing functions such as sorting, grouping similar links into folders and shortening obscure titles.
 
-# Load the extension
+## Install on Chrome
+* Get Bookmark-beautifier directly from [Chrome Web Store](https://chrome.google.com/webstore/detail/bookmark-beautifier/ahnaocfoepojfegbafgokdjnpnhajjgb?hl=en)
+* For dev branch get code from this repo and follow [these instructions](https://developer.chrome.com/extensions/getstarted#unpacked)
 
-1. Visit **chrome://extensions** in your browser (or open up the Chrome menu by clicking the icon to the far right of the Omnibox:  The menu's icon is three horizontal bars. and select Extensions under the Tools menu to get to the same place).
+## Using
+* [RubaXa Sortable](https://github.com/RubaXa/Sortable) js library used for implementing a reorderable bookmark list
 
-2. Ensure that the Developer mode checkbox in the top right-hand corner is checked.
+## Feedback
 
-3. Click Load unpacked extension… to pop up a file-selection dialog.
+All bugs, feature requests, pull requests, feedback, etc., are welcome. [Create an issue](https://github.com/koolzz/bookmark-beautifier/issues). Or [leave a comment](https://chrome.google.com/webstore/detail/bookmark-beautifier/ahnaocfoepojfegbafgokdjnpnhajjgb/support?utm_campaign=en&utm_source=en-et-na-us-oc-webstrhm&utm_medium=et).
 
-4. Navigate to the directory in which your extension files live, and select it.
+## License
 
-Alternatively, you can drag and drop the directory where your extension files live onto **chrome://extensions** in your browser to load it.
-
-If the extension is valid, it'll be loaded up and active right away! If it's invalid, an error message will be displayed at the top of the page. Correct the error, and try again.
+MIT License: http://adampritchard.mit-license.org/ or see [the `LICENSE` file](https://github.com/koolzz/bookmark-beautifier/blob/master/LICENSE.md).
