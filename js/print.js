@@ -213,10 +213,10 @@ function hideFolderChildren() {
 function toggleFolder(folder){
     if(folder.children('ul').is(":visible")){
     folder.find('.dropIcon').attr('src', 'icons/right.png');
-    folder.find('ul').hide();
+    folder.find('ul').slideUp(400);
     }
     else{
         folder.find('.dropIcon').attr('src', 'icons/down.png');
-        folder.find('ul').show();
+        folder.find('ul').slideDown(400);
     }
 }
