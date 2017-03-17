@@ -224,7 +224,7 @@ function sortableList() {
                 put: true
             },
             ghostClass: "sortable-ghost",
-            filter: ".editSelectedVal",
+            filter: ".editSelectedVal, .unusedPlaceHolder",
             handle: 'a',
             animation: 150,
             onStart: function( /**Event*/ evt) {
@@ -232,14 +232,22 @@ function sortableList() {
                     if ($(folder).hasClass("sortable-chosen"))
                         return;
                     var ul = $(folder).children('ul');
-                    if (ul.children().length == 0) {
+                    if (ul.children().length == 0) {     
                         ul.show();
-                        $(".bfolder").addClass("showspace");
+                        var li = $("<li>")
+                            .attr('class', 'unusedPlaceHolder');
+                        var link = $("<a/>");
+                        var depth = $(ul).parents("ul").length+1,
+                            padding = 20; 
+                        $(link).css('padding-left', depth * padding + 13);
+                        li.append(link);
+                        ul.append(li);
                     }
                 });
             },
             onEnd: function( /**Event*/ evt) {
                 $(".showspace").removeClass("showspace");
+                $(".unusedPlaceHolder").remove();
             },
             onUpdate: function(evt) {
                 var item = evt.item;
