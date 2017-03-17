@@ -45,6 +45,9 @@ function printBookmarkFolder(bookmarkFolder, notShowChildren) {
                 folder.addClass("is-empty");
             list.append(folder);
             $(r).click(function(e) {
+                toggleFolder($(e.currentTarget).parent().parent());
+
+                /*
                 if ($(folder).find('li').is(':visible')) {
                     $('.dropIcon', this).attr('src', 'icons/right.png');
                     $(folder).children().hide();
@@ -54,7 +57,7 @@ function printBookmarkFolder(bookmarkFolder, notShowChildren) {
                     $('.dropIcon', this).attr('src', 'icons/down.png');
                     $(folder).children().show();
                 }
-
+                */
             });
             if (notShowChildren)
                 return;
@@ -205,4 +208,15 @@ function hideFolderChildren() {
             });
         }
     });
+}
+
+function toggleFolder(folder){
+    if(folder.children('ul').is(":visible")){
+    folder.find('.dropIcon').attr('src', 'icons/right.png');
+    folder.find('ul').hide();
+    }
+    else{
+        folder.find('.dropIcon').attr('src', 'icons/down.png');
+        folder.find('ul').show();
+    }
 }

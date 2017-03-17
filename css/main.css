@@ -320,3 +320,15 @@ body {
     padding-left: 40%;
     content: "Drag link here";
 }
+#bookmarks .unusedPlaceHolder a {
+    padding-bottom: 0;
+    padding-top: 0;
+    height: 50px;
+    border-top: none;
+    border-bottom: 5px solid #009688;
+}
+#bookmarks .unusedPlaceHolder a::before{
+    position: relative; 
+    top: 5px;
+}
+
