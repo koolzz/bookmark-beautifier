@@ -10,8 +10,8 @@ Chrome browser extension for sorting and organizing bookmarks. Simplifies the bo
 
 ## Feedback
 
-All bugs, feature requests, pull requests, feedback, etc., are welcome. [Create an issue](https://github.com/koolzz/bookmark-beautifier/issues). Or [leave a comment](https://chrome.google.com/webstore/detail/bookmark-beautifier/ahnaocfoepojfegbafgokdjnpnhajjgb/support?utm_campaign=en&utm_source=en-et-na-us-oc-webstrhm&utm_medium=et).
+All bugs, feature requests, pull requests, feedback, etc., are welcome. [Create an issue](https://github.com/koolzz/bookmark-beautifier/issues), or [leave a comment](https://chrome.google.com/webstore/detail/bookmark-beautifier/ahnaocfoepojfegbafgokdjnpnhajjgb/support?utm_campaign=en&utm_source=en-et-na-us-oc-webstrhm&utm_medium=et).
 
 ## License
 
-MIT License: http://adampritchard.mit-license.org/ or see [the `LICENSE` file](https://github.com/koolzz/bookmark-beautifier/blob/master/LICENSE.md).
+MIT [License](https://github.com/koolzz/bookmark-beautifier/blob/master/LICENSE.md).
