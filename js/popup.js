@@ -242,18 +242,14 @@ function sortableList() {
                         $(link).css('padding-left', depth * padding + 13);
                         li.append(link);
                         ul.append(li);
-                        
-                        //
-                        //ul.show();
-                        //$(".bfolder").addClass("showspace");
                     }
                 });
             },
             onEnd: function( /**Event*/ evt) {
                 $(".showspace").removeClass("showspace");
+                $(".unusedPlaceHolder").remove();
             },
             onUpdate: function(evt) {
-                console.log(evt);
                 var item = evt.item;
                 var href = $(item).children('a').href;
                 var title = $(item).children('a').text();
