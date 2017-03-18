@@ -1,5 +1,4 @@
 var ROOT_TABS;
-var EDIT_MODE = false;
 
 $().ready(function() {
     'use strict';
@@ -232,13 +231,13 @@ function sortableList() {
                     if ($(folder).hasClass("sortable-chosen"))
                         return;
                     var ul = $(folder).children('ul');
-                    if (ul.children().length == 0) {     
+                    if (ul.children().length == 0) {
                         ul.show();
                         var li = $("<li>")
                             .attr('class', 'unusedPlaceHolder');
                         var link = $("<a/>");
-                        var depth = $(ul).parents("ul").length+1,
-                            padding = 20; 
+                        var depth = $(ul).parents("ul").length + 1,
+                            padding = 20;
                         $(link).css('padding-left', depth * padding + 13);
                         li.append(link);
                         ul.append(li);
@@ -254,6 +253,7 @@ function sortableList() {
                 var href = $(item).children('a').href;
                 var title = $(item).children('a').text();
                 var index = evt.newIndex < evt.oldIndex ? evt.newIndex : evt.newIndex + 1;
+                var parentTitle = $(item).parent('ul').siblings('a').text().trim();
                 chrome.bookmarks.search({
                     'title': title
                 }, function(result) {
@@ -262,13 +262,16 @@ function sortableList() {
                         'parentId': folder.parentId,
                         'index': index
                     }, function() {
-                        printBookmarks([sortableList]);
+                        printBookmarks([sortableList, function() {
+                            showFolder(parentTitle);
+                        }]);
                     });
                 });
             },
             onAdd: function(evt) {
                 var item = evt.item;
                 var old = evt.from;
+                var oldParentTitle = $(evt.from).siblings('a').text().trim();
                 var parentTitle = $(item).parent('ul').siblings('a').text().trim();
                 var href = $(item).children('a').href;
                 var title = $(item).children('a').text();
@@ -286,9 +289,10 @@ function sortableList() {
                             'parentId': id,
                             'index': index
                         }, function() {
-                            sortableList,
-                            showFolderChildren,
-                            printBookmarks([sortableList]);
+                            printBookmarks([sortableList, function() {
+                                showFolder(parentTitle);
+                                showFolder(oldParentTitle);
+                            }]);
                         });
                     });
                 });
@@ -484,7 +488,7 @@ function addNewFolder(name) {
             $('#bookmarks').animate({
                 scrollTop: length
             }, 700);
-        }], true);
+        }]);
     });
 }
 

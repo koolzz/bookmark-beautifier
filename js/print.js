@@ -41,23 +41,9 @@ function printBookmarkFolder(bookmarkFolder, notShowChildren) {
                 $(folder).find("a").prepend(r);
             }
             folder.append(printBookmarkFolder(bookmark, notShowChildren));
-            if (EDIT_MODE && bookmark.children.length === 0)
-                folder.addClass("is-empty");
             list.append(folder);
             $(r).click(function(e) {
                 toggleFolder($(e.currentTarget).parent().parent());
-
-                /*
-                if ($(folder).find('li').is(':visible')) {
-                    $('.dropIcon', this).attr('src', 'icons/right.png');
-                    $(folder).children().hide();
-                    $(folder).find('.dropIcon').show();
-                    $(folder).find('a').css('display', 'inline-block');
-                } else {
-                    $('.dropIcon', this).attr('src', 'icons/down.png');
-                    $(folder).children().show();
-                }
-                */
             });
             if (notShowChildren)
                 return;
@@ -151,7 +137,7 @@ function updateBookmarks(list, printAfter) {
             'parentId': folder.parentId,
             'index': key
         }, function callback() {
-            if (printAfter && key === list.children.length - 1){
+            if (printAfter && key === list.children.length - 1) {
                 printBookmarks([sortableList]);
             }
         });
@@ -210,13 +196,22 @@ function hideFolderChildren() {
     });
 }
 
-function toggleFolder(folder){
-    if(folder.children('ul').is(":visible")){
-    folder.find('.dropIcon').attr('src', 'icons/right.png');
-    folder.find('ul').slideUp(400);
+function toggleFolder(folder) {
+    if (folder.children('ul').is(":visible")) {
+        folder.children('a').find('.dropIcon').attr('src', 'icons/right.png');
+        folder.children('ul').slideUp(400);
+    } else {
+        folder.children('a').find('.dropIcon').attr('src', 'icons/down.png');
+        folder.children('ul').slideDown(400);
     }
-    else{
-        folder.find('.dropIcon').attr('src', 'icons/down.png');
-        folder.find('ul').slideDown(400);
-    }
+}
+
+function showFolder(folderName) {
+    var elements = $('#bookmarks').find('a');
+    var folder = elements.filter(function() {
+        return $(this).text() == folderName;
+    }).parent();
+
+    folder.children('a').find('.dropIcon').attr('src', 'icons/down.png');
+    folder.children('ul').show();
 }
