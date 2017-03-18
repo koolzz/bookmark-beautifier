@@ -1,14 +1,20 @@
-function printBookmarks(callbackList,showChildren) {
+function printBookmarks(callbackList, showChildren) {
     chrome.bookmarks.getTree(function(root) {
         //console.log(root);
         $('#bookmarks').empty();
         ROOT_TABS = root[0].children.length;
+        FIRST_TABS = root[0].children[0].children.length;
         root.forEach(function(folder) {
             $('#bookmarks').append(printBookmarkFolder(folder, showChildren));
             $('#bookmarks .bFolder').each(function(index, val) {
                 var depth = $(val).parents("ul").length,
                     padding = 20;
-                $(val).children().find('a').css('padding-left', depth * padding);
+                if (root.id > FIRST_TABS) {
+                    $(val).children().find('a').css('padding-left', depth * padding);
+                } else {
+                    $(val).children().find('a').css('padding-left', depth * padding + 13);
+                }
+
             });
             if (callbackList) {
                 for (var i = 0, len = callbackList.length; i < len; i++) {
@@ -26,25 +32,18 @@ function printBookmarkFolder(bookmarkFolder, notShowChildren) {
             list.append(printNode(bookmark));
         } else {
             var folder = printNodeFolder(bookmark);
-            var r = $("<button type=\"submit\" class=\"dropIcon\"><i class=\"fa fa-chevron-right\"></i></button>");
-            $(folder).find("a").prepend(r);
+
+            if (bookmark.id > ROOT_TABS) {
+                var r = $("<i class=\"fa\"><img src=\"icons/right.png\" class=\"dropIcon\"></i>");
+                $(folder).find("a").prepend(r);
+            } else {
+                var r = $("<i class=\"fa\"><img src=\"icons/right.png\" class=\"dropIcon\" id=\"root\"> </i>");
+                $(folder).find("a").prepend(r);
+            }
             folder.append(printBookmarkFolder(bookmark, notShowChildren));
-            if (EDIT_MODE && bookmark.children.length === 0)
-                folder.addClass("is-empty");
             list.append(folder);
             $(r).click(function(e) {
-                if ($(folder).find('li').is(':visible')) {
-                    $('.fa', this).removeClass("fa-chevron-down");
-                    $('.fa', this).addClass("fa-chevron-right");
-                    $(folder).children().hide();
-                    $(folder).find('.dropIcon').show();
-                    $(folder).find('a').css('display', 'inline-block');
-                } else {
-                    $('.fa', this).removeClass("fa-chevron-right");
-                    $('.fa', this).addClass("fa-chevron-down");
-                    $(folder).children().show();
-                }
-
+                toggleFolder($(e.currentTarget).parent().parent());
             });
             if (notShowChildren)
                 return;
@@ -53,8 +52,7 @@ function printBookmarkFolder(bookmarkFolder, notShowChildren) {
                 $(folder).find('.dropIcon').show();
                 $(folder).find('a').css('display', 'inline-block');
             } else {
-                $(folder).children('a').find('.fa').removeClass("fa-chevron-right");
-                $(folder).children('a').find('.fa').addClass("fa-chevron-down");
+                $(folder).children('a').find('.dropIcon').attr('src', 'icons/down.png');
             }
 
         }
@@ -71,9 +69,9 @@ function printNode(bookmark) {
     });
     li.append(link);
 
-    var hostname = $('<a>').prop('href', bookmark.url).prop('hostname'); 
-    li.find("a").prepend("<img class=\"linkIcon\" src="+("https://www.google.com/s2/favicons?domain="+hostname)+"/>")
-    
+    var hostname = $('<a>').prop('href', bookmark.url).prop('hostname');
+    li.find("a").prepend("<img class=\"linkIcon\" src=" + ("https://www.google.com/s2/favicons?domain=" + hostname) + "/>")
+
     return li;
 }
 
@@ -88,6 +86,7 @@ function printNodeFolder(bookmark) {
 }
 
 function previewFunction(callbackFunction) {
+    hideTrashIcon();
     var keys = {
         children: []
     };
@@ -95,7 +94,7 @@ function previewFunction(callbackFunction) {
         root[0].children.forEach(function(folder) {
             keys.children.push(folder);
         });
-
+        showDecisionBar();
         callbackFunction(keys);
         updateBookmarkListBuffer(keys);
     });
@@ -112,14 +111,17 @@ function updateBookmarks(list, printAfter) {
                     folder.children.forEach(function(bookmark) {
                         bookmark.parentId = e.id;
                     });
-                    if (key === list.children.length - 1)
+                    if (printAfter && key === list.children.length - 1)
                         updateBookmarks(folder, true);
                     else
                         updateBookmarks(folder, false);
                 });
                 return;
             } else {
-                updateBookmarks(folder, false);
+                if (key === list.children.length - 1)
+                    updateBookmarks(folder, true);
+                else
+                    updateBookmarks(folder, false);
             }
         }
 
@@ -131,13 +133,13 @@ function updateBookmarks(list, printAfter) {
                 'title': folder.title
             });
         }
-
         chrome.bookmarks.move(String(folder.id), {
             'parentId': folder.parentId,
             'index': key
         }, function callback() {
-            if (printAfter && key === list.children.length - 1)
-                printBookmarks();
+            if (printAfter && key === list.children.length - 1) {
+                printBookmarks([sortableList]);
+            }
         });
     });
 }
@@ -148,45 +150,68 @@ function updateBookmarkListBuffer(keys) {
     $('#bookmarks .bFolder').each(function(index, val) {
         var depth = $(val).parents("ul").length,
             padding = 20;
-        $(val).children().find('a').css('padding-left', depth * padding);
+        if (root.id > FIRST_TABS) {
+            $(val).children().find('a').css('padding-left', depth * padding);
+        } else {
+            $(val).children().find('a').css('padding-left', depth * padding + 13);
+        }
     });
     $('#reject').one("click", function(e) {
         e.preventDefault();
         $('#apply').unbind("click");
-        printBookmarks();
-        toggleAllButtons();
+        printBookmarks([sortableList]);
+        showToolsBar();
     });
     $('#apply').one("click", function(e) {
         e.preventDefault();
         $('#reject').unbind("click");
         updateBookmarks(keys, true);
-        toggleAllButtons();
+        showToolsBar();
     });
 }
 
 function showFolderChildren() {
     $("#bookmarks ul").each(function(key, e) {
-            var parentTitle = $(e).siblings('a').text();
-            if (parentTitle === "Bookmarks bar" || parentTitle === "Other bookmarks" || parentTitle === "Mobile bookmarks")
-                return;
-            if (!$(e).is(":visible")) {
-                $(e).slideDown(300, function() {
-                    $(e).siblings('a').find('.fa').removeClass("fa-chevron-right");
-                    $(e).siblings('a').find('.fa').addClass("fa-chevron-down");
-                });
-            }
-    });
-}
-function hideFolderChildren(){
-    $("#bookmarks ul").each(function(key, e) {
-        if (key > 0) {
-            var parentTitle = $(e).siblings('a').text(); 
-            if (parentTitle === "Bookmarks bar" || parentTitle === "Other bookmarks" || parentTitle === "Mobile bookmarks")
-                return;
-            $(e).slideUp(300, function() {
-                $(e).siblings('a').find('.fa').removeClass("fa-chevron-down");
-                $(e).siblings('a').find('.fa').addClass("fa-chevron-right");
+        var parentTitle = $(e).siblings('a').text();
+        if (parentTitle === "Bookmarks bar" || parentTitle === "Other bookmarks" || parentTitle === "Mobile bookmarks")
+            return;
+        if (!$(e).is(":visible")) {
+            $(e).slideDown(300, function() {
+                $(e).siblings('a').find('.dropIcon').attr('src', 'icons/down.png');
             });
         }
     });
+}
+
+function hideFolderChildren() {
+    $("#bookmarks ul").each(function(key, e) {
+        if (key > 0) {
+            var parentTitle = $(e).siblings('a').text();
+            if (parentTitle === "Bookmarks bar" || parentTitle === "Other bookmarks" || parentTitle === "Mobile bookmarks")
+                return;
+            $(e).slideUp(300, function() {
+                $(e).siblings('a').find('.dropIcon').attr('src', 'icons/right.png');
+            });
+        }
+    });
+}
+
+function toggleFolder(folder) {
+    if (folder.children('ul').is(":visible")) {
+        folder.children('a').find('.dropIcon').attr('src', 'icons/right.png');
+        folder.children('ul').slideUp(400);
+    } else {
+        folder.children('a').find('.dropIcon').attr('src', 'icons/down.png');
+        folder.children('ul').slideDown(400);
+    }
+}
+
+function showFolder(folderName) {
+    var elements = $('#bookmarks').find('a');
+    var folder = elements.filter(function() {
+        return $(this).text() == folderName;
+    }).parent();
+
+    folder.children('a').find('.dropIcon').attr('src', 'icons/down.png');
+    folder.children('ul').show();
 }

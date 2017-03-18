@@ -1,23 +1,32 @@
 var ROOT_TABS;
-var EDIT_MODE = false;
 
 $().ready(function() {
     'use strict';
+
+    showSearchIcon();
+    showToolsBar();
 
     $(window).blur(function() {
         window.close;
     });
 
-    printBookmarks();
-    //deleteEmptyFolder();
-
-    $("#sort, #group, #crop").click(function(e) {
-        e.preventDefault();
-        toggleAllButtons();
-    });
+    printBookmarks([sortableList]);
 
     $("#sort").click(function(e) {
         previewFunction(sort);
+    });
+
+    var text = {
+        "sort": "Sort bookmarks",
+        "group": "Group by domain name",
+        "crop": "Shorten long link titles",
+        "new_folder": "Add a new folder",
+    }
+    $("#sort, #group, #crop, #new_folder").hover(function(e) {
+        $("#tooltiptext").text(text[e.currentTarget.id]);
+        $("#tooltiptext").fadeIn(150);
+    }, function(e) {
+        $("#tooltiptext").fadeOut(150);
     });
 
     $("#group").click(function(e) {
@@ -27,46 +36,22 @@ $().ready(function() {
     $("#crop").click(function(e) {
         previewFunction(crop);
     });
+
     $("#learn").click(function(e) {
         window.open("https://github.com/koolzz/bookmark-beautifier", "_blank");
-    });
-    $("#backup").click(function(e) {
-        window.open("https://support.google.com/chrome/answer/96816?hl=en", "_blank");
     });
 
     $("#search").click(function(e) {
         $("#search").select();
     });
 
-    $("#edit").click(function(e) {
-        if($(this).hasClass("disabled"))
-            return;
-        EDIT_MODE = !EDIT_MODE;
-        if (EDIT_MODE) {
-            $('body').animate({
-                scrollTop: 300
-            }, 700);
-            toggleButtons(["#sort", "#group", "#crop"]);
-            showEditButtons();
-            $("#bookmarks, .selectedLink").removeClass('selectedLink');
-            $(".panel-heading").css("background-color", "#CF995F");
-        } else {
-            $('body').animate({
-                scrollTop: 1
-            }, 700);
-            toggleButtons(["#sort", "#group", "#crop"]);
-            hideEditButtons();
-            //hideFolderChildren();
-            $(".panel-heading").css("background-color", "#009688");
-        }
+    $('#new_folder').click(function(e) {
+        showNewFolderBar();
     });
 
-    $('#add-folder').click(function(e) {
-        if ($(".search").is(":visible")) {
-            $(".search").slideUp(400);
-        } else {
-            showSearchLine();
-        }
+    $("#reject_folder").click(function() {
+        $("#create_new_folder").val('');
+        showToolsBar();
     });
 
     $('#trash').click(function(e) {
@@ -79,87 +64,147 @@ $().ready(function() {
                 deleteFolder(link.text, link.href, (key === list.length - 1) ? true : false);
             });
         }
+        hideTrashIcon();
+    });
+
+    $("#create_new_folder").keyup(function(e) {
+        if (e.which == 13) {
+            if ($(this).val().trim().length != 0) {
+                addNewFolder($(this).val().trim());
+                $("#create_new_folder").val('');
+            }
+            showToolsBar();
+        }
+
+        $("#apply_folder").click(function() {
+            if ($("#create_new_folder").val().trim().length != 0) {
+                addNewFolder($("#create_new_folder").val().trim());
+                $("#create_new_folder").val('');
+            }
+            showToolsBar();
+        });
+
     });
 
     $("#search").keyup(function() {
-        if (EDIT_MODE) {
-            $(this).keypress(function(e) {
-                if (e.which == 13) {
-                    if ($(this).val().trim().length != 0) {
-                        addNewFolder($(this).val().trim());
-                        $("#search").val('');
-                    }
-                }
-            });
-
-            $('#resetSearch').click(function(event) {
-                if ($(event.target).closest("#search, #tools, #desision").length) return;
-                $('#resetSearch').unbind("click");
-                $("#search").val('');
-                event.stopPropagation();
-            });
+        if ($("#sort").hasClass("disabled"))
+            return;
+        $('#resetSearch').click(function(event) {
+            if ($(event.target).closest("#search, #tools, #desision").length) return;
+            printBookmarks();
+            showSearchIcon();
+            $('#resetSearch').unbind("click");
+            $("#search").val('');
+            event.stopPropagation();
+        });
+        if ($(this).val().trim().length === 0) {
+            $("#search").val('');
+            showSearchIcon();
+            printBookmarks();
         } else {
-            if ($("#sort").hasClass("disabled"))
-                return;
-            $('#resetSearch').click(function(event) {
-                if ($(event.target).closest("#search, #tools, #desision").length) return;
-                printBookmarks();
-                $('#resetSearch').unbind("click");
-                $("#search").val('');
-                event.stopPropagation();
-            });
-            if ($(this).val().trim().length === 0) {
-                $("#search").val('');
-                printBookmarks();
-            } else {
-                searchBookmark($(this).val().trim());
-            }
+            showResetSearch();
+            searchBookmark($(this).val().trim());
         }
-
     });
     var timeout = null,
+        openLink = null,
         clicks = 0,
-        delay = 350;
-    $("#bookmarks").on('click', '.bLink', function selectFunction(e) {
-        if (EDIT_MODE) {
-            e.preventDefault();
-            if (!window.event.ctrlKey) {
-                $(".selectedLink").removeClass("selectedLink");
-            }
-            clicks++;
-            var li = $(e.target).is('a') ? $(e.currentTarget) : $(e.target);
-            if (clicks === 1) {
-                if (li.hasClass("selectedLink")) {
+        openLinkDelay = 300,
+        editLinkdelay = 300;
+    $("#bookmarks").on('click', '.bLink', '.selectedLink', function selectFunction(e) {
+        e.preventDefault();
+        var li = $(e.currentTarget);
+
+        if (li.find(".editSelectedVal").length > 0) {
+            return;
+        }
+
+        clicks++;
+        if (clicks === 1) {
+            showTrashIcon();
+            if (li.hasClass("selectedLink")) {
+                /* Click on already selected target
+                 *
+                 * If pressing ctrl
+                 *   Check for ctrl press, deselect on repeated click when in ctrl mode
+                 *
+                 * Else
+                 *   open link after delay
+                 *   delay is used to distingwish between doubleclick for editing title
+                 */
+
+                if (window.event.ctrlKey) {
                     li.removeClass("selectedLink");
+                    if ($(".selectedLink").length == 0) {
+                        hideTrashIcon();
+                    }
                     clicks = 0;
                 } else {
-                    li.addClass("selectedLink");
-                    timeout = setTimeout(function() {
-                        clicks = 0;
-                    }, delay);
+                    if ($(".selectedLink").length > 1) {
+                        $(".selectedLink").removeClass("selectedLink");
+                        li.addClass("selectedLink");
+                        timeout = setTimeout(function() {
+                            clicks = 0;
+                        }, editLinkdelay);
+                        return;
+                    } else {
+                        openLink = setTimeout(function() {
+                            window.open($(li)[0].children[0].href, "_blank");
+                        }, openLinkDelay);
+                    }
                 }
             } else {
-                clicks = 0;
-                li.removeClass("selectedLink");
-                clearTimeout(timeout);
-                if (window.event.ctrlKey)
-                    return
-                if ($('#bookmarks').find('.editSelectedVal').length != 0)
-                    return;
-                var target = $(e.target).is('a') ? e.currentTarget : e.target;
-                var oldVal = $(target).children()[0].text;
-                var url = $(target).children()[0].href;
-                updateVal($(target), oldVal, url);
-
-            }
-        } else {
-            var li = $(e.currentTarget);
-            if (li.hasClass("selectedLink")) {
-                window.open(li[0].children[0].href, "_blank");
-            } else {
-                $("#bookmarks, .selectedLink").removeClass('selectedLink');
+                /* Click on non selected link
+                 *
+                 * If pressing ctrl
+                 *   select link
+                 *
+                 * Else
+                 *   deselect all selected links, select clicked one
+                 */
+                clearTimeout(openLink);
+                if (window.event.ctrlKey) {
+                    clicks = 0;
+                } else {
+                    timeout = setTimeout(function() {
+                        clicks = 0;
+                    }, editLinkdelay);
+                    $(".selectedLink").removeClass("selectedLink");
+                }
                 li.addClass("selectedLink");
             }
+        } else {
+            /* Double click detected
+             *
+             * Clear timeouts to avoid openning links
+             *
+             * If link is not selected or in ctrl mode don't enter edit mode
+             */
+            clearTimeout(openLink);
+            clearTimeout(timeout);
+            if (!li.hasClass("selectedLink")) {
+                if (!window.event.ctrlKey) {
+                    timeout = setTimeout(function() {
+                        clicks = 0;
+                    }, editLinkdelay);
+                    $(".selectedLink").removeClass("selectedLink");
+                }
+                li.addClass("selectedLink");
+                return;
+            } else {
+                clicks = 0;
+            }
+            if (window.event.ctrlKey)
+                return;
+            if ($('#bookmarks').find('.editSelectedVal').length != 0)
+                return;
+
+            li.removeClass("selectedLink");
+            var target = li;
+            var oldVal = li.children()[0].text;
+            var url = li.children()[0].href;
+            updateVal(li[0], oldVal, url);
+
         }
     });
 
@@ -178,12 +223,37 @@ function sortableList() {
                 put: true
             },
             ghostClass: "sortable-ghost",
+            filter: ".editSelectedVal, .unusedPlaceHolder",
+            handle: 'a',
             animation: 150,
+            onStart: function( /**Event*/ evt) {
+                $(".bFolder").each(function(key, folder) {
+                    if ($(folder).hasClass("sortable-chosen"))
+                        return;
+                    var ul = $(folder).children('ul');
+                    if (ul.children().length == 0) {
+                        ul.show();
+                        var li = $("<li>")
+                            .attr('class', 'unusedPlaceHolder');
+                        var link = $("<a/>");
+                        var depth = $(ul).parents("ul").length + 1,
+                            padding = 20;
+                        $(link).css('padding-left', depth * padding + 13);
+                        li.append(link);
+                        ul.append(li);
+                    }
+                });
+            },
+            onEnd: function( /**Event*/ evt) {
+                $(".showspace").removeClass("showspace");
+                $(".unusedPlaceHolder").remove();
+            },
             onUpdate: function(evt) {
                 var item = evt.item;
                 var href = $(item).children('a').href;
                 var title = $(item).children('a').text();
                 var index = evt.newIndex < evt.oldIndex ? evt.newIndex : evt.newIndex + 1;
+                var parentTitle = $(item).parent('ul').siblings('a').text().trim();
                 chrome.bookmarks.search({
                     'title': title
                 }, function(result) {
@@ -192,14 +262,17 @@ function sortableList() {
                         'parentId': folder.parentId,
                         'index': index
                     }, function() {
-                        printBookmarks([sortableList],true);
+                        printBookmarks([sortableList, function() {
+                            showFolder(parentTitle);
+                        }]);
                     });
                 });
             },
             onAdd: function(evt) {
                 var item = evt.item;
                 var old = evt.from;
-                var parentTitle = $(item).parent('ul').siblings('a').text();
+                var oldParentTitle = $(evt.from).siblings('a').text().trim();
+                var parentTitle = $(item).parent('ul').siblings('a').text().trim();
                 var href = $(item).children('a').href;
                 var title = $(item).children('a').text();
                 var index = evt.newIndex;
@@ -215,8 +288,11 @@ function sortableList() {
                         chrome.bookmarks.move(folder.id, {
                             'parentId': id,
                             'index': index
-                        }, function() {sortableList, showFolderChildren,
-                            printBookmarks([sortableList],true);
+                        }, function() {
+                            printBookmarks([sortableList, function() {
+                                showFolder(parentTitle);
+                                showFolder(oldParentTitle);
+                            }]);
                         });
                     });
                 });
@@ -267,7 +343,7 @@ function deleteFolder(title, url, callback) {
     }, function(result) {
         chrome.bookmarks.remove(result[0].id, function() {
             if (callback)
-                printBookmarks([sortableList],true);
+                printBookmarks([sortableList], true);
         });
     });
 }
@@ -316,9 +392,9 @@ function sortByName(a, b) {
     var aName = a.title.toLowerCase();
     var bName = b.title.toLowerCase();
     //We want folders to always be before normal links
-    if(typeof a.url === 'undefined'&&typeof b.url != 'undefined')
+    if (typeof a.url === 'undefined' && typeof b.url != 'undefined')
         return -1;
-    if(typeof a.url != 'undefined'&&typeof b.url === 'undefined')
+    if (typeof a.url != 'undefined' && typeof b.url === 'undefined')
         return 1;
     return ((aName < bName) ? -1 : ((aName > bName) ? 1 : 0));
 }
@@ -343,12 +419,25 @@ function rename(oldTitle, url, newTitle) {
 }
 
 function updateVal(currentLi, oldVal, url) {
+    var depth = $(currentLi).parents("ul").length - 1,
+        padding = 20,
+        hostname = $('<a>').prop('href', url).prop('hostname');
+
     $(currentLi).html('<input class="editSelectedVal" type="text" value="' + oldVal + '" />');
+    $(currentLi).find('.editSelectedVal').css('padding-left', depth * padding + 13);
     $(".editSelectedVal").focus();
     $(".editSelectedVal").keyup(function(event) {
         if (event.keyCode == 13) {
             rename(oldVal, url, $(".editSelectedVal").val().trim());
-            $(currentLi).html('<a href="' + url + '">' + $(".editSelectedVal").val().trim() + '</a>');
+            var li = $(currentLi);
+            var a = $("<a>")
+                .attr('href', url)
+                .text($(".editSelectedVal").val().trim());
+            li.empty();
+            li.append(a[0]);
+            li.find('a').prepend("<img class=\"linkIcon\" src=" + ("https://www.google.com/s2/favicons?domain=" + hostname) + "/>");
+            li.find('a').css('padding-left', depth * padding + 13);
+
         }
     });
     setTimeout(function() {
@@ -356,7 +445,16 @@ function updateVal(currentLi, oldVal, url) {
             if ($(e.target).is(".editSelectedVal")) {
                 return;
             } else {
-                $(".editSelectedVal").parent("li").html('<a href="' + url + '">' + oldVal + '</a>');
+                var hostname = $('<a>').prop('href', url).prop('hostname');
+                var li = $(".editSelectedVal").parent("li");
+
+                var a = $("<a>")
+                    .attr('href', url)
+                    .text(oldVal);
+                li.empty();
+                li.append(a[0]);
+                li.find('a').prepend("<img class=\"linkIcon\" src=" + ("https://www.google.com/s2/favicons?domain=" + hostname) + "/>");
+                li.find('a').css('padding-left', depth * padding + 13);
                 $(document).unbind("click");
             }
         });
@@ -364,44 +462,6 @@ function updateVal(currentLi, oldVal, url) {
 
 }
 
-function toggleAllButtons() {
-    if ($("#sort").hasClass("disabled")) {
-        $('#bookmarks').animate({
-            height: 505
-        }, 600);
-        $(".search").slideDown(600);
-        $("#decision").slideUp(500, function() {
-            $("#decision").css('display', 'none');
-        });
-        $('body').animate({
-            scrollTop: 1
-        }, 700);
-    } else {
-        $(".search").slideUp(600);
-        $('#bookmarks').animate({
-            height: 475
-        }, 600);
-        $("#decision").slideDown(500);
-        $('body').animate({
-            scrollTop: 300
-        }, 700);
-    }
-    toggleButtons(["#reject", "#apply"]);
-    toggleButtons(["#sort", "#group", "#crop","#edit"]);
-}
-
-function toggleButtons(idList) {
-    idList.forEach(function(id) {
-        var button = $(id);
-        if (button.hasClass("disabled")) {
-            button.removeClass("disabled");
-            button.addClass("active");
-        } else {
-            button.removeClass("active");
-            button.addClass("disabled");
-        }
-    });
-}
 
 function searchBookmark(text) {
     var keys = {
@@ -418,31 +478,6 @@ function searchBookmark(text) {
     });
 }
 
-function showEditButtons() {
-    $(".search").slideUp(400, function print() {
-        printBookmarks([sortableList, showFolderChildren]);
-    });
-    $("#add-folder").fadeIn(400);
-    $("#trash").fadeIn(400);
-    $("#search").val('');
-}
-
-function hideEditButtons() {
-    hideFolderChildren();
-    $(".search").slideDown(400, function print() {
-        printBookmarks();
-    });
-    $("#add-folder").fadeOut(400);
-    $("#trash").fadeOut(400);
-    $("#search").val('');
-    $('#search').attr("placeholder", "Type bookmark name");
-}
-
-function showSearchLine() {
-    $(".search").slideDown(400);
-    $('#search').attr("placeholder", "New folder name");
-}
-
 function addNewFolder(name) {
     chrome.bookmarks.create({
         'parentId': '1',
@@ -453,6 +488,53 @@ function addNewFolder(name) {
             $('#bookmarks').animate({
                 scrollTop: length
             }, 700);
-        }],true);
+        }]);
     });
+}
+
+function showResetSearch() {
+    $("#resetSearch").show();
+    $("#search_icon").hide();
+}
+
+function showSearchIcon() {
+    $("#resetSearch").hide();
+    $("#search_icon").show();
+}
+
+function showDecisionBar() {
+    $('#tools').fadeOut(300, function() {
+        $('.decision').fadeIn(300);
+    });
+
+}
+
+function showToolsBar() {
+    $('.decision').hide();
+    $('.add_new_folder').hide();
+    $('#trash').hide();
+    $('#tools').fadeIn(400);
+}
+
+// New Folder section
+function showNewFolderBar() {
+    $('#tools').fadeOut(300, function() {
+        $('.add_new_folder').fadeIn(300);
+    });
+}
+
+// trash icon
+function showTrashIcon() {
+    $("#trash").show();
+    $("#trash").animate({
+        top: 500,
+        opacity: 1
+    }, 500);
+}
+
+function hideTrashIcon() {
+    $("#trash").animate({
+        top: 590,
+        opacity: 0
+    }, 250);
 }
