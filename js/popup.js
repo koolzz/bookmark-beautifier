@@ -91,7 +91,7 @@ $().ready(function() {
             return;
         $('#resetSearch').click(function(event) {
             if ($(event.target).closest("#search, #tools, #desision").length) return;
-            printBookmarks();
+            printBookmarks([sortableList]);
             showSearchIcon();
             $('#resetSearch').unbind("click");
             $("#search").val('');
@@ -100,7 +100,7 @@ $().ready(function() {
         if ($(this).val().trim().length === 0) {
             $("#search").val('');
             showSearchIcon();
-            printBookmarks();
+            printBookmarks([sortableList]);
         } else {
             showResetSearch();
             searchBookmark($(this).val().trim());
