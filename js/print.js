@@ -56,7 +56,7 @@ function printBookmarkFolder(bookmarkFolder, notShowChildren) {
                 $(folder).children('a').find('.dropIcon').attr('src', 'icons/down.png');
                 $(folder).children('a').first().addClass("root_folder");
                 $(folder).addClass("non_draggable");
-            
+
             }
 
         }

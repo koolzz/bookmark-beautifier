@@ -54,15 +54,14 @@ $().ready(function() {
         var list = $(".selectedLink"),
             link_count = 0,
             group_count = 0;
-        list.each(function( index, value ) { 
-            if($(value).hasClass("bFolder")){
+        list.each(function(index, value) {
+            if ($(value).hasClass("bFolder")) {
                 link_count += $(value).parent('li').first().find('.bLink').length;
                 group_count += $(value).parent('li').first().find('.bFolder').length;;
-            }
-            else
+            } else
                 link_count++;
-        }); 
-        var r = confirm("Delete " + link_count + " bookmarks and " + group_count +" folders ?");
+        });
+        var r = confirm("Delete " + link_count + " bookmarks and " + group_count + " folders ?");
 
         if (r === true) {
             $(list).each(function(key, bookmark) {
@@ -153,7 +152,7 @@ $().ready(function() {
                         }, editLinkdelay);
                         return;
                     } else {
-                        if(li.hasClass("bFolder"))
+                        if (li.hasClass("bFolder"))
                             return;
                         openLink = setTimeout(function() {
                             window.open($(li)[0].children[0].href, "_blank");
@@ -203,17 +202,16 @@ $().ready(function() {
             }
             if (window.event.ctrlKey)
                 return;
-            
+
             if ($('#bookmarks').find('.editSelectedVal').length != 0)
                 return;
 
-            if(li.hasClass("bFolder")){
+            if (li.hasClass("bFolder")) {
                 li.removeClass("selectedLink");
                 var target = li;
-                var oldVal = li[0].text; 
+                var oldVal = li[0].text;
                 updateVal(li[0], oldVal, null);
-            }
-            else {
+            } else {
                 li.removeClass("selectedLink");
                 var target = li;
                 var oldVal = li.children()[0].text;
@@ -439,30 +437,28 @@ function updateVal(currentLi, oldVal, url) {
         hostname = $('<a>').prop('href', url).prop('hostname'),
         a_element = $(currentLi).clone();
 
-    if($(currentLi).hasClass('bFolder')){
+    if ($(currentLi).hasClass('bFolder')) {
         $(currentLi).replaceWith('<input class="editSelectedVal" type="text" value="' + oldVal + '" >');
-        $('.editSelectedVal').css('padding-left', depth  * padding + 13);
-    }
-    else {
+        $('.editSelectedVal').css('padding-left', depth * padding + 13);
+    } else {
         $(currentLi).children('a').first().replaceWith('<input class="editSelectedVal" type="text" value="' + oldVal + '" >');
-        $('.editSelectedVal').css('padding-left', depth  * padding + 13);
+        $('.editSelectedVal').css('padding-left', depth * padding + 13);
     }
 
     $(".editSelectedVal").focus();
     $(".editSelectedVal").keyup(function(event) {
         if (event.keyCode == 13) {
             var text = $(".editSelectedVal").val().trim();
-            var li = $(".editSelectedVal").parent("li"); 
+            var li = $(".editSelectedVal").parent("li");
             rename(oldVal, url, text);
-            $(".editSelectedVal").remove(); 
+            $(".editSelectedVal").remove();
 
-            if(!$(currentLi).hasClass('bFolder')){
+            if (!$(currentLi).hasClass('bFolder')) {
                 a_element.children('a').first().text(text);
                 li.prepend($(a_element).children('a').first());
                 li.find('a').prepend("<img class=\"linkIcon\" src=" + ("https://www.google.com/s2/favicons?domain=" + hostname) + "/>");
                 li.find('a').css('padding-left', depth * padding + 13);
-            }
-            else{
+            } else {
                 a_element.text(text);
                 li.prepend(a_element);
                 var r = $("<i class=\"fa\"><img src=\"icons/right.png\" class=\"dropIcon\"> </i>");
@@ -482,12 +478,12 @@ function updateVal(currentLi, oldVal, url) {
             } else {
                 var li = $(".editSelectedVal").parent("li");
                 $(".editSelectedVal").remove();
-                if(!$(currentLi).hasClass('bFolder'))
+                if (!$(currentLi).hasClass('bFolder'))
                     li.prepend($(a_element).children('a').first());
                 else
                     li.prepend(a_element);
- 
-                $(document).unbind("click"); 
+
+                $(document).unbind("click");
             }
         });
     }, 100);
