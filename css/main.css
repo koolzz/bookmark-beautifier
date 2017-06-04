@@ -103,7 +103,7 @@ body {
     list-style-type: none;
 }
 
-#bookmarks .bFolder a {
+#bookmarks .bFolder {
     display: inline-block;
     color: #000;
     width: 358px;
@@ -145,7 +145,7 @@ body {
     border-bottom: 1px solid #ddd;
 }
 
-#bookmarks .selectedLink a {
+#bookmarks .selectedLink  {
     background-color: #F0F5FF;
 }
 

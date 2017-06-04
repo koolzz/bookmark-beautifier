@@ -51,8 +51,18 @@ $().ready(function() {
     });
 
     $('#trash').click(function(e) {
-        var list = $(".selectedLink");
-        var r = confirm("Delete " + list.length + " selected bookmarks?");
+        var list = $(".selectedLink"),
+            link_count = 0,
+            group_count = 0;
+        list.each(function( index, value ) { 
+            if($(value).hasClass("bFolder")){
+                link_count += $(value).parent('li').first().find('.bLink').length;
+                group_count += $(value).parent('li').first().find('.bFolder').length;;
+            }
+            else
+                link_count++;
+        }); 
+        var r = confirm("Delete " + link_count + " bookmarks and " + group_count +" folders ?");
 
         if (r === true) {
             $(list).each(function(key, bookmark) {
@@ -106,12 +116,12 @@ $().ready(function() {
         openLink = null,
         clicks = 0,
         openLinkDelay = 300,
-        editLinkdelay = 150;
-    $("#bookmarks").on('click', '.bLink', '.selectedLink', function selectFunction(e) {
+        editLinkdelay = 200;
+    $("#bookmarks").on('click', '.bLink, .bFolder', function selectFunction(e) {
         e.preventDefault();
         var li = $(e.currentTarget);
 
-        if (li.find(".editSelectedVal").length > 0) {
+        if (li.find(".editSelectedVal").length > 0 || li.hasClass("root_folder")) {
             return;
         }
 
@@ -128,7 +138,6 @@ $().ready(function() {
                  *   open link after delay
                  *   delay is used to distingwish between doubleclick for editing title
                  */
-
                 if (window.event.ctrlKey) {
                     li.removeClass("selectedLink");
                     if ($(".selectedLink").length == 0) {
@@ -144,6 +153,8 @@ $().ready(function() {
                         }, editLinkdelay);
                         return;
                     } else {
+                        if(li.hasClass("bFolder"))
+                            return;
                         openLink = setTimeout(function() {
                             window.open($(li)[0].children[0].href, "_blank");
                         }, openLinkDelay);
@@ -192,15 +203,23 @@ $().ready(function() {
             }
             if (window.event.ctrlKey)
                 return;
+            
             if ($('#bookmarks').find('.editSelectedVal').length != 0)
                 return;
 
-            li.removeClass("selectedLink");
-            var target = li;
-            var oldVal = li.children()[0].text;
-            var url = li.children()[0].href;
-            updateVal(li[0], oldVal, url);
-
+            if(li.hasClass("bFolder")){
+                li.removeClass("selectedLink");
+                var target = li;
+                var oldVal = li[0].text; 
+                updateVal(li[0], oldVal, null);
+            }
+            else {
+                li.removeClass("selectedLink");
+                var target = li;
+                var oldVal = li.children()[0].text;
+                var url = li.children()[0].href;
+                updateVal(li[0], oldVal, url);
+            }
         }
     });
 
@@ -219,7 +238,7 @@ function sortableList() {
                 put: true
             },
             ghostClass: "sortable-ghost",
-            filter: ".editSelectedVal, .unusedPlaceHolder",
+            filter: ".editSelectedVal, .unusedPlaceHolder .root_folder .non_draggable",
             handle: 'a',
             animation: 150,
             onStart: function( /**Event*/ evt) {
@@ -327,7 +346,7 @@ function deleteEmptyFolder(folder) {
 }
 
 function deleteFolder(bookmarkFolder) {
-    chrome.bookmarks.remove(bookmarkFolder.id, function() {
+    chrome.bookmarks.removeTree(bookmarkFolder.id, function() {
         console.log(bookmarkFolder.title + " removed");
     });
 }
@@ -337,7 +356,7 @@ function deleteFolder(title, url, callback) {
         'title': title,
         'url': url
     }, function(result) {
-        chrome.bookmarks.remove(result[0].id, function() {
+        chrome.bookmarks.removeTree(result[0].id, function() {
             if (callback)
                 printBookmarks([sortableList], true);
         });
@@ -417,22 +436,42 @@ function rename(oldTitle, url, newTitle) {
 function updateVal(currentLi, oldVal, url) {
     var depth = $(currentLi).parents("ul").length - 1,
         padding = 20,
-        hostname = $('<a>').prop('href', url).prop('hostname');
+        hostname = $('<a>').prop('href', url).prop('hostname'),
+        a_element = $(currentLi).clone();
 
-    $(currentLi).html('<input class="editSelectedVal" type="text" value="' + oldVal + '" />');
-    $(currentLi).find('.editSelectedVal').css('padding-left', depth * padding + 13);
+    if($(currentLi).hasClass('bFolder')){
+        $(currentLi).replaceWith('<input class="editSelectedVal" type="text" value="' + oldVal + '" >');
+        $('.editSelectedVal').css('padding-left', depth  * padding + 13);
+    }
+    else {
+        $(currentLi).children('a').first().replaceWith('<input class="editSelectedVal" type="text" value="' + oldVal + '" >');
+        $('.editSelectedVal').css('padding-left', depth  * padding + 13);
+    }
+
     $(".editSelectedVal").focus();
     $(".editSelectedVal").keyup(function(event) {
         if (event.keyCode == 13) {
-            rename(oldVal, url, $(".editSelectedVal").val().trim());
-            var li = $(currentLi);
-            var a = $("<a>")
-                .attr('href', url)
-                .text($(".editSelectedVal").val().trim());
-            li.empty();
-            li.append(a[0]);
-            li.find('a').prepend("<img class=\"linkIcon\" src=" + ("https://www.google.com/s2/favicons?domain=" + hostname) + "/>");
-            li.find('a').css('padding-left', depth * padding + 13);
+            var text = $(".editSelectedVal").val().trim();
+            var li = $(".editSelectedVal").parent("li"); 
+            rename(oldVal, url, text);
+            $(".editSelectedVal").remove(); 
+
+            if(!$(currentLi).hasClass('bFolder')){
+                a_element.children('a').first().text(text);
+                li.prepend($(a_element).children('a').first());
+                li.find('a').prepend("<img class=\"linkIcon\" src=" + ("https://www.google.com/s2/favicons?domain=" + hostname) + "/>");
+                li.find('a').css('padding-left', depth * padding + 13);
+            }
+            else{
+                a_element.text(text);
+                li.prepend(a_element);
+                var r = $("<i class=\"fa\"><img src=\"icons/right.png\" class=\"dropIcon\"> </i>");
+                li.find("a").first().prepend(r);
+                $(r).click(function(e) {
+                    toggleFolder($(e.currentTarget).parent().parent());
+                });
+            }
+
 
         }
     });
@@ -441,23 +480,19 @@ function updateVal(currentLi, oldVal, url) {
             if ($(e.target).is(".editSelectedVal")) {
                 return;
             } else {
-                var hostname = $('<a>').prop('href', url).prop('hostname');
                 var li = $(".editSelectedVal").parent("li");
-
-                var a = $("<a>")
-                    .attr('href', url)
-                    .text(oldVal);
-                li.empty();
-                li.append(a[0]);
-                li.find('a').prepend("<img class=\"linkIcon\" src=" + ("https://www.google.com/s2/favicons?domain=" + hostname) + "/>");
-                li.find('a').css('padding-left', depth * padding + 13);
-                $(document).unbind("click");
+                $(".editSelectedVal").remove();
+                if(!$(currentLi).hasClass('bFolder'))
+                    li.prepend($(a_element).children('a').first());
+                else
+                    li.prepend(a_element);
+ 
+                $(document).unbind("click"); 
             }
         });
     }, 100);
 
 }
-
 
 function searchBookmark(text) {
     var keys = {
@@ -512,14 +547,12 @@ function showToolsBar() {
     $('#tools').fadeIn(400);
 }
 
-// New Folder section
 function showNewFolderBar() {
     $('#tools').fadeOut(300, function() {
         $('.add_new_folder').fadeIn(300);
     });
 }
 
-// trash icon
 function showTrashIcon() {
     $("#trash").show();
     $("#trash").animate({

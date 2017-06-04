@@ -7,6 +7,7 @@ function printBookmarks(callbackList, showChildren) {
         root.forEach(function(folder) {
             $('#bookmarks').append(printBookmarkFolder(folder, showChildren));
             $('#bookmarks .bFolder').each(function(index, val) {
+                val = $(val).parent();
                 var depth = $(val).parents("ul").length,
                     padding = 20;
                 if (root.id > FIRST_TABS) {
@@ -53,6 +54,9 @@ function printBookmarkFolder(bookmarkFolder, notShowChildren) {
                 $(folder).find('a').css('display', 'inline-block');
             } else {
                 $(folder).children('a').find('.dropIcon').attr('src', 'icons/down.png');
+                $(folder).children('a').first().addClass("root_folder");
+                $(folder).addClass("non_draggable");
+            
             }
 
         }
@@ -76,11 +80,11 @@ function printNode(bookmark) {
 }
 
 function printNodeFolder(bookmark) {
-    var li = $("<li>")
-        .attr('class', 'bFolder');
+    var li = $("<li>");
     var link = $("<a />", {
         text: bookmark.title
     });
+    link.addClass('bFolder');
     li.append(link);
     return li;
 }
