@@ -65,8 +65,10 @@ $().ready(function() {
 
         if (r === true) {
             $(list).each(function(key, bookmark) {
-                var link = bookmark.children[0];
-                deleteFolder(link.text, link.href, (key === list.length - 1) ? true : false);
+                if ($(bookmark).hasClass("bFolder"))
+                    deleteFolder(bookmark.text, null, (key === list.length - 1) ? true : false);
+                else
+                    deleteFolder(bookmark.children[0].text, bookmark.children[0].href, (key === list.length - 1) ? true : false);
             });
         }
         hideTrashIcon();
@@ -243,7 +245,7 @@ function sortableList() {
                 $(".bFolder").each(function(key, folder) {
                     if ($(folder).hasClass("sortable-chosen"))
                         return;
-                    var ul = $(folder).children('ul');
+                    var ul = $(folder).siblings('ul').first();
                     if (ul.children().length == 0) {
                         ul.show();
                         var li = $("<li>")
