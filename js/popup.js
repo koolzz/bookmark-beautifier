@@ -6,10 +6,6 @@ $().ready(function() {
     showSearchIcon();
     showToolsBar();
 
-    $(window).blur(function() {
-        window.close;
-    });
-
     printBookmarks([sortableList]);
 
     $("#sort").click(function(e) {
@@ -110,7 +106,7 @@ $().ready(function() {
         openLink = null,
         clicks = 0,
         openLinkDelay = 300,
-        editLinkdelay = 300;
+        editLinkdelay = 150;
     $("#bookmarks").on('click', '.bLink', '.selectedLink', function selectFunction(e) {
         e.preventDefault();
         var li = $(e.currentTarget);

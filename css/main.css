@@ -21,19 +21,14 @@ body {
 #search {
     position: relative;
     margin-left: 14px;
-    top: 2px;
+    top: 1px;
     width: 300px;
-    font-size: 12px;
+    font-size: 18px;
     color: #ffffff;
     display: inline-block;
     overflow: hidden;
     padding-top: 15px;
-    padding-bottom: 0.1;
     font-family: "Roboto";
-}
-
-#search:hover {
-    opacity: 0.5;
 }
 
 #search:focus, #create_new_folder:focus {
