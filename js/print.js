@@ -8,8 +8,9 @@ function printBookmarks(callbackList, showChildren) {
                 val = $(val).parent();
                 var depth = $(val).parents("ul").length,
                     padding = 20;
-                $(val).children().find('a').css('padding-left', depth * padding + 13);
+                val.children().find('a').css('padding-left', depth * padding + 13);
             });
+
             if (callbackList) {
                 for (var i = 0, len = callbackList.length; i < len; i++) {
                     callbackList[i]();
@@ -32,6 +33,7 @@ function printBookmarkFolder(bookmarkFolder, notShowChildren) {
             folder.append(printBookmarkFolder(bookmark, notShowChildren));
             list.append(folder);
             $(r).click(function(e) {
+                e.stopPropagation();
                 toggleFolder($(e.currentTarget).parent().parent());
             });
             if (notShowChildren)

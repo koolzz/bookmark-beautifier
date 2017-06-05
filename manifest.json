@@ -2,7 +2,7 @@
     "manifest_version": 2,
     "name": "Bookmark beautifier",
     "short_name":"Bbeautifier",
-    "version": "1.0.3.0",
+    "version": "1.0.5.0",
     "description": "A browser extension that sorts and organizes bookmarks, also has an edit mode.",
     "permissions": [
         "bookmarks"

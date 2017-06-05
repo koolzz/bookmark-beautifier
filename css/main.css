@@ -48,16 +48,29 @@ body {
 #search_header{
     width: 320px;
 }
+
 #create_new_folder:hover, #learn:hover {
     opacity: 0.5;
 }
+
 #create_new_folder:focus {
     opacity: 1;
 }
+
 #search::-webkit-input-placeholder, #create_new_folder::-webkit-input-placeholder {
     color: rgb(255, 255, 255);
 }
 
+#search:focus::-webkit-input-placeholder, #create_new_folder:focus::-webkit-input-placeholder {
+     color: transparent;
+}
+
+#search:focus, #search:focus+#search_icon, #create_new_folder:focus {
+     border-color: inherit;
+     -webkit-box-shadow: none;
+     box-shadow: none;
+}
+ 
 #search_icon {
     margin-left: -21px;s
     margin-bottom: 3px;
@@ -309,9 +322,7 @@ body {
     border-top: none;
 }
 
-#bookmarks .unusedPlaceHolder {
-    border-bottom: 3px solid #009688;
-}
+
 
 #bookmarks .unusedPlaceHolder a::before {
     position: relative;

@@ -263,14 +263,16 @@ function sortableList() {
             animation: 150,
             onStart: function( /**Event*/ evt) {
                 $(".bFolder").each(function(key, folder) {
-                    if ($(folder).hasClass("sortable-chosen"))
+                    if ($(folder).parent().hasClass("sortable-chosen")){
+                        $(folder).siblings('ul').slideUp(300);
                         return;
+                    }
                     var ul = $(folder).siblings('ul').first();
-                    if (ul.children().length == 0) {
-                        ul.show();
+                    if (ul.children().length == 0 || ul.css('display') == 'none') {
+                        $(ul).slideDown(ul.children().length * 35);
                         var li = $("<li>")
                             .attr('class', 'unusedPlaceHolder');
-                        li.height(0); 
+                        li.height(0);
                         ul.append(li);
                         $(li).animate({
                             height: '+=35px'
@@ -279,13 +281,22 @@ function sortableList() {
                     }
                 });
             },
+            /*
+            onMove: function( evt, originalEvent) {
+                var depth = $(".sortable-ghost").parents("ul").length - 1,
+                    padding = 20;
+                $(".sortable-ghost").children('a').css('padding-left', depth * padding + 13);
+            },*/
             onEnd: function( /**Event*/ evt) {
+                setTimeout(function() {
                 $(".showspace").removeClass("showspace");
-                $(".unusedPlaceHolder").animate({
-                    height: '-=35px'
-                }, 250, function() {
-                    $(".unusedPlaceHolder").remove();
-                });
+                    $(".unusedPlaceHolder").animate({
+                        height: '-=35px'
+                    }, 250, function() {
+                        $(".unusedPlaceHolder").remove();
+                    });
+                }, 25);
+                
             },
             onUpdate: function(evt) {
                 var item = evt.item;
@@ -501,6 +512,7 @@ function updateVal(currentLi, oldVal, url) {
                 var r = $("<img src=\"icons/right.png\" class=\"dropIcon\">");
                 li.find("a").first().prepend(r);
                 $(r).click(function(e) {
+                    e.stopPropagation();
                     toggleFolder($(e.currentTarget).parent().parent());
                 });
             }
