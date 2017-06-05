@@ -31,10 +31,28 @@ body {
     font-family: "Roboto";
 }
 
-#search:focus, #create_new_folder:focus {
+#create_new_folder {
+    position: absolute;
+    margin-left: 14px;
+    top: 1px;
+    width: 227px;
+    font-size: 18px;
+    color: #ffffff;
+    display: inline-block;
+    overflow: hidden;
+    padding-top: 15px;
+    font-family: "Roboto";
+}
+
+#search:hover, #search:hover+#search_icon, #create_new_folder:hover, #search_icon:hover, #learn:hover {
+    opacity: 0.5;
+}
+
+#search:focus, #search:focus+#search_icon, #create_new_folder:focus {
     border-color: inherit;
     -webkit-box-shadow: none;
     box-shadow: none;
+    opacity: 1;
 }
 
 #search::-webkit-input-placeholder, #create_new_folder::-webkit-input-placeholder {
@@ -51,10 +69,6 @@ body {
     width: 1.7rem;
     height: 1.7rem;
     opacity: inherit;
-}
-
-#search_icon:hover {
-    opacity: 0.5;
 }
 
 #resetSearch {
@@ -79,10 +93,6 @@ body {
     top: 15px;
     left: 327px;
     color: white;
-}
-
-#learn:hover {
-    opacity: 0.5;
 }
 
 
@@ -189,31 +199,26 @@ body {
     height: 50px;
 }
 
-#sort {
+#sort, #group, #crop, #new_folder {
     position: relative;
-    margin-left: 28px;
+    margin-left: 55px;
     margin-top: 8px;
+}
+
+#sort {
+    margin-left: 28px;
     height: 29px;
 }
 
 #group {
-    position: relative;
-    margin-left: 55px;
-    margin-top: 8px;
     height: 34px;
 }
 
 #crop {
-    position: relative;
-    margin-left: 55px;
-    margin-top: 8px;
     height: 31px;
 }
 
 #new_folder {
-    position: relative;
-    margin-left: 55px;
-    margin-top: 8px;
     height: 30px;
 }
 
@@ -225,7 +230,7 @@ body {
     width: 358px;
 }
 
-#apply {
+#apply, #reject {
     position: absolute;
     width: 27px;
     height: 27px;
@@ -234,11 +239,7 @@ body {
 }
 
 #reject {
-    position: absolute;
-    width: 28px;
-    height: 28px;
     margin-left: 209px;
-    margin-top: 11px;
 }
 
 #apply:hover, #reject:hover {
@@ -262,35 +263,17 @@ body {
     position: absolute;
 }
 
-#create_new_folder {
-    position: absolute;
-    margin-left: 12px;
-    margin-top: 5px;
-    width: 227px;
-    font-size: 15px;
-    color: #ffffff;
-    display: inline-block;
-    overflow: hidden;
-    padding-top: 15px;
-    padding-bottom: 0.1;
-    opacity: 0.8;
-    font-family: "Roboto";
-}
-
-#apply_folder {
+#apply_folder, #reject_folder {
     position: absolute;
     width: 27px;
     height: 27px;
-    margin-left: 260px;
-    margin-top: 13px;
+    top: 15px;
+    left: 260;
+    color: white;
 }
 
 #reject_folder {
-    position: absolute;
-    width: 27px;
-    height: 27px;
-    margin-left: 310px;
-    margin-top: 13px;
+    left: 310px;
 }
 
 #apply_folder:hover, #reject_folder:hover {
@@ -325,7 +308,7 @@ body {
 }
 
 #bookmarks .unusedPlaceHolder {
-    border-bottom: 5px solid #009688;
+    border-bottom: 3px solid #009688;
 }
 
 #bookmarks .unusedPlaceHolder a::before {

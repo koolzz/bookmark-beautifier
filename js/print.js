@@ -1,21 +1,14 @@
 function printBookmarks(callbackList, showChildren) {
     chrome.bookmarks.getTree(function(root) {
-        //console.log(root);
         $('#bookmarks').empty();
         ROOT_TABS = root[0].children.length;
-        FIRST_TABS = root[0].children[0].children.length;
         root.forEach(function(folder) {
             $('#bookmarks').append(printBookmarkFolder(folder, showChildren));
             $('#bookmarks .bFolder').each(function(index, val) {
                 val = $(val).parent();
                 var depth = $(val).parents("ul").length,
                     padding = 20;
-                if (root.id > FIRST_TABS) {
-                    $(val).children().find('a').css('padding-left', depth * padding);
-                } else {
-                    $(val).children().find('a').css('padding-left', depth * padding + 13);
-                }
-
+                $(val).children().find('a').css('padding-left', depth * padding + 13);
             });
             if (callbackList) {
                 for (var i = 0, len = callbackList.length; i < len; i++) {
@@ -32,15 +25,10 @@ function printBookmarkFolder(bookmarkFolder, notShowChildren) {
         if (typeof bookmark.url != 'undefined') {
             list.append(printNode(bookmark));
         } else {
-            var folder = printNodeFolder(bookmark);
+            var folder = printNodeFolder(bookmark),
+                r = $("<i class=\"fa\"><img src=\"icons/right.png\" class=\"dropIcon\"></i>");
 
-            if (bookmark.id > ROOT_TABS) {
-                var r = $("<i class=\"fa\"><img src=\"icons/right.png\" class=\"dropIcon\"></i>");
-                $(folder).find("a").prepend(r);
-            } else {
-                var r = $("<i class=\"fa\"><img src=\"icons/right.png\" class=\"dropIcon\" id=\"root\"> </i>");
-                $(folder).find("a").prepend(r);
-            }
+            $(folder).find("a").prepend(r);
             folder.append(printBookmarkFolder(bookmark, notShowChildren));
             list.append(folder);
             $(r).click(function(e) {
@@ -48,14 +36,14 @@ function printBookmarkFolder(bookmarkFolder, notShowChildren) {
             });
             if (notShowChildren)
                 return;
-            if (bookmark.id > ROOT_TABS) {
+            if (bookmark.id > ROOT_TABS || bookmark.id === undefined) {
                 $(folder).children().hide();
                 $(folder).find('.dropIcon').show();
                 $(folder).find('a').css('display', 'inline-block');
             } else {
                 $(folder).children('a').find('.dropIcon').attr('src', 'icons/down.png');
                 $(folder).children('a').first().addClass("root_folder");
-                $(folder).addClass("non_draggable");
+
 
             }
 
@@ -129,8 +117,12 @@ function updateBookmarks(list, printAfter) {
             }
         }
 
-        if (folder.id <= ROOT_TABS)
+        if (folder.id <= ROOT_TABS) {
+            if (printAfter && key === list.children.length - 1) {
+                printBookmarks([sortableList]);
+            }
             return;
+        }
 
         if (folder.rename) {
             chrome.bookmarks.update(String(folder.id), {
@@ -141,6 +133,7 @@ function updateBookmarks(list, printAfter) {
             'parentId': folder.parentId,
             'index': key
         }, function callback() {
+            console.log(printAfter + " " + key + " " + list.children.length);
             if (printAfter && key === list.children.length - 1) {
                 printBookmarks([sortableList]);
             }
@@ -154,11 +147,7 @@ function updateBookmarkListBuffer(keys) {
     $('#bookmarks .bFolder').each(function(index, val) {
         var depth = $(val).parents("ul").length,
             padding = 20;
-        if (root.id > FIRST_TABS) {
-            $(val).children().find('a').css('padding-left', depth * padding);
-        } else {
-            $(val).children().find('a').css('padding-left', depth * padding + 13);
-        }
+        $(val).siblings().find('a').css('padding-left', depth * padding + 13);
     });
     $('#reject').one("click", function(e) {
         e.preventDefault();

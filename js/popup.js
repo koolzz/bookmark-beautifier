@@ -65,10 +65,18 @@ $().ready(function() {
 
         if (r === true) {
             $(list).each(function(key, bookmark) {
-                if ($(bookmark).hasClass("bFolder"))
-                    deleteFolder(bookmark.text, null, (key === list.length - 1) ? true : false);
-                else
-                    deleteFolder(bookmark.children[0].text, bookmark.children[0].href, (key === list.length - 1) ? true : false);
+                var obj;
+                if ($(bookmark).hasClass("bFolder")) {
+                    deleteFolder(bookmark.text, null, false);
+                    obj = $(bookmark).parent('li').first();
+                } else {
+                    deleteFolder(bookmark.children[0].text, bookmark.children[0].href, false);
+                    obj = $(bookmark);
+                }
+
+                $(obj).slideUp(300, function() {
+                    $(obj).remove();
+                });
             });
         }
         hideTrashIcon();
@@ -123,6 +131,7 @@ $().ready(function() {
         var li = $(e.currentTarget);
 
         if (li.find(".editSelectedVal").length > 0 || li.hasClass("root_folder")) {
+            $(".selectedLink").removeClass("selectedLink");
             return;
         }
 
@@ -238,7 +247,7 @@ function sortableList() {
                 put: true
             },
             ghostClass: "sortable-ghost",
-            filter: ".editSelectedVal, .unusedPlaceHolder .root_folder .non_draggable",
+            filter: ".editSelectedVal, .unusedPlaceHolder, .root_folder",
             handle: 'a',
             animation: 150,
             onStart: function( /**Event*/ evt) {
@@ -261,7 +270,12 @@ function sortableList() {
             },
             onEnd: function( /**Event*/ evt) {
                 $(".showspace").removeClass("showspace");
-                $(".unusedPlaceHolder").remove();
+                $(".unusedPlaceHolder").animate({
+                    height: '-=20px'
+                }, 250, function() {
+                    $(".unusedPlaceHolder").remove();
+                });
+
             },
             onUpdate: function(evt) {
                 var item = evt.item;
@@ -269,17 +283,23 @@ function sortableList() {
                 var title = $(item).children('a').text();
                 var index = evt.newIndex < evt.oldIndex ? evt.newIndex : evt.newIndex + 1;
                 var parentTitle = $(item).parent('ul').siblings('a').text().trim();
-                chrome.bookmarks.search({
-                    'title': title
-                }, function(result) {
-                    var folder = result[0];
-                    chrome.bookmarks.move(folder.id, {
-                        'parentId': folder.parentId,
-                        'index': index
-                    }, function() {
-                        printBookmarks([sortableList, function() {
-                            showFolder(parentTitle);
-                        }]);
+                $(".showspace").removeClass("showspace");
+                $(".unusedPlaceHolder").animate({
+                    height: '-=20px'
+                }, 250, function() {
+                    $(".unusedPlaceHolder").remove();
+                    chrome.bookmarks.search({
+                        'title': title
+                    }, function(result) {
+                        var folder = result[0];
+                        chrome.bookmarks.move(folder.id, {
+                            'parentId': folder.parentId,
+                            'index': index
+                        }, function() {
+                            printBookmarks([sortableList, function() {
+                                showFolder(parentTitle);
+                            }]);
+                        });
                     });
                 });
             },
@@ -291,27 +311,32 @@ function sortableList() {
                 var href = $(item).children('a').href;
                 var title = $(item).children('a').text();
                 var index = evt.newIndex;
-                chrome.bookmarks.search({
-                    'title': parentTitle
-                }, function(PARENT) {
-                    var id = parentTitle === "Bookmarks bar" ? '1' : parentTitle === "Other bookmarks" ? '2' : parentTitle === "Mobile bookmarks" ? '3' : PARENT[0].id;
+                $(".showspace").removeClass("showspace");
+                $(".unusedPlaceHolder").animate({
+                    height: '-=20px'
+                }, 250, function() {
+                    $(".unusedPlaceHolder").remove();
                     chrome.bookmarks.search({
-                        'url': href,
-                        'title': title
-                    }, function(result) {
-                        var folder = result[0];
-                        chrome.bookmarks.move(folder.id, {
-                            'parentId': id,
-                            'index': index
-                        }, function() {
-                            printBookmarks([sortableList, function() {
-                                showFolder(parentTitle);
-                                showFolder(oldParentTitle);
-                            }]);
+                        'title': parentTitle
+                    }, function(PARENT) {
+                        var id = parentTitle === "Bookmarks bar" ? '1' : parentTitle === "Other bookmarks" ? '2' : parentTitle === "Mobile bookmarks" ? '3' : PARENT[0].id;
+                        chrome.bookmarks.search({
+                            'url': href,
+                            'title': title
+                        }, function(result) {
+                            var folder = result[0];
+                            chrome.bookmarks.move(folder.id, {
+                                'parentId': id,
+                                'index': index
+                            }, function() {
+                                printBookmarks([sortableList, function() {
+                                    showFolder(parentTitle);
+                                    showFolder(oldParentTitle);
+                                }]);
+                            });
                         });
                     });
                 });
-
             }
         });
     });
