@@ -25,6 +25,17 @@ $().ready(function() {
         $("#tooltiptext").fadeOut(150);
     });
 
+    $("#search_header").hover(function(e) {
+        $("#search_header").fadeTo("fast", 0.5);
+    }, function(e) {
+        $("#search_header").fadeTo("fast", 1);
+    });
+
+    $("#search_header").click(function(e) {
+        $("#search").focus();
+        $("#search_header").fadeTo("fast", 1);
+    });
+
     $("#group").click(function(e) {
         previewFunction(group);
     });
@@ -259,23 +270,22 @@ function sortableList() {
                         ul.show();
                         var li = $("<li>")
                             .attr('class', 'unusedPlaceHolder');
-                        var link = $("<a/>");
-                        var depth = $(ul).parents("ul").length + 1,
-                            padding = 20;
-                        $(link).css('padding-left', depth * padding + 13);
-                        li.append(link);
+                        li.height(0); 
                         ul.append(li);
+                        $(li).animate({
+                            height: '+=35px'
+                        }, 250, function() { 
+                        });
                     }
                 });
             },
             onEnd: function( /**Event*/ evt) {
                 $(".showspace").removeClass("showspace");
                 $(".unusedPlaceHolder").animate({
-                    height: '-=20px'
+                    height: '-=35px'
                 }, 250, function() {
                     $(".unusedPlaceHolder").remove();
                 });
-
             },
             onUpdate: function(evt) {
                 var item = evt.item;
@@ -285,7 +295,7 @@ function sortableList() {
                 var parentTitle = $(item).parent('ul').siblings('a').text().trim();
                 $(".showspace").removeClass("showspace");
                 $(".unusedPlaceHolder").animate({
-                    height: '-=20px'
+                    height: '-=35px'
                 }, 250, function() {
                     $(".unusedPlaceHolder").remove();
                     chrome.bookmarks.search({
@@ -313,7 +323,7 @@ function sortableList() {
                 var index = evt.newIndex;
                 $(".showspace").removeClass("showspace");
                 $(".unusedPlaceHolder").animate({
-                    height: '-=20px'
+                    height: '-=35px'
                 }, 250, function() {
                     $(".unusedPlaceHolder").remove();
                     chrome.bookmarks.search({
@@ -488,7 +498,7 @@ function updateVal(currentLi, oldVal, url) {
             } else {
                 a_element.text(text);
                 li.prepend(a_element);
-                var r = $("<i class=\"fa\"><img src=\"icons/right.png\" class=\"dropIcon\"> </i>");
+                var r = $("<img src=\"icons/right.png\" class=\"dropIcon\">");
                 li.find("a").first().prepend(r);
                 $(r).click(function(e) {
                     toggleFolder($(e.currentTarget).parent().parent());

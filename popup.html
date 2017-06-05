@@ -6,7 +6,6 @@
     <script src="js/popup.js"></script>
     <script src="js/print.js"></script>
     <script src="js/tools.js"></script>
-    <script src="js/fontawesome.js"></script>
     <script src="js/sortable.js"></script>
     <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="css/main.css">
@@ -18,9 +17,11 @@
 
 <body>
     <div class="header">
-        <input type="text" class="form-control" id="search" placeholder="Search">
-        <img src="icons/search.png" id="search_icon" />
-        <button type="submit" id="resetSearch"><i class="fa fa-close fa-lg"></i></button>
+        <div id="search_header">
+            <input type="text" class="form-control" id="search" placeholder="Search">
+            <img src="icons/search.png" id="search_icon" />
+            <button type="submit" id="resetSearch"><img src="icons/cancel.png"></button>
+        </div>
         <img src="icons/logo.png" id="learn" />
     </div>
 

@@ -26,7 +26,7 @@ function printBookmarkFolder(bookmarkFolder, notShowChildren) {
             list.append(printNode(bookmark));
         } else {
             var folder = printNodeFolder(bookmark),
-                r = $("<i class=\"fa\"><img src=\"icons/right.png\" class=\"dropIcon\"></i>");
+                r = $("<img src=\"icons/right.png\" class=\"dropIcon\">");
 
             $(folder).find("a").prepend(r);
             folder.append(printBookmarkFolder(bookmark, notShowChildren));

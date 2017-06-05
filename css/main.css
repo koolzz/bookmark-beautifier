@@ -42,29 +42,24 @@ body {
     overflow: hidden;
     padding-top: 15px;
     font-family: "Roboto";
+    transition: all .15s ease-in-out;
 }
 
-#search:hover, #search:hover+#search_icon, #create_new_folder:hover, #search_icon:hover, #learn:hover {
+#search_header{
+    width: 320px;
+}
+#create_new_folder:hover, #learn:hover {
     opacity: 0.5;
 }
-
-#search:focus, #search:focus+#search_icon, #create_new_folder:focus {
-    border-color: inherit;
-    -webkit-box-shadow: none;
-    box-shadow: none;
+#create_new_folder:focus {
     opacity: 1;
 }
-
 #search::-webkit-input-placeholder, #create_new_folder::-webkit-input-placeholder {
     color: rgb(255, 255, 255);
 }
 
-#search:focus::-webkit-input-placeholder, #create_new_folder:focus::-webkit-input-placeholder {
-    color: transparent;
-}
-
 #search_icon {
-    margin-left: -21px;
+    margin-left: -21px;s
     margin-bottom: 3px;
     width: 1.7rem;
     height: 1.7rem;
@@ -72,10 +67,11 @@ body {
 }
 
 #resetSearch {
-    width: 14px;
+    width: 20px;
+    height: 20px;
     position: absolute;
     left: 295px;
-    top: 18px;
+    top: 15px;
     padding: 0;
     background-color: #009688;
     background-repeat: no-repeat;
@@ -86,13 +82,19 @@ body {
     outline: none;
     transition: all .15s ease-in-out;
 }
+#resetSearch img{
+    width: 20px;
+    height: 20px;
+}
 
 #learn {
     position: absolute;
-    width: 1.8rem;
-    top: 15px;
+    width: 20px;
+    height: : 20px;
+    top: 16px;
     left: 327px;
     color: white;
+    transition: all .15s ease-in-out;
 }
 
 
