@@ -317,9 +317,14 @@ function sortableList() {
                             'parentId': folder.parentId,
                             'index': index
                         }, function() {
-                            printBookmarks([sortableList, function() {
-                                showFolder(parentTitle);
-                            }]);
+                            /*
+                             printBookmarks([sortableList, function() {
+                                 showFolder(parentTitle);
+                             }]);
+                            */
+                            var depth = $(item).parents("ul").length - 1,
+                                    padding = 20;
+                            $(item).children('a').css('padding-left', depth * padding + 13);
                         });
                     });
                 });
@@ -350,10 +355,14 @@ function sortableList() {
                                 'parentId': id,
                                 'index': index
                             }, function() {
+                                /*
                                 printBookmarks([sortableList, function() {
                                     showFolder(parentTitle);
                                     showFolder(oldParentTitle);
-                                }]);
+                                }]);*/
+                                var depth = $(item).parents("ul").length - 1,
+                                    padding = 20;
+                                $(item).children('a').css('padding-left', depth * padding + 13);
                             });
                         });
                     });
