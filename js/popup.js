@@ -25,12 +25,6 @@ $().ready(function() {
         $("#tooltiptext").fadeOut(150);
     });
 
-    $("#search_header").hover(function(e) {
-        $("#search_header").fadeTo("fast", 0.5);
-    }, function(e) {
-        $("#search_header").fadeTo("fast", 1);
-    });
-
     $("#search_header").click(function(e) {
         $("#search").focus();
         $("#search_header").fadeTo("fast", 1);

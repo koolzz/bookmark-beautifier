@@ -1,36 +1,31 @@
-html {
-    overflow: hidden;
-    display: block;
+.h1, .h2, .h3, .h4, body, h1, h2, h3, h4, h5, h6 {
+    font-family: Roboto,Helvetica,Arial,sans-serif;
+    font-weight: 300;
 }
-
+input {
+  margin-left: 10px;
+  width:290px;
+  border:none;
+  border-bottom:1px solid #757575;
+}
 body {
+    display: block;
     height: 600px;
     width: 358px;
     background-color: #009688;
+    margin: 0;
+    font-size: 14px;
+    line-height: 1.42857143;
+    color: #333;
 }
-
-
-/* Header */
-
-.header {
-    background-color: #009688;
-    width: 358px;
+.header {   
     height: 47px;
 }
-
 #search {
     position: relative;
-    margin-left: 14px;
     top: 1px;
-    width: 300px;
-    font-size: 18px;
-    color: #ffffff;
-    display: inline-block;
-    overflow: hidden;
     padding-top: 15px;
-    font-family: "Roboto";
 }
-
 #create_new_folder {
     position: absolute;
     margin-left: 14px;
@@ -39,46 +34,30 @@ body {
     font-size: 18px;
     color: #ffffff;
     display: inline-block;
-    overflow: hidden;
+    overflow: hidden;   
     padding-top: 15px;
     font-family: "Roboto";
     transition: all .15s ease-in-out;
 }
-
-#search_header{
-    width: 320px;
-}
-
-#create_new_folder:hover, #learn:hover {
-    opacity: 0.5;
-}
-
 #create_new_folder:focus {
     opacity: 1;
 }
-
 #search::-webkit-input-placeholder, #create_new_folder::-webkit-input-placeholder {
     color: rgb(255, 255, 255);
 }
-
 #search:focus::-webkit-input-placeholder, #create_new_folder:focus::-webkit-input-placeholder {
      color: transparent;
 }
-
 #search:focus, #search:focus+#search_icon, #create_new_folder:focus {
      border-color: inherit;
      -webkit-box-shadow: none;
      box-shadow: none;
 }
- 
 #search_icon {
-    margin-left: -21px;s
-    margin-bottom: 3px;
-    width: 1.7rem;
-    height: 1.7rem;
-    opacity: inherit;
+    margin-left: -20px;
+    width: 1rem;
+    height: 1rem;
 }
-
 #resetSearch {
     width: 20px;
     height: 20px;
@@ -88,7 +67,6 @@ body {
     padding: 0;
     background-color: #009688;
     background-repeat: no-repeat;
-    color: #ffffff;
     border: none;
     cursor: pointer;
     overflow: hidden;
@@ -99,35 +77,27 @@ body {
     width: 20px;
     height: 20px;
 }
-
 #learn {
     position: absolute;
     width: 20px;
     height: : 20px;
-    top: 16px;
+    top: 12px;
     left: 327px;
     color: white;
     transition: all .15s ease-in-out;
 }
-
-
-/* Bookmarks */
-
 #bookmarks {
     background-color: #ffffff;
     overflow-y: auto !important;
     overflow-x: hidden;
     height: 503px;
-    width: 358px;
-    font size: 19px;
+    font-size: 15px;
 }
-
 #bookmarks ul {
     margin: 0;
     padding: 0;
     list-style-type: none;
 }
-
 #bookmarks .bFolder {
     display: inline-block;
     color: #000;
@@ -136,13 +106,10 @@ body {
     text-decoration: none;
     font-weight: normal;
     border-top: 1px solid #ddd;
-    font size: 15px;
 }
-
 .bLink:hover {
     border: 1px;
 }
-
 #bookmarks .bLink a {
     display: inline-block;
     color: #000;
@@ -152,99 +119,72 @@ body {
     font-weight: normal;
     border-top: 1px solid #ddd;
     min-height: 20px;
-    font size: 19px;
 }
-
 #bookmarks .bLink a:empty {
     height: 40px;
 }
-
 #bookmarks .bLink a:empty:after {
     font-style: italic;
     content: "No title";
 }
-
 #bookmarks>ul {
     border-left: 1px solid #ddd;
     border-right: 1px solid #ddd;
     border-bottom: 1px solid #ddd;
 }
-
 #bookmarks .selectedLink {
     background-color: #F0F5FF;
 }
-
 #bookmarks .editSelectedVal {
     background-color: rgba(0, 0, 0, 0.1);
     width: 346px;
     padding: 14px 12px 14px 8px;
     border: none;
 }
-
 #bookmarks .ghost a {
     opacity: 0.4;
 }
-
 .dropIcon {
     position: relative;
-    margin-top: -2px;
     width: 22px;
     height: 17px;
 }
-
 #root {
     margin-left: 13px;
 }
-
 .linkIcon {
-    position: relative;
-    margin-top: -2px;
-    margin-right: 6px;
-    width: 17px;
-    height: 17px;
+    margin-right: 8px;
 }
-
-
-/* Footer */
-
 .footer {
     margin-bottom: 0px;
     background-color: #009688;
     width: 358px;
     height: 50px;
 }
-
 #sort, #group, #crop, #new_folder {
     position: relative;
     margin-left: 55px;
     margin-top: 8px;
 }
-
 #sort {
     margin-left: 28px;
     height: 29px;
 }
-
 #group {
     height: 34px;
 }
-
 #crop {
     height: 31px;
 }
-
 #new_folder {
     height: 30px;
 }
-
 #sort:hover, #group:hover, #crop:hover, #new_folder:hover {
     opacity: 0.5;
 }
-
 .decision {
     width: 358px;
 }
-
 #apply, #reject {
     position: absolute;
     width: 27px;
@@ -252,15 +192,12 @@ body {
     margin-left: 124px;
     margin-top: 11px;
 }
-
 #reject {
     margin-left: 209px;
 }
-
 #apply:hover, #reject:hover {
     opacity: 0.5;
 }
-
 #trash {
     position: absolute;
     opacity: 0;
@@ -269,15 +206,12 @@ body {
     height: 4rem;
     left: 292;
 }
-
 #trash:hover {
     opacity: 0.5;
 }
-
 .add_new_folder {
     position: absolute;
 }
-
 #apply_folder, #reject_folder {
     position: absolute;
     width: 27px;
@@ -286,26 +220,22 @@ body {
     left: 260;
     color: white;
 }
-
 #reject_folder {
     left: 310px;
 }
-
 #apply_folder:hover, #reject_folder:hover {
     opacity: 0.5;
 }
-
 #tooltiptext {
-    position: absolute;
-    top: 528px;
     display: none;
+    position: absolute;
+    top: 530px;
     width: 358px;
     background-color: #323a46;
     color: #fff;
     text-align: center;
-    font-size: 16px;
+    font-size: 15px;
 }
-
 #bookmarks .showspace ul:empty {
     min-height: 20px;
 }
@@ -321,10 +251,38 @@ body {
     height: 50px;
     border-top: none;
 }
-
-
-
 #bookmarks .unusedPlaceHolder a::before {
     position: relative;
     top: 5px;
+}
+.panel {
+    border: none;
+    -webkit-box-shadow: 0 1px 6px 0 rgba(0,0,0,.12),0 1px 6px 0 rgba(0,0,0,.12);
+    box-shadow: 0 1px 6px 0 rgba(0,0,0,.12),0 1px 6px 0 rgba(0,0,0,.12);
+}
+.form-control {
+    color: rgba(255,255,255,.84);
+    height: 38px;
+    padding: 7px 0;
+    font-size: 16px;
+    line-height: 1.42857143;
+    margin-bottom: 7px;
+    border: 0;
+    background-image: -webkit-gradient(linear,left top,left bottom,from(#009688),to(#009688)),-webkit-gradient(linear,left top,left bottom,from(#D2D2D2),to(#D2D2D2));
+    background-image: -webkit-linear-gradient(#009688,#009688),-webkit-linear-gradient(#D2D2D2,#D2D2D2);
+    background-image: -o-linear-gradient(#009688,#009688),-o-linear-gradient(#D2D2D2,#D2D2D2);
+    background-image: linear-gradient(#009688,#009688),linear-gradient(#D2D2D2,#D2D2D2);
+    -webkit-background-size: 0 2px,100% 1px;
+    background-size: 0 2px,100% 1px;
+    background-repeat: no-repeat;
+    background-position: center bottom,center -webkit-calc(100% - 1px);
+    background-position: center bottom,center calc(100% - 1px);
+    background-color: rgba(0,0,0,0);
+    -webkit-transition: background 0s ease-out;
+    -o-transition: background 0s ease-out;
+    transition: background 0s ease-out;
+    float: none;
+    -webkit-box-shadow: none;
+    box-shadow: none;
+    border-radius: 0
 }
